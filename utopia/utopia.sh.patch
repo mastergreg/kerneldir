@@ -1,0 +1,20 @@
+--- utopia-orig.sh	2012-03-25 13:42:31.730667794 +0300
++++ utopia.sh	2012-03-25 13:45:41.932289948 +0300
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ #
+ # utopia.sh
+ #
+@@ -125,6 +125,11 @@ if [ -e "$PRIVATE_COW" ] && [ ! -f "$PRI
+     exit 1
+ fi
+ 
++
++export TMPDIR=/tmp/uml/$(whoami)
++mkdir -p $TMPDIR
++chmod 777 $TMPDIR
++
+ echo " "
+ echo " $PF Transfering to Utopia ..."
+ echo " "
