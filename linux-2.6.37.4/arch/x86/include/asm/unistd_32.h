@@ -346,7 +346,7 @@
 #define __NR_fanotify_init	338
 #define __NR_fanotify_mark	339
 #define __NR_prlimit64		340
-#define __NR_curse		341
+#define __NR_curse			341
 
 #ifdef __KERNEL__
 
