@@ -126,9 +126,9 @@ if [ -e "$PRIVATE_COW" ] && [ ! -f "$PRIVATE_COW" ]; then
 fi
 
 
-export TMPDIR=/tmp/uml/$(whoami)
-mkdir -p $TMPDIR
-chmod 777 $TMPDIR
+#export TMPDIR=/tmp/uml/$(whoami)
+#mkdir -p $TMPDIR
+#chmod 777 $TMPDIR
 
 echo " "
 echo " $PF Transfering to Utopia ..."
