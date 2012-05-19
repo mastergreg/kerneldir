@@ -26,6 +26,7 @@ int syscurse_rem_rule(int, char *);
 //TODO: Some functions should not return int, but a pointer to an array (for example syscurse_list_all, I think).
 //IMPORTANT: Depending on the way we do the copy to userspace, this should not even matter. I think it would be better if we went with the proc filesystem mapping solution (it is not a case where the data is time sensitive).
 
+/*This is the system call source base function.*/
 SYSCALL_DEFINE3(curse, int curse_cmd, int, curse_no, pid_t, target)
 {
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);

@@ -59,7 +59,17 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 
 #ifdef __KERNEL__
 
-//Kernel specific code... :: Does it need anything?
+//Kernel specific code... :: Does it need anything? : Yes it does.
+
+/*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
+inline void curse_k_wrapper (void) {
+	//check if curses are enabled
+	//check if current has a curse
+	//if so, retrieve the pointer from the fun* array and call.
+	return;
+}
+
+//Anything else?...
 
 
 #endif
