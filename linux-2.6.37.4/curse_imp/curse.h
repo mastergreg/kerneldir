@@ -16,15 +16,15 @@
 
 /* -------Curse commands-------
  * list_all					: lists all curses, implemented and not.						: <no_argument>
- * activate					: activates a curse (makes it ready for deployment)				: short int representing the serial number of the active bit in curse_id_mask (ex. 16 for 0x8000, 10 for 0x200, ...)
- * deactivate				: deactivates a curse (disables its use until reactivation)		: <same>
+ * activate					: activates the curse system (enables the curse mechanism)		: int representing the serial number of the active bit in curse_id_mask (ex. 16 for 0x8000, 10 for 0x200, ...)
+ * deactivate				: deactivates the curse system (disables the curse mechanism)	: <same>
  * check_curse_activity		: checks if a curse is active									: <same>
  * check_tainted_process	: check if a process of the current user has an active curse	: pid_t identifying the process to check (-1 to check for any process)
  * deploy (ex unleash)		: set a curse upon a target (if any)							: pid_t representing the process to unleash the curse upon (not applicable in case of no target curses)
  * retire					: remove a curse from a target (if any)							: pid_t representing the process to remove the curse from (not applicable in case of no target curses)
  * -------------  RULES: Rules are static bindings of curses to binaries (paths) instead of processes.  ------------- :: These are supplementary. We may implement them, after the main implementation of the system call.
  * show_rules				: show all rules that are currently in the system				: <no_argument>
- * add_rule					: add a new rule (this adds a binding, and deploys the rule)	: short int representing the serial number of the curse_id_mask, full path to binary
+ * add_rule					: add a new rule (this adds a binding, and deploys the rule)	: integer representing the serial number of the curse_id_mask, full path to binary
  * rem_rule					: remove an existing rule										: <same>
  */
 /*Curse system call interface.*/
@@ -46,11 +46,11 @@ struct syscurse {
 };
 
 /*Structure representing an active curse status.*/
-struct curse_list_t {		//Note the _t part...:)
+struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used in array form, not LL.
 	struct syscurse curse_info;
 	pid_t curse_target;
 	uid_t proc_owner;
-};							//Should be used in array form.
+};
 
 //TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
 //I will add more things later.
