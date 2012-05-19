@@ -41,7 +41,7 @@ enum curse_status {implemented=0, activated, active, invalid_curse};
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {
-	struct curse_list_entry *entry;		//Not sure if it should be static struct or pointer.
+	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	enum curse_status status;
 };
 
@@ -59,7 +59,8 @@ struct curse_list_t {		//Note the _t part...:)
 
 #ifdef __KERNEL__
 
-//Kernel code...
+//Kernel specific code... :: Does it need anything?
+
 
 #endif
 
