@@ -15,6 +15,7 @@
 # The method of adding a new curse in the system, is described below.
 # 1. Source code: You have to have the kernel source code for the system call in a source file.
 # 2. Curse entry: You have to add an entry to the curse table. An entry consists of a unique name and a descriptive hex value of type uint64_t, like 0xBOOBBOOB.
-# 3. Makefile entry: You have to add a new rule for the curse to the existing makefile in the curses subdirectory.
-# 4. Recompilation: For the new curse to be added to the system, you have to recompile the curse system.
+# 3. Curse function pointers: You have to include the curse header and the function pointers in the appropriate array in the curse table library.
+# 4. Makefile entry: You have to add a new rule for the curse to the existing makefile in the curses subdirectory.
+# 5. Recompilation: For the new curse to be added to the system, you have to recompile the curse system.
 #

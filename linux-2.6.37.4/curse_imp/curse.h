@@ -12,7 +12,7 @@
 #ifndef _SYSCURSE_H
 #define _SYSCURSE_H
 
-#include <sys/types.h>
+#include <linux/types.h>
 
 /* -------Curse commands-------
  * list_all					: lists all curses, implemented and not.						: <no_argument>
@@ -72,6 +72,6 @@ inline void curse_k_wrapper (void) {
 //Anything else?...
 
 
-#endif
+#endif	/* __KERNEL__ */
 
 #endif /* _SYSCURSE_H */
