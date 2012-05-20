@@ -134,12 +134,24 @@ echo " "
 echo " $PF Transfering to Utopia ..."
 echo " "
 
-if [ x"$OVER_SSH" = x"yes" ]; then
-    # Launch UML over ssh
-    exec $uml_kernel ubd0="$PRIVATE_COW","$UML_ROOT_FS_IMAGE" mem=54MB \
-        eth0=slirp,,slirp-fullbolt con0=fd:0,fd:1 con1=pts con2=pts con3=pts con=null $*
+if [ -n "$1" ] && [ "$1" = "modify" ]; then
+	if [ x"$OVER_SSH" = x"yes" ]; then
+	    # Launch UML over ssh
+	    exec $uml_kernel ubd0="$UML_ROOT_FS_IMAGE" mem=54MB \
+	        eth0=slirp,,slirp-fullbolt con0=fd:0,fd:1 con1=pts con2=pts con3=pts con=null
+	else
+	    # Launch UML normally
+	    exec $uml_kernel ubd0="$UML_ROOT_FS_IMAGE" mem=256MB \
+	        con0=xterm con1=fd:0,fd:1 con2=xterm con3=xterm con=null eth0=tuntap,utopia
+	fi
 else
-    # Launch UML normally
-    exec $uml_kernel ubd0="$PRIVATE_COW","$UML_ROOT_FS_IMAGE" mem=256MB \
-        con0=xterm con1=fd:0,fd:1 con2=xterm con3=xterm con=null eth0=tuntap,utopia $*
+	if [ x"$OVER_SSH" = x"yes" ]; then
+	    # Launch UML over ssh
+	    exec $uml_kernel ubd0="$PRIVATE_COW","$UML_ROOT_FS_IMAGE" mem=54MB \
+	        eth0=slirp,,slirp-fullbolt con0=fd:0,fd:1 con1=pts con2=pts con3=pts con=null
+	else
+	    # Launch UML normally
+	    exec $uml_kernel ubd0="$PRIVATE_COW","$UML_ROOT_FS_IMAGE" mem=256MB \
+	        con0=xterm con1=fd:0,fd:1 con2=xterm con3=xterm con=null eth0=tuntap,utopia
+	fi
 fi
