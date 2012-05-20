@@ -1,1 +1,6 @@
 local
+*.out
+*.o
+*.swp
+*.swo
+
