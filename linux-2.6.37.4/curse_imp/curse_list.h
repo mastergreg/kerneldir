@@ -9,7 +9,7 @@
 #include <linux/types.h>
 
 /*Maximum size for a curse name.*/
-#define CURSE_MAX_NAME_SIZE 28
+#define CURSE_MAX_NAME_SIZE 24
 
 /*Curse entry structure for logistic purposes.*/
 struct curse_list_entry {
