@@ -13,7 +13,6 @@
 #define _SYSCURSE_H
 
 #include <linux/types.h>
-#include <linux/semaphore.h>
 
 /* -------Curse commands-------
  * list_all					: lists all curses, implemented and not.						: <no_argument>
@@ -69,6 +68,7 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 #ifdef __KERNEL__
 
 //Kernel specific code... :: Does it need anything? : Yes it does.
+#include <linux/semaphore.h>
 
 /*Struct to-be injected in task_struct to let us keep tabs on processes.*/
 struct task_curse_struct {

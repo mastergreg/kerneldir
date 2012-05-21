@@ -125,10 +125,10 @@ if [ -e "$PRIVATE_COW" ] && [ ! -f "$PRIVATE_COW" ]; then
     exit 1
 fi
 
-
-export TMPDIR=/tmp/uml/$(whoami)
-mkdir -p $TMPDIR
-chmod 777 $TMPDIR
+#Error chmod/mkdir: permission denied persists. Commenting out.
+#export TMPDIR=/tmp/uml/$(whoami)
+#mkdir -p $TMPDIR
+#chmod 777 $TMPDIR
 
 echo " "
 echo " $PF Transfering to Utopia ..."

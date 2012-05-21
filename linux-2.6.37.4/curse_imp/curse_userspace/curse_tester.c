@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <curse_imp/curse.h>
+#include "../curse.h"
 
 #ifdef __i386__
 # define __NR_curse 341
