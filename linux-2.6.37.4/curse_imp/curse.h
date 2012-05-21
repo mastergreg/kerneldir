@@ -69,6 +69,21 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 
 //Kernel specific code... :: Does it need anything? : Yes it does.
 #include <linux/semaphore.h>
+#include <linux/mutex.h>
+
+//Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
+int syscurse_list_all(void);
+int syscurse_activate(void);
+int syscurse_deactivate(void);
+int syscurse_check_curse_activity(int);
+int syscurse_check_tainted_process(pid_t);
+int syscurse_deploy(int, pid_t);
+//int syscurse_cast(int, pid_t);
+int syscurse_retire(int, pid_t);
+//int syscurse_lift(int, pid_t);
+int syscurse_show_rules(void);
+int syscurse_add_rule(int, char *);
+int syscurse_rem_rule(int, char *);
 
 /*Struct to-be injected in task_struct to let us keep tabs on processes.*/
 struct task_curse_struct {
@@ -78,9 +93,13 @@ struct task_curse_struct {
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
-	struct semaphore guard;
+	struct mutex guard;
 	_Bool value;
 };
+
+/*Data holding the curse system status.*/
+//TODO: Since the wrapper that checks is in the header, I think this should be there too.	:: Moved it here. curse_k_wrapper needs it. Not static - prevents reentrancy.
+struct bool_wrapper curse_system_active;
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
