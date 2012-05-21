@@ -13,6 +13,10 @@
 #include "curse.h"
 #include "curse_list.h"
 
+//Global data.
+/*Static data holding the curse system status.*/
+static bool_wrapper curse_system_active;	//TODO: Since the wrapper that checks is in the header, I think this should be there too.
+
 //Function prototypes (although I hate forwards, we have to provide the interface).
 //All the functions return 0 for success, or one of the usual error codes for error.
 static inline int syscurse_list_all(void);
@@ -119,11 +123,3 @@ static inline int syscurse_rem_rule (int curse, char *path) {
 	return 0;
 }
 
-/*	//Stub to check compilation of curse_list library.
-int main (void) {
-	struct curse_list_entry *hi;
-	hi=&curse_full_list[0];
-	printf("name is %s and id is %lu\n", hi->curse_name, (unsigned long)hi->curse_id);
-	printf("haha\n");
-	return 0;
-}*/

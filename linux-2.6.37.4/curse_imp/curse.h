@@ -76,6 +76,12 @@ struct task_curse_struct {
 	uint64_t curse_field;
 }
 
+/*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
+struct bool_wrapper {
+	struct semaphore guard;
+	_Bool value;
+}
+
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
 	//check if curses are enabled
