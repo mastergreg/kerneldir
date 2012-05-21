@@ -1,7 +1,8 @@
 #!/bin/bash
-cd linux-2.6.37.4
-make mrproper
-make mrproper ARCH=um
-make defconfig ARCH=um SUBARCH=x86_64
-make ARCH=um SUBARCH=x86_64 CC=gcc-4.4 -j6
+kerneldir=linux-2.6.37.4
+
+make -C $kerneldir mrproper
+make -C $kerneldir mrproper ARCH=um
+make -C $kerneldir defconfig ARCH=um SUBARCH=$(uname -m)
+make -C $kerneldir ARCH=um SUBARCH=$(uname -m)  CC=gcc-4.4 -j6
 

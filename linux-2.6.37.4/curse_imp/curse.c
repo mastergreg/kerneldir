@@ -21,7 +21,9 @@ static inline int syscurse_deactivate(void);
 static inline int syscurse_check_curse_activity(int);
 static inline int syscurse_check_tainted_process(pid_t);
 static inline int syscurse_deploy(int, pid_t);
+//static inline int syscurse_cast(int, pid_t);
 static inline int syscurse_retire(int, pid_t);
+//static inline int syscurse_lift(int, pid_t);
 static inline int syscurse_show_rules(void);
 static inline int syscurse_add_rule(int, char *);
 static inline int syscurse_rem_rule(int, char *);
@@ -32,30 +34,41 @@ static inline int syscurse_rem_rule(int, char *);
 SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target /*I think it need a char * too.*/)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
-/*
 	long ret=-EINVAL;
 	int cmd_norm=(int)curse_cmd;
 	switch(cmd_norm) {
-		case list_all:
+		case LIST_ALL:
+            ret = syscurse_list_all();
+            break;
+		case ACTIVATE:
+            ret = syscurse_activate();
+            break;
+		case DEACTIVATE:
+            ret = syscurse_deactivate();
+            break;
+		case CHECK_CURSE_ACTIVITY:
+            ret = syscurse_check_curse_activity(curse_no);
+            break;
 			
-		case activate:
+		case CHECK_TAINTED_PROCESS:
+            ret = syscurse_check_tainted_process(target);
+            break;
 			
-		case deactivate:
-			
-		case check_curse_activity:
-			
-		case check_tainted_process:
-			
-		case deploy:
+		case DEPLOY:
+            ret = syscurse_deploy(curse_no, target);
+            break;
 
-		case retire:
+		case RETIRE:
+            ret = syscurse_retire(curse_no, target);
+            break;
 			
-		case show_rules:
+		case SHOW_RULES:
 			//Stub (for now, fall-throughs)
-		case add_rule:
+		case ADD_RULE:
 			//Stub
-		case rem_rule:
+		case REM_RULE:
 			printk(KERN_INFO "This operation is unsupported at this time.");
+            ret = -EINVAL;
 			goto out;
 		default:
 			goto out;
@@ -63,8 +76,7 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target /*I think it
 
 out:
 	return ret;
-*/
-	return (long)(curse_cmd+curse_no+(int)target);
+	//return (long)(curse_cmd+curse_no+(int)target);
 }
 
 //TODO: Source helpful functions.
