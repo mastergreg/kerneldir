@@ -69,7 +69,6 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 
 //Kernel specific code... :: Does it need anything? : Yes it does.
 #include <linux/semaphore.h>
-#include <linux/mutex.h>
 
 //Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
 int syscurse_list_all(void);
@@ -93,7 +92,7 @@ struct task_curse_struct {
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
-	struct mutex guard;
+	struct semaphore guard;
 	_Bool value;
 };
 

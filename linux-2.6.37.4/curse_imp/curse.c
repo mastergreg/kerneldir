@@ -16,13 +16,13 @@
 
 //Global data (create them taking into account reentrancy: static usually prevents that).
 /*This flag helps to initialize what needs iinitializing in our envirronment.*/
-atomic_t initial_actions_flag=atomic_set(initial_actions_flag, 0);
+atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
 
 //Other functions.
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
 	//Global activity status.
-	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
+	printk(KERN_ERR "Entered initialization function.\n");		//Testing if it is really called only the first time.
 	sema_init(&curse_system_active.guard, 1);
 	curse_system_active.value=0;
 }
@@ -33,15 +33,15 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 	long ret=-EINVAL;
 	int cmd_norm=(int)curse_cmd;
 
-	if (atomic_read(initial_actions_flag)) {		//Conditional will not be entered but the first time(s).
-		if (atomic_read(initial_actions_flag)==2)
+	if (atomic_read(&initial_actions_flag)) {		//Conditional will not be entered but the first time(s).
+		if (atomic_read(&initial_actions_flag)==2)
 			goto wait_init;
-		atomic_set(initial_actions_flag, 2);
+		atomic_set(&initial_actions_flag, 2);
 		//Initializing actions.
 		initial_actions();
-		atomic_set(initial_actions_flag, 0);
+		atomic_set(&initial_actions_flag, 0);
 		wait_init:
-		while (atomic_read(initial_actions_flag))
+		while (atomic_read(&initial_actions_flag))
 			continue;
 	}
 
@@ -90,11 +90,11 @@ out:
 //IMPORTANT: Depending on the way we do the copy to userspace, this should not even matter. I think it would be better if we went with the proc filesystem mapping solution (it is not a case where the data is time sensitive).
 
 //TODO: Source helpful functions.
-static int syscurse_list_all (void) {
+int syscurse_list_all (void) {
 	//...
 	return 0;
 }
-static int syscurse_activate (void) {
+int syscurse_activate (void) {
 	if (!curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
@@ -105,7 +105,7 @@ static int syscurse_activate (void) {
 	}
 	return 0;
 }
-static int syscurse_deactivate (void) {
+int syscurse_deactivate (void) {
 	if (curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
@@ -117,29 +117,29 @@ static int syscurse_deactivate (void) {
 	//TODO: Do we have to unhook (call close pointer) all the active curses here?
 	return 0;
 }
-static int syscurse_check_curse_activity (int curse_no) {
+int syscurse_check_curse_activity (int curse_no) {
 	//...
 	return 0;
 }
-static int syscurse_check_tainted_process (pid_t target) {
+int syscurse_check_tainted_process (pid_t target) {
 	//...
 	return 0;
 }
-static int syscurse_deploy (int curse_no, pid_t target) {
+int syscurse_deploy (int curse_no, pid_t target) {
 	//...
 	return 0;
 }
-static int syscurse_retire (int curse_no, pid_t target) {
+int syscurse_retire (int curse_no, pid_t target) {
 	//...
 	return 0;
 }
-static int syscurse_show_rules (void) {
+int syscurse_show_rules (void) {
 	return 0;
 }
-static int syscurse_add_rule (int curse, char *path) {
+int syscurse_add_rule (int curse, char *path) {
 	return 0;
 }
-static int syscurse_rem_rule (int curse, char *path) {
+int syscurse_rem_rule (int curse, char *path) {
 	return 0;
 }
 
