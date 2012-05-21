@@ -13,6 +13,7 @@
 #define _SYSCURSE_H
 
 #include <linux/types.h>
+#include <linux/semaphore.h>
 
 /* -------Curse commands-------
  * list_all					: lists all curses, implemented and not.						: <no_argument>
@@ -68,6 +69,12 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 #ifdef __KERNEL__
 
 //Kernel specific code... :: Does it need anything? : Yes it does.
+
+/*Struct to-be injected in task_struct to let us keep tabs on processes.*/
+struct task_curse_struct {
+	struct semaphore protection;
+	uint64_t curse_field;
+}
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
