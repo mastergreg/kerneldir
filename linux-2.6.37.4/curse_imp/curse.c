@@ -36,10 +36,29 @@ static inline int syscurse_rem_rule(int, char *);
 
 /*This is the system call source base function.*/
 SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
-{
-	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
+{	
 	long ret=-EINVAL;
 	int cmd_norm=(int)curse_cmd;
+	/*This flag helps to initialize what needs it in our envirronment.*/
+	static int initial_actions_flag=1;		//TODO: Need to figure out a way to test-and-set it atomically.
+
+	if (initial_actions_flag) {		//Conditional wil not be entered but the first time(s).
+		if (initial_actions_flag==2)
+			goto wait_init;
+		initial_actions_flag=2;
+
+		//Initializing actions.
+		sema_init(&curse_system_active.guard, 1);
+		curse_system_active.value=0;
+
+		initial_actions_flag=0;
+	}
+wait_init:
+		while (initial_actions_flag)
+			continue;
+
+	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
+	
 	switch(cmd_norm) {
 		case LIST_ALL:
             ret = syscurse_list_all();
@@ -90,11 +109,22 @@ static inline int syscurse_list_all (void) {
 	return 0;
 }
 static inline int syscurse_activate (void) {
-	//...
+	if (!curse_system_active.value) {
+		if (down_interruptible(&curse_system_active.guard))
+			return -EINTR;
+		curse_system_active.value=1;
+		up(&curse_system_active.guard);
+	}
 	return 0;
 }
 static inline int syscurse_deactivate (void) {
-	//...
+	if (curse_system_active.value) {
+		if (down_interruptible(&curse_system_active.guard))
+			return -EINTR;
+		curse_system_active.value=0;
+		up(&curse_system_active.guard);
+	}
+	//TODO: Do we have to unhook (call close pointer) all the active curses here?
 	return 0;
 }
 static inline int syscurse_check_curse_activity (int curse_no) {
