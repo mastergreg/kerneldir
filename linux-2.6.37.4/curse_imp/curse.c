@@ -9,11 +9,11 @@
 #include <linux/syscalls.h>
 #include <linux/kernel.h>
 #include <linux/types.h>		//Sentinels prevent multiple inclusion.
+#include <linux/sched.h>
 #include <asm/atomic.h>
 
 #include "curse.h"
 #include "curse_list.h"
-
 //Global data (create them taking into account reentrancy: static usually prevents that).
 /*This flag helps to initialize what needs initializing in our envirronment.*/
 atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
@@ -131,8 +131,18 @@ out_pos:
 	return ret;
 }
 int syscurse_check_tainted_process (pid_t target) {
-	//...
-	return 0;
+	struct task_struct *target_task;
+	long err;
+
+	err = -EINVAL;
+	if (target<=0) goto out;
+
+	err = -ESRCH;
+	target_task = find_task_by_vpid(pid);
+	if (!target_task) goto out;
+
+	out: 
+		return err;
 }
 int syscurse_deploy (int curse_no, pid_t target) {
 	//...
