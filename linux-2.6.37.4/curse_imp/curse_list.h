@@ -20,16 +20,13 @@ struct curse_list_entry {
 #ifdef __KERNEL__
 
 /*[ADD] The individual curse header includes.*/
-static inline void stub_init(void /*or not*/)
-{
+static inline void stub_init(void /*or not*/) {
     return -EINVAL;
 }
-static inline void stub_destroy(void /*or not*/)
-{
+static inline void stub_destroy(void /*or not*/) {
     return -EINVAL;
 }
-static inline void stub_use(void /*or not*/)
-{
+static inline void stub_use(void /*not*/) {
     return -EINVAL;
 }
 
