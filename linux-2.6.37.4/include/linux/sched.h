@@ -94,7 +94,7 @@ struct sched_param {
 
 #include <asm/processor.h>
 
-#include "../../curse_imp/curse.h"
+#include "../../curse_imp/curse_sched.h"
 
 struct exec_domain;
 struct futex_pi_state;
@@ -1189,7 +1189,7 @@ struct task_struct {
 	unsigned int ptrace;
 
 #ifdef _CURSES_INCLUDED
-	struct task_curse_struct;
+	struct task_curse_struct curse_data;
 #endif
 
 	int lock_depth;		/* BKL lock depth */

@@ -89,11 +89,7 @@ int syscurse_rem_rule(int, char *);
 #define _CURSES_INSERTED
 #endif
 
-/*Struct to-be injected in task_struct to let us keep tabs on processes.*/
-struct task_curse_struct {
-	struct semaphore protection;
-	uint64_t curse_field;
-};
+#include "curse_sched.h"	//Source it here too.
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
