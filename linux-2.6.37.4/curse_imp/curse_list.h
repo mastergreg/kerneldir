@@ -21,13 +21,13 @@ struct curse_list_entry {
 
 /*[ADD] The individual curse header includes.*/
 static inline void stub_init(void /*or not*/) {
-    return -EINVAL;
+    return;
 }
 static inline void stub_destroy(void /*or not*/) {
-    return -EINVAL;
+    return;
 }
 static inline void stub_use(void /*not*/) {
-    return -EINVAL;
+    return;
 }
 
 

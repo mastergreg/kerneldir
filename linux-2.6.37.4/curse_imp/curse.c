@@ -15,7 +15,7 @@
 
 //Global data.
 /*Static data holding the curse system status.*/
-static bool_wrapper curse_system_active;	//TODO: Since the wrapper that checks is in the header, I think this should be there too.
+static struct bool_wrapper curse_system_active;	//TODO: Since the wrapper that checks is in the header, I think this should be there too.
 
 //Function prototypes (although I hate forwards, we have to provide the interface).
 //All the functions return 0 for success, or one of the usual error codes for error.
