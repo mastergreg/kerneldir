@@ -138,7 +138,7 @@ int syscurse_check_tainted_process (pid_t target) {
 	if (target<=0) goto out;
 
 	err = -ESRCH;
-	target_task = find_task_by_vpid(pid);
+	target_task = find_task_by_vpid(target);
 	if (!target_task) goto out;
 
 	out: 
