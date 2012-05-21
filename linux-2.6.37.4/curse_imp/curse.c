@@ -15,7 +15,7 @@
 #include "curse_list.h"
 
 //Global data (create them taking into account reentrancy: static usually prevents that).
-/*This flag helps to initialize what needs iinitializing in our envirronment.*/
+/*This flag helps to initialize what needs initializing in our envirronment.*/
 atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
 
 //Other functions.
@@ -118,8 +118,17 @@ int syscurse_deactivate (void) {
 	return 0;
 }
 int syscurse_check_curse_activity (int curse_no) {
+	int ret=-EINVAL;
+	if (down_interruptible(&curse_system_active.guard))
+		goto out_pos;
+	if (curse_system_active.value==0)
+		goto out_sema_held;
+	//STUB: Check if any curse in the table is active.
 	//...
-	return 0;
+out_sema_held:
+	up(&curse_system_active.guard);
+out_pos:
+	return ret;
 }
 int syscurse_check_tainted_process (pid_t target) {
 	//...
