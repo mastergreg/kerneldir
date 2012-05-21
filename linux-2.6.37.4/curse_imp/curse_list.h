@@ -20,6 +20,18 @@ struct curse_list_entry {
 #ifdef __KERNEL__
 
 /*[ADD] The individual curse header includes.*/
+static inline void stub_init(void/*or not*/)
+{
+    return -EINVAL;
+}
+static inline void stub_destroy(void/*or not*/)
+{
+    return -EINVAL;
+}
+static inline void stub_use(void/*or not*/)
+{
+    return -EINVAL;
+}
 
 
 /*[ADD] The system curse listing.*/
@@ -38,9 +50,9 @@ struct fun_element {
 
 /*[ADD] The system call function pointer array.*/
 struct fun_element fun_array[] = {
-	{	NULL, NULL, NULL	},
-	
-	{	NULL, NULL, NULL	}
+	{	stub_init, stub_destroy, stub_use	}, /* maybe a stub maybe not, depends on how we handle 0 */
+
+	{	stub_init, stub_destroy, stub_use	} /* you have made a grave mistace (sentinel speaking) */
 };
 
 #endif	/* __KERNEL__ */
