@@ -28,7 +28,15 @@
  * rem_rule					: remove an existing rule										: <same>
  */
 /*Curse system call interface.*/
-enum curse_command {list_all=0, activate, deactivate, check_curse_activity, check_tainted_process, deploy, retire, show_rules, add_rule, rem_rule, illegal_command};
+enum curse_command	{	LIST_ALL=0, 
+						ACTIVATE, DEACTIVATE, 
+						CHECK_CURSE_ACTIVITY, 
+						CHECK_TAINTED_PROCESS, 
+						DEPLOY, RETIRE, 
+						SHOW_RULES, 
+						ADD_RULE, REM_RULE, 
+						ILLEGAL_COMMAND
+					};
 
 /* -------Curse status (booleans)-------
  * Implemented: curse has code (vs. placeholders)
@@ -36,8 +44,8 @@ enum curse_command {list_all=0, activate, deactivate, check_curse_activity, chec
  * Active: currently running (influencing the system) (is implemented, and activated)
  */
 /*Lists every possible status for a curse (for userspace portability).*/
-//TODO: Maybe in bitmask style. :: No need, enum elements are inclusive.
-enum curse_status {implemented=0, activated, active, invalid_curse};
+//Maybe in bitmask style. :: No need, enum elements are inclusive.
+enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {
