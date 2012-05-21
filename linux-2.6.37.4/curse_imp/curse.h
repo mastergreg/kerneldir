@@ -84,6 +84,11 @@ int syscurse_show_rules(void);
 int syscurse_add_rule(int, char *);
 int syscurse_rem_rule(int, char *);
 
+/*Preprocessor guard for scheduling/execing.*/
+#ifndef _CURSES_INSERTED
+#define _CURSES_INSERTED
+#endif
+
 /*Struct to-be injected in task_struct to let us keep tabs on processes.*/
 struct task_curse_struct {
 	struct semaphore protection;
