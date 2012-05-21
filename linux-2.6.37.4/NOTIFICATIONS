@@ -1,5 +1,5 @@
 1. Hello. This is the update notification in case there is something to share. The messages are to be indexed.
 2. I have followed http://www.cmpe.boun.edu.tr/courses/cmpe322/fall2009/Tutorials/Kernel%20Compile%20and%20SysCall%20Add%20(Ubuntu%208.04).pdf up to step 8, and I will hopefully finish it tomorrow. If you see this, answer: do I need to patch this tree, or can I just build with gcc 4.4?
 	::To SELF : system has gcc 4.4, so AOK.
-3. Minor fixes in curse_imp files. Need to check if stub syscall works, in order to move to serious action.
+3. Minor fixes in curse_imp files. Need to check if stub syscall works, in order to move to serious action. :: It does.
 
