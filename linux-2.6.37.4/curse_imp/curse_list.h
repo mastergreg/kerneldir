@@ -17,40 +17,6 @@ struct curse_list_entry {
 	uint64_t curse_id;
 };
 
-
-/*
- * this could be used instead of all the defines
- * style is everything :p FIXME
-
-enum commands{  LIST_ALL=0,
-		        ACTIVATE,
-		        DEACTIVATE,
-		        CHECK_CURSE_ACTIVITY,
-		        CHECK_TAINTED_PROCESS,
-		        DEPLOY,
-		        RETIRE,
-		        SHOW_RULES,
-		        ADD_RULE,
-		        REM_RULE,
-                NR_COMMANDS
-}
-
- */
-
-#define LIST_ALL                0
-#define ACTIVATE                1
-#define DEACTIVATE              2
-#define CHECK_CURSE_ACTIVITY    3
-#define CHECK_TAINTED_PROCESS   4
-#define DEPLOY                  5
-#define RETIRE                  6
-#define SHOW_RULES              7
-#define ADD_RULE                9
-#define REM_RULE                8
-#define NR_COMMANDS             10
-
-
-
 #ifdef __KERNEL__
 
 /*[ADD] The individual curse header includes.*/
