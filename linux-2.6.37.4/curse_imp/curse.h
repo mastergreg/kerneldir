@@ -28,7 +28,15 @@
  * rem_rule					: remove an existing rule										: <same>
  */
 /*Curse system call interface.*/
-enum curse_command {list_all=0, activate, deactivate, check_curse_activity, check_tainted_process, deploy, retire, show_rules, add_rule, rem_rule, illegal_command};
+enum curse_command	{	LIST_ALL=0, 
+						ACTIVATE, DEACTIVATE, 
+						CHECK_CURSE_ACTIVITY, 
+						CHECK_TAINTED_PROCESS, 
+						DEPLOY, RETIRE, 
+						SHOW_RULES, 
+						ADD_RULE, REM_RULE, 
+						ILLEGAL_COMMAND
+					};
 
 /* -------Curse status (booleans)-------
  * Implemented: curse has code (vs. placeholders)
@@ -36,8 +44,8 @@ enum curse_command {list_all=0, activate, deactivate, check_curse_activity, chec
  * Active: currently running (influencing the system) (is implemented, and activated)
  */
 /*Lists every possible status for a curse (for userspace portability).*/
-//TODO: Maybe in bitmask style. :: No need, enum elements are inclusive.
-enum curse_status {implemented=0, activated, active, invalid_curse};
+//Maybe in bitmask style. :: No need, enum elements are inclusive.
+enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {
@@ -60,6 +68,38 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 #ifdef __KERNEL__
 
 //Kernel specific code... :: Does it need anything? : Yes it does.
+#include <linux/semaphore.h>
+#include <linux/mutex.h>
+
+//Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
+int syscurse_list_all(void);
+int syscurse_activate(void);
+int syscurse_deactivate(void);
+int syscurse_check_curse_activity(int);
+int syscurse_check_tainted_process(pid_t);
+int syscurse_deploy(int, pid_t);
+//int syscurse_cast(int, pid_t);
+int syscurse_retire(int, pid_t);
+//int syscurse_lift(int, pid_t);
+int syscurse_show_rules(void);
+int syscurse_add_rule(int, char *);
+int syscurse_rem_rule(int, char *);
+
+/*Struct to-be injected in task_struct to let us keep tabs on processes.*/
+struct task_curse_struct {
+	struct semaphore protection;
+	uint64_t curse_field;
+};
+
+/*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
+struct bool_wrapper {
+	struct mutex guard;
+	_Bool value;
+};
+
+/*Data holding the curse system status.*/
+//TODO: Since the wrapper that checks is in the header, I think this should be there too.	:: Moved it here. curse_k_wrapper needs it. Not static - prevents reentrancy.
+struct bool_wrapper curse_system_active;
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
