@@ -154,24 +154,29 @@ out_pos:
 	return ret;
 }
 int syscurse_check_tainted_process (pid_t target) {
-	int err=-EINVAL;
+	int err; 
+	long spinflags;
 	struct task_struct *target_task;
 	if ((err=down_interruptible(&curse_system_active.guard)))
 		goto out;
 	err = -EINVAL;
 	if (target<=0)
 		goto out_locked;
-	err=-EPERM;
+	err = -EPERM;
 	//STUB: Check permissions on current.
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
 	if (!target_task)
 		goto out_locked;
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
-	if (target_task->curse_data.curse_field)
-		err=0;
-	else
+	spin_lock_irqsave(&target_task->curse_data.protection , spinflags);
+	if (target_task->curse_data.curse_field){
+		err = 0;
+		printk(KERN_INFO "curse_field is %llu",target_task->curse_data.curse_field);
+	} else
 		err=1;
+	spin_unlock_irqrestore(&target_task->curse_data.protection , spinflags);
+
 out_locked:
 	up(&curse_system_active.guard);
 out: 
