@@ -182,7 +182,7 @@ int syscurse_check_tainted_process (pid_t target) {
 		err=1;
 		printk(KERN_INFO "no curse_field for you!");
 	}
-	spin_unlock_irqrestore(&target_task->curse_data.protection , spinflags);
+	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
 out_locked:
 	up(&curse_system_active.guard);
