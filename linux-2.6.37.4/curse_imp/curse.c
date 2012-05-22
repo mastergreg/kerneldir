@@ -12,8 +12,10 @@
 #include <linux/sched.h>
 #include <asm/atomic.h>
 
-#include "curse.h"
-#include "curse_list.h"
+//#include "curse.h"
+#include <curse_imp/curse.h>
+//#include "curse_list.h"
+#include <curse_imp/curse_list.h>
 //Global data (create them taking into account reentrancy: static usually prevents that).
 /*This flag helps to initialize what needs initializing in our envirronment.*/
 atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
