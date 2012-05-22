@@ -72,8 +72,8 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 
 //Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
 int syscurse_list_all(void);
-int syscurse_activate(void);
-int syscurse_deactivate(void);
+int syscurse_activate(int);
+int syscurse_deactivate(int);
 int syscurse_check_curse_activity(int);
 int syscurse_check_tainted_process(pid_t);
 int syscurse_cast(int, pid_t);

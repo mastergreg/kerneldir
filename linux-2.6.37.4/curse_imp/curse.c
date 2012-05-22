@@ -14,6 +14,7 @@
 
 #include <curse/curse.h>
 #include <curse/curse_list.h>
+
 //Global data (create them taking into account reentrancy: static usually prevents that).
 /*This flag helps to initialize what needs initializing in our envirronment.*/
 atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
@@ -54,10 +55,10 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
             ret = syscurse_list_all();
             break;
 		case ACTIVATE:
-            ret = syscurse_activate();
+            ret = syscurse_activate(curse_no);
             break;
 		case DEACTIVATE:
-            ret = syscurse_deactivate();
+            ret = syscurse_deactivate(curse_no);
             break;
 		case CHECK_CURSE_ACTIVITY:
             ret = syscurse_check_curse_activity(curse_no);
@@ -97,7 +98,7 @@ int syscurse_list_all (void) {
 	//...
 	return 0;
 }
-int syscurse_activate (void) {
+int syscurse_activate (int curse_no) {
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
 	//FIXME...
@@ -111,7 +112,7 @@ int syscurse_activate (void) {
 	}
 	return 0;
 }
-int syscurse_deactivate (void) {
+int syscurse_deactivate (int curse_no) {
 	if (curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
