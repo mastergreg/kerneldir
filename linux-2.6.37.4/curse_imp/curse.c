@@ -148,6 +148,9 @@ int syscurse_check_curse_activity (int curse_no) {
 		goto out_sema_held;
 	//STUB: Check if any curse in the table is active.
 	//...
+    //8a exoume max
+    if (curse_list_pointer[curse_no]->status == ACTIVE) 
+        ret = 0;
 out_sema_held:
 	up(&curse_system_active.guard);
 out_pos:
