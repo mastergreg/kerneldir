@@ -13,6 +13,7 @@
 #define _SYSCURSE_H
 
 #include <linux/types.h>
+#include "curse_list.h"
 
 /* -------Curse commands-------
  * list_all					: lists all curses, implemented and not.						: <no_argument>
@@ -43,8 +44,7 @@ enum curse_command	{	LIST_ALL=0,
  * Activated: curse can become active (is implemented, not launched)
  * Active: currently running (influencing the system) (is implemented, and activated)
  */
-/*Lists every possible status for a curse (for userspace portability).*/
-//Maybe in bitmask style. :: No need, enum elements are inclusive.
+/*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
 enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
 
 /*Structure describing a curse (and its status).*/
@@ -67,7 +67,7 @@ struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used 
 
 #ifdef __KERNEL__
 
-//Kernel specific code... :: Does it need anything? : Yes it does.
+//Kernel specific code...
 #include <linux/semaphore.h>
 
 //Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
@@ -83,11 +83,6 @@ int syscurse_retire(int, pid_t);
 int syscurse_show_rules(void);
 int syscurse_add_rule(int, char *);
 int syscurse_rem_rule(int, char *);
-
-/*Preprocessor guard for scheduling/execing.*/
-#ifndef _CURSES_INSERTED
-#define _CURSES_INSERTED
-#endif
 
 #include "curse_sched.h"	//Source it here too.
 

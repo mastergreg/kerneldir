@@ -131,17 +131,27 @@ out_pos:
 	return ret;
 }
 int syscurse_check_tainted_process (pid_t target) {
-	int err;
+	int err=-EINVAL;
 	struct task_struct *target_task;
-	err = -EINVAL;
-	if (target<=0)
-		goto out;
-	err = -ESRCH;
-	target_task = find_task_by_vpid(target);
-	if (!target_task)
-		goto out;
-	//STUB: Check if target has an active curse on it.
-	//...
+	#ifdef _CURSES_INSERTED
+		if (err=down_interruptible(&curse_system_active.guard))
+			goto out;
+		err = -EINVAL;
+		if (target<=0)
+			goto out_locked;
+		err = -ESRCH;
+		target_task = find_task_by_vpid(target);
+		if (!target_task)
+			goto out_locked;
+		//STUB: Check if target has an active curse on it.
+			if (target_task->curse_data.curse_field)
+				ret=0;
+			else
+				ret=1;
+		//...
+out_locked:
+		up(&curse_system_active.guard);
+	#endif
 out: 
 	return err;
 }
