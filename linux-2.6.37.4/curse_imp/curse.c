@@ -12,6 +12,8 @@
 #include <linux/sched.h>
 #include <asm/atomic.h>
 
+#include <linux/export.h>
+
 #include <curse/curse.h>
 #include <curse/curse_list.h>
 
