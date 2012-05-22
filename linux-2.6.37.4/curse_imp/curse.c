@@ -49,7 +49,7 @@ void initial_actions (void) {
 }
 
 /*This is the system call source base function.*/
-SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {	
 	long ret=-EINVAL;
 	int cmd_norm=(int)curse_cmd;
@@ -66,7 +66,7 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 			continue;
 	}
 
-	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
+	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
 	
 	//Do not even call if curse system is not active.
 	#ifdef _CURSES_INSERTED
@@ -115,7 +115,7 @@ int syscurse_list_all (void) {
 	//...
 	return 0;
 }
-int syscurse_activate (int curse_no) {
+int syscurse_activate (uint64_t curse_no) {
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
 	//FIXME...
@@ -129,7 +129,7 @@ int syscurse_activate (int curse_no) {
 	}
 	return 0;
 }
-int syscurse_deactivate (int curse_no) {
+int syscurse_deactivate (uint64_t curse_no) {
 	if (curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
@@ -141,7 +141,7 @@ int syscurse_deactivate (int curse_no) {
 	//TODO: Do we have to unhook (call close pointer) all the active curses here?
 	return 0;
 }
-int syscurse_check_curse_activity (int curse_no) {
+int syscurse_check_curse_activity (uint64_t curse_no) {
 	int ret=-EINVAL;
 	if (down_interruptible(&curse_system_active.guard))
 		goto out_pos;
@@ -189,21 +189,21 @@ out_locked:
 out: 
 	return err;
 }
-int syscurse_cast (int curse_no, pid_t target) {
+int syscurse_cast (uint64_t curse_no, pid_t target) {
 	//...
 	return 0;
 }
-int syscurse_lift (int curse_no, pid_t target) {
+int syscurse_lift (uint64_t curse_no, pid_t target) {
 	//...
 	return 0;
 }
 int syscurse_show_rules (void) {
 	return 0;
 }
-int syscurse_add_rule (int curse, char *path) {
+int syscurse_add_rule (uint64_t curse, char *path) {
 	return 0;
 }
-int syscurse_rem_rule (int curse, char *path) {
+int syscurse_rem_rule (uint64_t curse, char *path) {
 	return 0;
 }
 
