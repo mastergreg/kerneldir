@@ -3,11 +3,8 @@ CC = gcc-4.4
 CCFLAGS +=
 OPT = 2
 
-CCFLAGS += -g -O0 -Werror -Wall -Wextra -Wuninitialized
+CCFLAGS += -g -O0 -Werror -Wall -Wextra -Wuninitialized -fPIC
 
-CCFILES += $(wildcard *.c)
-OBJFILES +=  $(patsubst %.c,%.o,$(CCFILES))
-DEPENDS += $(wildcard *.h) 
 
 
 all: $(TARGET)
