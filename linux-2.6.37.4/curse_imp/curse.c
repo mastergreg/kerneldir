@@ -22,7 +22,7 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
 	//Global activity status.
-	printk(KERN_ERR "Entered initialization function.\n");		//Testing if it is really called only the first time.
+	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
 	sema_init(&curse_system_active.guard, 1);
 	curse_system_active.value=0;
 }
@@ -131,18 +131,19 @@ out_pos:
 	return ret;
 }
 int syscurse_check_tainted_process (pid_t target) {
+	int err;
 	struct task_struct *target_task;
-	long err;
-
 	err = -EINVAL;
-	if (target<=0) goto out;
-
+	if (target<=0)
+		goto out;
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
-	if (!target_task) goto out;
-
-	out: 
-		return err;
+	if (!target_task)
+		goto out;
+	//STUB: Check if target has an active curse on it.
+	//...
+out: 
+	return err;
 }
 int syscurse_deploy (int curse_no, pid_t target) {
 	//...

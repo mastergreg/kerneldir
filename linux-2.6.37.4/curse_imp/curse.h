@@ -98,7 +98,7 @@ struct bool_wrapper {
 };
 
 /*Data holding the curse system status.*/
-//TODO: Since the wrapper that checks is in the header, I think this should be there too.	:: Moved it here. curse_k_wrapper needs it. Not static - prevents reentrancy.
+//Since the wrapper that checks is in the header, I think this should be there too.	:: Moved it here. curse_k_wrapper needs it. Not static - prevents reentrancy.
 struct bool_wrapper curse_system_active;
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
