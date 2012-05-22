@@ -16,20 +16,39 @@
 //#include "curse_list.h"
 
 /* -------Curse commands-------
- * list_all
- *   lists all curses, implemented and not, that exist in the full list.	:	<no_argument>
- * activate
- *   activates the curse system (enables the curse mechanism)				: int representing the serial number of the active bit in curse_id_mask (ex. 16 for 0x8000, 10 for 0x200, ...)
- * deactivate				: deactivates the curse system (disables the curse mechanism)	: <same>
- * check_curse_activity		: checks if a curse is active									: <same>
- * check_tainted_process	: check if a process of the current user has an active curse	: pid_t identifying the process to check (-1 to check for any process)
- * cast (ex unleash)		: set a curse upon a target (if any)							: pid_t representing the process to unleash the curse upon (not applicable in case of no target curses)
- * lift					: remove a curse from a target (if any)							: pid_t representing the process to remove the curse from (not applicable in case of no target curses)
- * -------------  RULES: Rules are static bindings of curses to binaries (paths) instead of processes.  ------------- :: These are supplementary. We may implement them, after the main implementation of the system call.
- * show_rules				: show all rules that are currently in the system				: <no_argument>
- * add_rule					: add a new rule (this adds a binding, and deploys the rule)	: integer representing the serial number of the curse_id_mask, full path to binary
- * rem_rule					: remove an existing rule										: <same>
- */
+ * 1. list_all							:	<no_argument>
+ *   lists all curses in the curse list, implemented and not
+ * R: <?>
+//IMPORTANT: Depending on the way we do the copy to userspace, this should not even matter. I think it would be better if we went with the proc filesystem mapping solution (it is not a case where the data is time sensitive).
+ * 2. activate							:	id of curse to activate
+ *   activates the curse with the provided id, or activates the curse system if id is 0
+ * R: 1 on success - appropriate code on failure
+ * 3. deactivate						:	id of curse to deactivate
+ *   deactivates the curse with the provided id or the whole system (disables the curse mechanism) if it is 0
+ * R: <same>
+ * 4. check_curse_activity				:	id of curse to check
+ *   checks if a curse is active (false if the curse mechanism is deactivated)
+ * R: 1 if a curse is active - 0 if no curse is active - appropriate code on error
+ * 5. check_tainted_process				:	pid_t of the process to check (-1 to check for any process (?TODO)), id of curse to check
+ *   check if the requested process has an active curse	(false if the user has not permissions to that process)
+ * R: <same>
+ * 6. cast (ex deploy (ex unleash))		:	pid_t of the process to target, id of the curse to use
+ *   set a curse upon a target
+ * R: 1 on success - appropriate code on failure
+ * 7. lift (ex retire)					:	<same>
+ *   remove a curse from a target
+ * R: <same>
+ * ------RULES: Rules are static bindings of curses to binaries (paths) instead of processes.------ :: These are supplementary. We may implement them, after the main implementation of the system call.
+ * 8. show_rules						:	<no_argument>
+ *   show all rules that are currently in the system
+ * R: <?>
+ * 9. add_rule							:	identifier to the binary (TODO: path/inode(?)), id of the curse to deploy
+ *   add a new rule (this adds a binding, and deploys the rule)
+ * R: 1 on success - appropriate code on failure
+ * 10.rem_rule							:	<same>
+ *   remove an existing rule
+ * R: 1 on success - appropriate code on failure
+ * ============RETURN============
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, 
 						ACTIVATE, DEACTIVATE, 
