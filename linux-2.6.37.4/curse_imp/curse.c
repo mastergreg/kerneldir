@@ -47,6 +47,8 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 	
+	//Do not even call if curse system is not active.
+	#ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
             ret = syscurse_list_all();
@@ -80,6 +82,7 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 		default:
 			goto out;
 	}
+	#endif
 
 out:
 	return ret;
@@ -95,6 +98,9 @@ int syscurse_list_all (void) {
 	return 0;
 }
 int syscurse_activate (void) {
+	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
+	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
+	//FIXME...
 	if (!curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
@@ -133,24 +139,24 @@ out_pos:
 int syscurse_check_tainted_process (pid_t target) {
 	int err=-EINVAL;
 	struct task_struct *target_task;
-	#ifdef _CURSES_INSERTED
-		if ((err=down_interruptible(&curse_system_active.guard)))
-			goto out;
-		err = -EINVAL;
-		if (target<=0)
-			goto out_locked;
-		err = -ESRCH;
-		target_task = find_task_by_vpid(target);
-		if (!target_task)
-			goto out_locked;
-		//STUB: Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
-			if (target_task->curse_data.curse_field)
-				err=0;
-			else
-				err=1;
+	if ((err=down_interruptible(&curse_system_active.guard)))
+		goto out;
+	err = -EINVAL;
+	if (target<=0)
+		goto out_locked;
+	err=-EPERM;
+	//STUB: Check permissions on current.
+	err = -ESRCH;
+	target_task = find_task_by_vpid(target);
+	if (!target_task)
+		goto out_locked;
+	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
+	if (target_task->curse_data.curse_field)
+		err=0;
+	else
+		err=1;
 out_locked:
-		up(&curse_system_active.guard);
-	#endif
+	up(&curse_system_active.guard);
 out: 
 	return err;
 }
