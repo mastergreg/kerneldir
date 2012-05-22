@@ -39,7 +39,7 @@ void initial_actions (void) {
 	}
 	printk(KERN_INFO "all ok. malloced");
 	for (j=0; j<i; j++) {
-		printk(KERN_INFO "name: %s -> id: %zu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
+		printk(KERN_INFO "name: %s -> id: %llu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
 		printk(KERN_INFO "status: %d", curse_list_pointer[j].status);
 	}
 	printk(KERN_INFO "all printed");
