@@ -1,2 +1,8 @@
-* find out where _CURSES_INCLUDED goes  --all --PENDING
-* SAMpLE MESSAGE --ale1ster --FIXED
+* Need to create permissions verification mechanism (function?) --FirstComeFirstServed --3
+* Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified). --ale1ster --3
+* Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5
+* Check atomic operations --master --5
+* SAMLE MESSAGE --all --10
+* SAMpLE MESSAGE --nalfemp --10
+* If needed, fix deploy-retire to cast-lift --master --7 --FIXED
+* SAMpLE MESSAGE --ale1ster --10 --FIXED

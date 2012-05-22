@@ -10,11 +10,12 @@
 #include <linux/kernel.h>
 #include <linux/types.h>		//Sentinels prevent multiple inclusion.
 #include <linux/sched.h>
-#include <linux/spinlock.h>
 #include <asm/atomic.h>
+#include <linux/slab.h>
 
-#include "curse.h"
-#include "curse_list.h"
+#include <curse/curse.h>
+#include <curse/curse_list.h>
+
 //Global data (create them taking into account reentrancy: static usually prevents that).
 /*This flag helps to initialize what needs initializing in our envirronment.*/
 atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
@@ -22,10 +23,25 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 //Other functions.
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
+	int i, j;
 	//Global activity status.
-	printk(KERN_ERR "Entered initialization function.\n");		//Testing if it is really called only the first time.
+	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
+	//1. Initialize active status boolean.
 	sema_init(&curse_system_active.guard, 1);
 	curse_system_active.value=0;
+	//2. Initialize curse lookup table.
+	for (i=0; (curse_full_list[i].curse_id!=0xBADDE5C && i<MAX_CURSE_NO); i++) ;
+	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
+	for (j=0; j<i; j++) {
+		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
+		curse_list_pointer[j].status=IMPLEMENTED;
+	}
+	printk(KERN_INFO "all ok. malloced");
+	for (j=0; j<i; j++) {
+		printk(KERN_INFO "name: %s -> id: %zu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
+		printk(KERN_INFO "status: %d", curse_list_pointer[j].status);
+	}
+	printk(KERN_INFO "all printed");
 }
 
 /*This is the system call source base function.*/
@@ -48,15 +64,17 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 	
+	//Do not even call if curse system is not active.
+	#ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
             ret = syscurse_list_all();
             break;
 		case ACTIVATE:
-            ret = syscurse_activate();
+            ret = syscurse_activate(curse_no);
             break;
 		case DEACTIVATE:
-            ret = syscurse_deactivate();
+            ret = syscurse_deactivate(curse_no);
             break;
 		case CHECK_CURSE_ACTIVITY:
             ret = syscurse_check_curse_activity(curse_no);
@@ -64,11 +82,11 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 		case CHECK_TAINTED_PROCESS:
             ret = syscurse_check_tainted_process(target);
             break;
-		case DEPLOY:
-            ret = syscurse_deploy(curse_no, target);
+		case CAST:
+            ret = syscurse_cast(curse_no, target);
             break;
-		case RETIRE:
-            ret = syscurse_retire(curse_no, target);
+		case LIFT:
+            ret = syscurse_lift(curse_no, target);
             break;
 		case SHOW_RULES:
 			//Stub (for now, fall-throughs).
@@ -81,6 +99,7 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 		default:
 			goto out;
 	}
+	#endif
 
 out:
 	return ret;
@@ -95,7 +114,10 @@ int syscurse_list_all (void) {
 	//...
 	return 0;
 }
-int syscurse_activate (void) {
+int syscurse_activate (int curse_no) {
+	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
+	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
+	//FIXME...
 	if (!curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
@@ -106,7 +128,7 @@ int syscurse_activate (void) {
 	}
 	return 0;
 }
-int syscurse_deactivate (void) {
+int syscurse_deactivate (int curse_no) {
 	if (curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
@@ -132,36 +154,34 @@ out_pos:
 	return ret;
 }
 int syscurse_check_tainted_process (pid_t target) {
+	int err=-EINVAL;
 	struct task_struct *target_task;
-	long err;
-	long spinflags;
-	uint64_t task_field;
-
+	if ((err=down_interruptible(&curse_system_active.guard)))
+		goto out;
 	err = -EINVAL;
-	if (target<=0) goto out;
-
-	/* get target's task struct */
+	if (target<=0)
+		goto out_locked;
+	err=-EPERM;
+	//STUB: Check permissions on current.
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
-	if (!target_task) goto out;
-	
-	/* Hold lock and read the curse_field */
-	spin_lock_irqsave(&target_task->curse_data.protection, spinflags);
-	task_field = target_task->curse_data.curse_field;
-	spin_unlock_irqrestore(&target_task->curse_data.protection, spinflags);
-
-	/* TODO: How should the curses field be returned? */
-	printk(KERN_INFO "process with pid %d is tainted by the curses: %llu", target, task_field);
-	err=1;
-
-	out: 
-		return err;
+	if (!target_task)
+		goto out_locked;
+	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
+	if (target_task->curse_data.curse_field)
+		err=0;
+	else
+		err=1;
+out_locked:
+	up(&curse_system_active.guard);
+out: 
+	return err;
 }
-int syscurse_deploy (int curse_no, pid_t target) {
+int syscurse_cast (int curse_no, pid_t target) {
 	//...
 	return 0;
 }
-int syscurse_retire (int curse_no, pid_t target) {
+int syscurse_lift (int curse_no, pid_t target) {
 	//...
 	return 0;
 }
