@@ -63,11 +63,11 @@ SYSCALL_DEFINE3(curse, int, curse_cmd, int, curse_no, pid_t, target)		//asmlinka
 		case CHECK_TAINTED_PROCESS:
             ret = syscurse_check_tainted_process(target);
             break;
-		case DEPLOY:
-            ret = syscurse_deploy(curse_no, target);
+		case CAST:
+            ret = syscurse_cast(curse_no, target);
             break;
-		case RETIRE:
-            ret = syscurse_retire(curse_no, target);
+		case LIFT:
+            ret = syscurse_lift(curse_no, target);
             break;
 		case SHOW_RULES:
 			//Stub (for now, fall-throughs).
@@ -155,11 +155,11 @@ out_locked:
 out: 
 	return err;
 }
-int syscurse_deploy (int curse_no, pid_t target) {
+int syscurse_cast (int curse_no, pid_t target) {
 	//...
 	return 0;
 }
-int syscurse_retire (int curse_no, pid_t target) {
+int syscurse_lift (int curse_no, pid_t target) {
 	//...
 	return 0;
 }

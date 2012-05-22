@@ -21,8 +21,8 @@
  * deactivate				: deactivates the curse system (disables the curse mechanism)	: <same>
  * check_curse_activity		: checks if a curse is active									: <same>
  * check_tainted_process	: check if a process of the current user has an active curse	: pid_t identifying the process to check (-1 to check for any process)
- * deploy (ex unleash)		: set a curse upon a target (if any)							: pid_t representing the process to unleash the curse upon (not applicable in case of no target curses)
- * retire					: remove a curse from a target (if any)							: pid_t representing the process to remove the curse from (not applicable in case of no target curses)
+ * cast (ex unleash)		: set a curse upon a target (if any)							: pid_t representing the process to unleash the curse upon (not applicable in case of no target curses)
+ * lift					: remove a curse from a target (if any)							: pid_t representing the process to remove the curse from (not applicable in case of no target curses)
  * -------------  RULES: Rules are static bindings of curses to binaries (paths) instead of processes.  ------------- :: These are supplementary. We may implement them, after the main implementation of the system call.
  * show_rules				: show all rules that are currently in the system				: <no_argument>
  * add_rule					: add a new rule (this adds a binding, and deploys the rule)	: integer representing the serial number of the curse_id_mask, full path to binary
@@ -33,7 +33,7 @@ enum curse_command	{	LIST_ALL=0,
 						ACTIVATE, DEACTIVATE, 
 						CHECK_CURSE_ACTIVITY, 
 						CHECK_TAINTED_PROCESS, 
-						DEPLOY, RETIRE, 
+						CAST, LIFT, 
 						SHOW_RULES, 
 						ADD_RULE, REM_RULE, 
 						ILLEGAL_COMMAND
@@ -76,9 +76,9 @@ int syscurse_activate(void);
 int syscurse_deactivate(void);
 int syscurse_check_curse_activity(int);
 int syscurse_check_tainted_process(pid_t);
-int syscurse_deploy(int, pid_t);
+int syscurse_cast(int, pid_t);
 //int syscurse_cast(int, pid_t);
-int syscurse_retire(int, pid_t);
+int syscurse_lift(int, pid_t);
 //int syscurse_lift(int, pid_t);
 int syscurse_show_rules(void);
 int syscurse_add_rule(int, char *);
