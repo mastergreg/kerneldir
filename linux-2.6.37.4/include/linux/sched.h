@@ -1188,9 +1188,9 @@ struct task_struct {
 	unsigned int flags;	/* per process flags, defined below */
 	unsigned int ptrace;
 
-#ifdef _CURSES_INCLUDED
+/*#ifdef _CURSES_INCLUDED*/
 	struct task_curse_struct curse_data;
-#endif
+/*#endif*/
 
 	int lock_depth;		/* BKL lock depth */
 

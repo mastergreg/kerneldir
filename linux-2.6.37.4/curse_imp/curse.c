@@ -10,6 +10,7 @@
 #include <linux/kernel.h>
 #include <linux/types.h>		//Sentinels prevent multiple inclusion.
 #include <linux/sched.h>
+#include <linux/spinlock.h>
 #include <asm/atomic.h>
 
 #include "curse.h"
@@ -133,13 +134,25 @@ out_pos:
 int syscurse_check_tainted_process (pid_t target) {
 	struct task_struct *target_task;
 	long err;
+	long spinflags;
+	uint64_t task_field;
 
 	err = -EINVAL;
 	if (target<=0) goto out;
 
+	/* get target's task struct */
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
 	if (!target_task) goto out;
+	
+	/* Hold lock and read the curse_field */
+	spin_lock_irqsave(&target_task->curse_data.protection, spinflags);
+	task_field = target_task->curse_data.curse_field;
+	spin_unlock_irqrestore(&target_task->curse_data.protection, spinflags);
+
+	/* TODO: How should the curses field be returned? */
+	printk(KERN_INFO "process with pid %d is tainted by the curses: %llu", target, task_field);
+	err=1;
 
 	out: 
 		return err;
