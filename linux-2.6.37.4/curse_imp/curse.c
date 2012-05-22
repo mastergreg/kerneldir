@@ -143,7 +143,7 @@ int syscurse_check_tainted_process (pid_t target) {
 		target_task = find_task_by_vpid(target);
 		if (!target_task)
 			goto out_locked;
-		//STUB: Check if target has an active curse on it.
+		//STUB: Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is t better?
 			if (target_task->curse_data.curse_field)
 				err=0;
 			else

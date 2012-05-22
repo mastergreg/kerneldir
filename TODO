@@ -1,5 +1,5 @@
-* SAMLE MESSAGE --all --PENDING
-* SAMpLE MESSAGE --ale1ster --FIXED
-* SAMpLE MESSAGE --nalfemp --FAILED
-* If needed, fix deploy-retire to cast-lift --master --PENDING
-* Fix curse_list.h inclusion error on include of curse.h from userspace. --ale1ster --PENDING
+* SAMLE MESSAGE --all --10 --PENDING
+* SAMpLE MESSAGE --ale1ster --10 --FIXED
+* SAMpLE MESSAGE --nalfemp --10 --FAILED
+* If needed, fix deploy-retire to cast-lift --master --7 --PENDING
+* Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5 --PENDING

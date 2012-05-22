@@ -17,6 +17,7 @@ FIXED_STATUS_COLOR="green"
 PENDING_STATUS_COLOR="red"
 ASSIGNEE_COLOR="cyan"
 MESSAGE_COLOR="blue"
+PRIORITY_COLOR="yellow"
 from termcolor import colored
 
 def main():
@@ -35,15 +36,19 @@ def main():
             except IndexError:
                 assignee = "none"
             try:
+                priority = task[2].split()[0]
+            except IndexError:
+                priority = "10"
+            try:
                 STATUS_COLOR = FIXED_STATUS_COLOR
-                status = task[2].split()[0]
+                status = task[3].split()[0]
             except IndexError:
                 STATUS_COLOR = PENDING_STATUS_COLOR
                 status = "PENDING"
 
             print "Message: ", colored( message, MESSAGE_COLOR )
             print "Assigned to: ", colored( assignee, ASSIGNEE_COLOR )
-            print "Status: ", colored( status, STATUS_COLOR )
+            print "Status: ", colored( status, STATUS_COLOR ), "[ ", colored( priority, PRIORITY_COLOR ), " ]"
 
 
 if __name__=="__main__":
