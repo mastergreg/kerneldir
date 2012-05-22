@@ -37,14 +37,15 @@ void initial_actions (void) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
-	curse_list_pointer[0].status=(curse_list_pointer[i]=INVALID_CURSE);
-	
+	curse_list_pointer[0].status=(curse_list_pointer[i].status=INVALID_CURSE);
+/*	
 	printk(KERN_INFO "all ok. malloced");
-	for (j=0; j<i; j++) {
-		printk(KERN_INFO "name: %s -> id: %zu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
+	for (j=0; j<i+1; j++) {
+		printk(KERN_INFO "name: %s -> id: %llu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
 		printk(KERN_INFO "status: %d", curse_list_pointer[j].status);
 	}
 	printk(KERN_INFO "all printed");
+*/
 }
 
 /*This is the system call source base function.*/
