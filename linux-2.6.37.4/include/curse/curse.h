@@ -16,8 +16,10 @@
 //#include "curse_list.h"
 
 /* -------Curse commands-------
- * list_all					: lists all curses, implemented and not.						: <no_argument>
- * activate					: activates the curse system (enables the curse mechanism)		: int representing the serial number of the active bit in curse_id_mask (ex. 16 for 0x8000, 10 for 0x200, ...)
+ * list_all
+ *   lists all curses, implemented and not, that exist in the full list.	:	<no_argument>
+ * activate
+ *   activates the curse system (enables the curse mechanism)				: int representing the serial number of the active bit in curse_id_mask (ex. 16 for 0x8000, 10 for 0x200, ...)
  * deactivate				: deactivates the curse system (disables the curse mechanism)	: <same>
  * check_curse_activity		: checks if a curse is active									: <same>
  * check_tainted_process	: check if a process of the current user has an active curse	: pid_t identifying the process to check (-1 to check for any process)
