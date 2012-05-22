@@ -3,3 +3,5 @@
 * SAMpLE MESSAGE --nalfemp --10 --FAILED
 * If needed, fix deploy-retire to cast-lift --master --7 --PENDING
 * Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5 --PENDING
+* Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified). --ale1ster --3 --PENDING
+* Need to create permissions verification mechanism (function?) --FirstComeFirstServed --3 --PENDING
