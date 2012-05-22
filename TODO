@@ -2,3 +2,4 @@
 * SAMpLE MESSAGE --ale1ster --FIXED
 * SAMpLE MESSAGE --nalfemp --FAILED
 * If needed, fix deploy-retire to cast-lift --master --PENDING
+* Fix curse_list.h inclusion error on include of curse.h from userspace. --ale1ster --PENDING
