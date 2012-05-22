@@ -94,7 +94,7 @@ struct sched_param {
 
 #include <asm/processor.h>
 
-#include "../../curse_imp/curse_sched.h"
+#include <curse_imp/curse_sched.h>
 
 struct exec_domain;
 struct futex_pi_state;

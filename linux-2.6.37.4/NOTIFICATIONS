@@ -3,5 +3,6 @@
 3. Minor fixes in curse_imp files. Need to check if stub syscall works, in order to move to serious action. :: It does.
 4. Manual pages for gcc missing. How did thou install it? :: I wanted to find the default gcc library search paths.
 5. Changed from mutex bask to semas, because of http://www.dilip.nijagal.com/geeky-stuff/45-technical-stuff/64-difference-between-semaphores-and-mutex
-6. FIXME: Find default search paths for includes in sched.h. After, fix inclusion of our library in it (it is "" now). We want our library as part of the kernel.	:: Maybe symlink in include/linux?
+6. FIXME: Find default search paths for includes in sched.h. After, fix inclusion of our library in it (it is "" now). We want our library as part of the kernel.	:: Maybe symlink in include/linux? : symlink is kinda ugly bit it works, need to do some testing, maybe all the headers in include? or the entire implementation?
+
 
