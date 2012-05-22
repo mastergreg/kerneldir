@@ -48,7 +48,7 @@
  * 10.rem_rule							:	<same>
  *   remove an existing rule
  * R: 1 on success - appropriate code on failure
- * ============RETURN============
+ */
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, 
 						ACTIVATE, DEACTIVATE, 
