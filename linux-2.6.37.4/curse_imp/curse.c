@@ -39,7 +39,7 @@ void initial_actions (void) {
 	}
 	printk(KERN_INFO "all ok. malloced");
 	for (j=0; j<i; j++) {
-		printk(KERN_INFO "name: %s -> id: %zu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
+		printk(KERN_INFO "name: %s -> id: %llu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
 		printk(KERN_INFO "status: %d", curse_list_pointer[j].status);
 	}
 	printk(KERN_INFO "all printed");
@@ -179,7 +179,7 @@ int syscurse_check_tainted_process (pid_t target) {
 		err=1;
 		printk(KERN_INFO "no curse_field for you!");
 	}
-	spin_unlock_irqrestore(&target_task->curse_data.protection , spinflags);
+	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
 out_locked:
 	up(&curse_system_active.guard);
