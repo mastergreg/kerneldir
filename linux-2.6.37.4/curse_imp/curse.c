@@ -106,9 +106,6 @@ out:
 	//return (long)(curse_cmd+curse_no+(int)target);
 }
 
-//TODO: Some functions should not return int, but a pointer to an array (for example syscurse_list_all, I think).
-//IMPORTANT: Depending on the way we do the copy to userspace, this should not even matter. I think it would be better if we went with the proc filesystem mapping solution (it is not a case where the data is time sensitive).
-
 //TODO: Source helpful functions.
 int syscurse_list_all (void) {
 	//...
