@@ -36,7 +36,7 @@ def main():
 
     args = map(int,argv[1:])
     threads = []
-    for i in range(args[3])):
+    for i in range(args[3]):
         threads.append(thTassos(args[0], args[1], args[2]))
     map( lambda x : x.start(),threads )
     map( lambda x : x.join(),threads )
