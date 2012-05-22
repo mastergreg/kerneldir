@@ -47,17 +47,19 @@ enum curse_command	{	LIST_ALL=0,
 /*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
 enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
 
-/*Structure describing a curse (and its status).*/
-struct syscurse {
-	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
-	enum curse_status status;
-};
-
 /*Structure representing an active curse status.*/
+/*	//USELESS??
 struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used in array form, not LL.
 	struct syscurse curse_info;
 	pid_t curse_target;
 	uid_t proc_owner;
+};*/
+
+/*Structure describing a curse (and its status).*/
+struct syscurse {
+	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
+//	struct curse_list_t curse_status;
+	enum curse_status status;
 };
 
 //TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
@@ -90,9 +92,11 @@ struct bool_wrapper {
 	_Bool value;
 };
 
-/*Data holding the curse system status.*/
 //Since the wrapper that checks is in the header, I think this should be there too.	:: Moved it here. curse_k_wrapper needs it. Not static - prevents reentrancy.
+/*Data holding the curse system status.*/
 struct bool_wrapper curse_system_active;
+/*Pointer to the implemented curse array (loaded at init of syscall).*/
+struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
