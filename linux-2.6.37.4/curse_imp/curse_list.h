@@ -6,6 +6,9 @@
  * 
  */
 
+#ifndef _CURSE_LIST_LIB
+#define _CURSE_LIST_LIB
+
 #include <linux/types.h>
 
 /*Maximum size for a curse name.*/
@@ -53,3 +56,6 @@ struct fun_element fun_array[] = {
 };
 
 #endif	/* __KERNEL__ */
+
+#endif /* _CURSE_LIST_LIB */
+

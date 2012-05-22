@@ -134,7 +134,7 @@ int syscurse_check_tainted_process (pid_t target) {
 	int err=-EINVAL;
 	struct task_struct *target_task;
 	#ifdef _CURSES_INSERTED
-		if (err=down_interruptible(&curse_system_active.guard))
+		if ((err=down_interruptible(&curse_system_active.guard)))
 			goto out;
 		err = -EINVAL;
 		if (target<=0)
@@ -145,9 +145,9 @@ int syscurse_check_tainted_process (pid_t target) {
 			goto out_locked;
 		//STUB: Check if target has an active curse on it.
 			if (target_task->curse_data.curse_field)
-				ret=0;
+				err=0;
 			else
-				ret=1;
+				err=1;
 		//...
 out_locked:
 		up(&curse_system_active.guard);

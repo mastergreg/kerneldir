@@ -13,7 +13,7 @@
 #define _SYSCURSE_H
 
 #include <linux/types.h>
-#include "curse_list.h"
+//#include "curse_list.h"
 
 /* -------Curse commands-------
  * list_all					: lists all curses, implemented and not.						: <no_argument>
