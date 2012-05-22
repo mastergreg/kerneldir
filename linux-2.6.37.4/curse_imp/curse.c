@@ -32,10 +32,12 @@ void initial_actions (void) {
 	//2. Initialize curse lookup table.
 	for (i=0; (curse_full_list[i].curse_id!=0xBADDE5C && i<MAX_CURSE_NO); i++) ;
 	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
-	for (j=0; j<i; j++) {
+	for (j=0; j<i+1; j++) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
+	curse_list_pointer[0].status=(curse_list_pointer[i]=INVALID_CURSE);
+	
 	printk(KERN_INFO "all ok. malloced");
 	for (j=0; j<i; j++) {
 		printk(KERN_INFO "name: %s -> id: %zu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
