@@ -10,6 +10,7 @@
 #include <linux/kernel.h>
 #include <linux/types.h>		//Sentinels prevent multiple inclusion.
 #include <linux/sched.h>
+#include <linux/spinlock.h>
 #include <asm/atomic.h>
 #include <linux/slab.h>
 
@@ -146,7 +147,7 @@ int syscurse_check_curse_activity (int curse_no) {
 	//STUB: Check if any curse in the table is active.
 	//...
     //8a exoume max
-    if (curse_list_pointer[curse_no]->status == ACTIVE) 
+    if (curse_list_pointer[curse_no].status & ACTIVE) 
         ret = 0;
 out_sema_held:
 	up(&curse_system_active.guard);
@@ -155,8 +156,9 @@ out_pos:
 }
 int syscurse_check_tainted_process (pid_t target) {
 	int err; 
-	long spinflags;
+	unsigned long spinflags;
 	struct task_struct *target_task;
+
 	if ((err=down_interruptible(&curse_system_active.guard)))
 		goto out;
 	err = -EINVAL;
@@ -169,7 +171,7 @@ int syscurse_check_tainted_process (pid_t target) {
 	if (!target_task)
 		goto out_locked;
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
-	spin_lock_irqsave(&target_task->curse_data.protection , spinflags);
+	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	if (target_task->curse_data.curse_field){
 		err = 0;
 		printk(KERN_INFO "curse_field is %llu",target_task->curse_data.curse_field);
