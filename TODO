@@ -1,7 +1,13 @@
 * Need to create permissions verification mechanism (function?) --FirstComeFirstServed --3
-* Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified). --ale1ster --3
+* Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified) --ale1ster --3
 * Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5
 * check for race conditions on task_struct and use of its spinlocks --nalfemp --7
+* Check proper use of activation. --ale1ster --2
+* Fix deactivation (Policy: we act on list_pointer only after we take system_status sema). --ale1ster --4
+* Fix binary op spaces (too tired right now) --ale1ster --1
+* Beautify library from userspace inclusion (done from laptop after 12:00) --ale1ster --1
+* Make bitmask_from_id proper (for-if-return) --ale1ster --3
+* Change curse_bit to curse_active_bit in syscurse (and all used points) --Someone --6
 * Check atomic operations --master --5 --FIXED
 * If needed, fix deploy-retire to cast-lift --master --7 --FIXED
 * initialize task_curse_struct (in fork?) --all --5
