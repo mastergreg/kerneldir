@@ -25,6 +25,7 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
 	int i, j;
+	uint64_t t;
 	//Global activity status.
 	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
 	//1. Initialize active status boolean.
@@ -33,11 +34,15 @@ void initial_actions (void) {
 	//2. Initialize curse lookup table.
 	for (i=0; (curse_full_list[i].curse_id!=0xBADDE5C && i<MAX_CURSE_NO); i++) ;
 	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
-	for (j=0; j<i+1; j++) {
+	for (j=1, t=0x1; j<i+1; j++, t<<=1) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
+		curse_list_pointer[j].curse_bit=t;
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
 	curse_list_pointer[0].status=(curse_list_pointer[i].status=INVALID_CURSE);
+	curse_list_pointer[0].curse_bit=(curse_list_pointer[i].curse_bit=0x0);
+	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
+	curse_list_pointer[i].entry=(struct curse_list_entry *)&curse_full_list[i];
 /*	
 	printk(KERN_INFO "all ok. malloced");
 	for (j=0; j<i+1; j++) {
@@ -116,18 +121,36 @@ int syscurse_list_all (void) {
 	return 0;
 }
 int syscurse_activate (uint64_t curse_no) {
+	int i, ret=-EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
 	//FIXME...
+	if (curse_no) {		//On non-zero value, activate curse and mechanism (if necessary).
+		for (i=0; curse_list_pointer[i].entry->curse_id!=0xBADDE5C; i++) {
+			if (curse_list_pointer[i].entry->curse_id==curse_no) {
+				if (curse_list_pointer[i].status!=ACTIVE) {
+					curse_list_pointer[i].status=ACTIVE;
+					ret=1;
+				} else {
+					ret=0;
+				}
+				break;
+			}
+		}
+		if (curse_list_pointer[i].entry->curse_id==0xBADDE5C)
+			goto out_ret;
+	}
+	//On zero (common code) : system activation.
 	if (!curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;
 		curse_system_active.value=1;
 		up(&curse_system_active.guard);
-	} else {
-		return -EINVAL;
+	} else if (curse_no==0) {
+		ret=-EINVAL;
 	}
-	return 0;
+out_ret:
+	return ret;
 }
 int syscurse_deactivate (uint64_t curse_no) {
 	if (curse_system_active.value) {

@@ -17,12 +17,10 @@ long curse (int command, int curse, pid_t target) {
 
 int main (void) {
 	
-	//printf("%d\n", curse(98, 49, 24));		//Initial stub: outdated.
-//	printf("%d\n", curse(ACTIVATE, 0, 0));
-
-	printf("%d\n", curse(CHECK_TAINTED_PROCESS, 0, 1));
-
-//	printf("%d\n", curse(DEACTIVATE, 0, 0));
+	//printf("Blob: %d\n", curse(98, 49, 24));		//Initial stub: outdated.
+	printf("Activate: %d\n", curse(ACTIVATE, 0, 0));
+	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 0, 1));
+//	printf("Deactivate: %d\n", curse(DEACTIVATE, 0, 0));
 
 	return 0;
 }

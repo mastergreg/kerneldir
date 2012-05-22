@@ -68,18 +68,14 @@ enum curse_command	{	LIST_ALL=0,
 /*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
 enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
 
-/*Structure representing an active curse status.*/
-/*	//USELESS??
-struct curse_list_t {		//Note the _t part.:) : Seriously tho, it should be used in array form, not LL.
-	struct syscurse curse_info;
-	pid_t curse_target;
-	uid_t proc_owner;
-};*/
+#ifndef __KERNEL__
+#include <stdint.h>
+#endif
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
-//	struct curse_list_t curse_status;
+	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
 	enum curse_status status;
 };
 
