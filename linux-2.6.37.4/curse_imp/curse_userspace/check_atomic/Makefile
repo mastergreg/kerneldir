@@ -1,5 +1,5 @@
 TARGET = curse.so
-CC = gcc
+CC = gcc-4.4
 CCFLAGS +=
 OPT = 2
 

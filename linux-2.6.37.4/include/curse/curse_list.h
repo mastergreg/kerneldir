@@ -13,6 +13,8 @@
 
 /*Maximum size for a curse name.*/
 #define CURSE_MAX_NAME_SIZE 24
+/*Maximum number of curses (-1 is the limit).*/
+#define MAX_CURSE_NO 65
 
 /*Curse entry structure for logistic purposes.*/
 struct curse_list_entry {
