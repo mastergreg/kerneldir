@@ -77,6 +77,7 @@ enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=
 struct syscurse {
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
+	unsigned int ref_count;
 	enum curse_status status;
 };
 
