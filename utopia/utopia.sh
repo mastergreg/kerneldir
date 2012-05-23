@@ -13,7 +13,7 @@
 # 2010-03-09    gtsouk          Initial utopic script.
 #
 
-UTOPIA_CONFIG="utopia.config"
+UTOPIA_CONFIG=`dirname $0`/"utopia.config"
 
 VERBOSE=1
 PF=\*\*\*

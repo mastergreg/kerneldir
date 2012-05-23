@@ -1,5 +1,5 @@
 #!/bin/bash
-kerneldir=linux-2.6.37.4
+kerneldir=`dirname $0`/linux-2.6.37.4
 if [ -z $1 ];
   then
 	echo "You are safe from Mister Proper this time"
