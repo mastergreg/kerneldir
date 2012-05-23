@@ -74,9 +74,9 @@ void initial_actions (void) {
 		goto out;
 	if (!(output_node = create_proc_read_entry(proc_out_node_name, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
 		goto out_dirred;
-
-
-//out_nodded:
+	//TODO: Is there anything else to be done here?
+	goto out;
+out_nodded:
 	remove_proc_entry(proc_out_node_name, dir_node);
 out_dirred:
 	remove_proc_entry(proc_dir_name, NULL);
@@ -147,7 +147,7 @@ out:
 
 //TODO: Source helpful functions.
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
-	//...
+	//TODO: ... Y' know...:)
 	return 0;
 }
 int syscurse_activate (uint64_t curse_no) {
