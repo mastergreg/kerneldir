@@ -156,7 +156,7 @@ int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof,
 		goto out;
 	}
 	for (i=0; (c_list[i].entry->curse_id != 0xABADDE5C); i++) {
-		;
+		
 	}
 out:
 	return ret;
