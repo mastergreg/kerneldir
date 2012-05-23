@@ -99,7 +99,7 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, targe
             ret = syscurse_check_curse_activity(curse_no);
             break;
 		case CHECK_TAINTED_PROCESS:
-            ret = syscurse_check_tainted_process(target);
+            ret = syscurse_check_tainted_process(curse_no, target);
             break;
 		case CAST:
             ret = syscurse_cast(curse_no, target);
@@ -190,16 +190,16 @@ out_sema_held:
 out_pos:
 	return ret;
 }
-int syscurse_check_tainted_process (pid_t target) {
-	int err; 
+int syscurse_check_tainted_process (uint64_t curse_no, pid_t target) {
+	int err = -EINVAL;
+	uint64_t check_bit;
 	unsigned long spinflags;
 	struct task_struct *target_task;
 
+	if (!(check_bit = bitmask_from_id(curse_no)) || (target <= 0))
+		goto out;
 	if ((err=down_interruptible(&curse_system_active.guard)))
 		goto out;
-	err = -EINVAL;
-	if (target<=0)
-		goto out_locked;
 	err = -EPERM;
 	//STUB: Check permissions on current.
 	err = -ESRCH;
@@ -208,15 +208,14 @@ int syscurse_check_tainted_process (pid_t target) {
 		goto out_locked;
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
-	if (target_task->curse_data.curse_field){
-		err=0;
+	if (target_task->curse_data.curse_field & check_bit){
+		err=1;
 		printk(KERN_INFO "curse_field is %llu",target_task->curse_data.curse_field);
 	} else {
-		err=1;
+		err=0;
 		printk(KERN_INFO "no curse_field for you!");
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-
 out_locked:
 	up(&curse_system_active.guard);
 out: 
