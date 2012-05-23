@@ -32,12 +32,46 @@ inline int index_from_id (uint64_t a_c_id) {
 		;
 	return i;
 }
+
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
 	i=index_from_id(a_c_id);
 	return curse_list_pointer[i].curse_bit;
 }
+
+/*This function checks if we are allowed to change the state of the target proc.*/
+inline int check_permissions (pid_t target) {
+
+	struct task_struct *foreign_task;
+    const struct cred *foreign_c;
+    const struct cred *local_c;
+    int ret;
+
+    ret = -ESRCH;
+	foreign_task = find_task_by_vpid(target);
+    /* sanity check FIXME */
+	if (!foreign_task)
+		goto out;
+
+    /* sanity check FIXME */
+    ret = -EINVAL;
+    foreign_c = get_task_cred(foreign_task);
+    if (!foreign_creds)
+        goto out_with_foreign;
+
+    local_c = get_current_cred();
+
+     ret = ((local_c->uid == 0) || (local_c->uid == foreign_c->uid) || (local_c->gid == foreign_c->gid));
+
+out_with_local:
+    put_cred(local_c);
+out_with_foreign:
+    put_cred(foreign_c);
+out:
+    return ret;
+}
+
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
 	int i, j;
