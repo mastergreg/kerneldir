@@ -289,6 +289,7 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	unsigned long spinflags;
 	struct task_struct *target_task;
 	uint64_t curse_mask;
+	int index;
 
 	if ((err = down_interruptible(&curse_system_active.guard)))
 		goto out;
@@ -300,7 +301,15 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	err = -EPERM;
 	//TODO: Check permissions.
 
-	curse_mask = bitmask_from_id(curse_no);
+	index = index_from_id(curse_no);
+	curse_mask = curse_list_pointer[index].curse_bit;
+
+	/* set status to ACTIVATED if no other curses active */
+	if (target_task->curse_data.curse_field & curse_mask) {
+		curse_list_pointer[index].ref_count--;
+		if (curse_list_pointer[index].ref_count == 0)
+			curse_list_pointer[index].status = ACTIVATED;
+	}
 
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	target_task->curse_data.curse_field ^= curse_mask;
