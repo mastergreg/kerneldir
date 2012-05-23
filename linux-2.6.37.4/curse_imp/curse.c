@@ -126,7 +126,7 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, targe
 			//Stub (for now, fall-throughs).
 		case ADD_RULE:
 		case REM_RULE:
-			printk(KERN_INFO "This operation is unsupported at this time.");
+			printk(KERN_INFO "This operation is unsupported at this time.\n");
             ret = -EINVAL;
 			goto out;
 		case ILLEGAL_COMMAND:
@@ -237,10 +237,10 @@ int syscurse_check_tainted_process (uint64_t curse_no, pid_t target) {
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	if (target_task->curse_data.curse_field & check_bit){
 		err=1;
-		printk(KERN_INFO "curse_field is %llu",target_task->curse_data.curse_field);
+		printk(KERN_INFO "curse_field is %llu\n",target_task->curse_data.curse_field);
 	} else {
 		err=0;
-		printk(KERN_INFO "no curse_field for you!");
+		printk(KERN_INFO "no curse_field for you!\n");
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 out_locked:
@@ -277,7 +277,7 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-	printk(KERN_INFO "Casting curse %llu to process %d \n",curse_no,target);
+	printk(KERN_INFO "Casting curse %llu to process %d\n",curse_no,target);
 
 out_locked:
 	up(&curse_system_active.guard);
@@ -307,7 +307,7 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	err=1;
 
-	printk(KERN_INFO "Lifting curse %llu from process %d \n",curse_no,target);
+	printk(KERN_INFO "Lifting curse %llu from process %d\n",curse_no,target);
 
 out_locked:
 	up(&curse_system_active.guard);
