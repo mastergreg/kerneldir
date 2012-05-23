@@ -76,7 +76,7 @@ void initial_actions (void) {
 		goto out_dirred;
 	//TODO: Is there anything else to be done here?
 	goto out;
-out_nodded:
+//out_nodded:
 	remove_proc_entry(proc_out_node_name, dir_node);
 out_dirred:
 	remove_proc_entry(proc_dir_name, NULL);
@@ -147,6 +147,7 @@ out:
 
 //TODO: Source helpful functions.
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
+	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p and start: %p\n", (long)off, count, data, start);
 	//TODO: ... Y' know...:)
 	return 0;
 }
