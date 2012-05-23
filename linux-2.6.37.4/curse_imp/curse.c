@@ -133,31 +133,23 @@ int syscurse_list_all (void) {
 int syscurse_activate (uint64_t curse_no) {
 	int i, ret =- EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
-	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
-	//FIXME...
-	if (curse_no) {		//On non-zero value, activate curse and mechanism (if necessary).
-		for (i=0; (curse_list_pointer[i].entry->curse_id != 0xABADDE5C); i++) {
-			if (curse_list_pointer[i].entry->curse_id == curse_no) {
-				if (curse_list_pointer[i].status != ACTIVE) {
-					curse_list_pointer[i].status = ACTIVE;
-					ret=1;
-				} else {
-					ret=0;
-				}
-				break;
-			}
-		}
-		if (curse_list_pointer[i].entry->curse_id == 0xABADDE5C)
+	if ((curse_no != 0xABADDE5C) && bitmask_from_id(curse_no)) {	//Activation of an existing curse, activates the system too.
+		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
+			;
+		if (curse_list_pointer[i].status != ACTIVE) {
+			curse_list_pointer[i].status = ACTIVE;
+			ret=1;
+		} else {
 			goto out_ret;
+		}
 	}
-	//On zero (common code) : system activation.
-	if (!curse_system_active.value) {
-		if (down_interruptible(&curse_system_active.guard))
-			return -EINTR;
+	if (!curse_system_active.value) {								//On invalid id, system activation.	::	TODO: Race here.
+		if (down_interruptible(&curse_system_active.guard)) {
+			ret = -EINTR;
+			goto out_ret;
+		}
 		curse_system_active.value=1;
 		up(&curse_system_active.guard);
-	} else if (curse_no == 0) {
-		ret = -EINVAL;
 	}
 out_ret:
 	return ret;
