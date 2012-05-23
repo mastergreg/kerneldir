@@ -22,6 +22,8 @@ int main (void) {
 	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
 	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
 	printf("Cast: %d\n", curse(CAST, 1, 1));
+	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
+	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
 	printf("Lift: %d\n", curse(LIFT, 1, 1));
 	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
 	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
