@@ -246,7 +246,7 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 
 	new_mask = bitmask_from_id(curse_no);
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
-	target_task->curse_data.curse_field = new_mask;
+	target_task->curse_data.curse_field &= new_mask;
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	err=1;
 	printk(KERN_INFO "Casting curse %llu to process %d with mask %llu\n",curse_no,target,new_mask);
