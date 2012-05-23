@@ -13,6 +13,7 @@
 #include <linux/spinlock.h>
 #include <asm/atomic.h>
 #include <linux/slab.h>
+#include <linux/stat.h>
 #include <linux/proc_fs.h>
 
 #include <curse/curse.h>
@@ -71,26 +72,16 @@ void initial_actions (void) {
 	//3. Populate entries in /proc filesystem.
 	if (!(dir_node = proc_mkdir(proc_dir_name, NULL)))
 		goto out;
-/*
-	if (!(output_node = create_proc_read_entry(proc_out_node_name, <MODE>, dir_node, <READ_FUNCTION>, curse_list_pointer)))
+	if (!(output_node = create_proc_read_entry(proc_out_node_name, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
 		goto out_dirred;
 
 
-out_nodded:
-	remove_proc_entry(proc_out_node_name, proc_dir_name);
+//out_nodded:
+	remove_proc_entry(proc_out_node_name, dir_node);
 out_dirred:
-*/
 	remove_proc_entry(proc_dir_name, NULL);
 out:
-	return;		//Stub, but there night be others below.
-/*	
-	printk(KERN_INFO "all ok. malloced");
-	for (j=0; j<i+1; j++) {
-		printk(KERN_INFO "name: %s -> id: %llu", curse_list_pointer[j].entry->curse_name, curse_list_pointer[j].entry->curse_id);
-		printk(KERN_INFO "status: %d", curse_list_pointer[j].status);
-	}
-	printk(KERN_INFO "all printed");
-*/
+	return;		//Stub, but there might be others below.
 }
 
 /*This is the system call source base function.*/
@@ -116,33 +107,32 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, targe
 	//Do not even call if curse system is not active.
 	#ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
-		case LIST_ALL:
-            ret = syscurse_list_all();
-            break;
+	//	case LIST_ALL:			//Fall-through: read through proc.
+	//		ret = syscurse_list_all();
+	//		break;
 		case ACTIVATE:
-            ret = syscurse_activate(curse_no);
-            break;
+			ret = syscurse_activate(curse_no);
+			break;
 		case DEACTIVATE:
-            ret = syscurse_deactivate(curse_no);
-            break;
+			ret = syscurse_deactivate(curse_no);
+			break;
 		case CHECK_CURSE_ACTIVITY:
-            ret = syscurse_check_curse_activity(curse_no);
-            break;
+			ret = syscurse_check_curse_activity(curse_no);
+			break;
 		case CHECK_TAINTED_PROCESS:
-            ret = syscurse_check_tainted_process(curse_no, target);
-            break;
+			ret = syscurse_check_tainted_process(curse_no, target);
+			break;
 		case CAST:
-            ret = syscurse_cast(curse_no, target);
-            break;
+			ret = syscurse_cast(curse_no, target);
+			break;
 		case LIFT:
-            ret = syscurse_lift(curse_no, target);
-            break;
+			ret = syscurse_lift(curse_no, target);
+			break;
 		case SHOW_RULES:
 			//Stub (for now, fall-throughs).
 		case ADD_RULE:
 		case REM_RULE:
 			printk(KERN_INFO "This operation is unsupported at this time.\n");
-            ret = -EINVAL;
 			goto out;
 		case ILLEGAL_COMMAND:
 		default:
@@ -156,7 +146,7 @@ out:
 }
 
 //TODO: Source helpful functions.
-int syscurse_list_all (void) {
+int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
 	//...
 	return 0;
 }

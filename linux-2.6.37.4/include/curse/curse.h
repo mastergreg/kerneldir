@@ -90,9 +90,10 @@ struct syscurse {
 
 //Kernel specific code...
 #include <linux/semaphore.h>
+#include <linux/proc_fs.h>
 
 //Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
-int syscurse_list_all(void);
+int syscurse_list_all(char *, char **, off_t, int, int *, void *);
 int syscurse_activate(uint64_t);
 int syscurse_deactivate(uint64_t);
 int syscurse_check_curse_activity(uint64_t);
