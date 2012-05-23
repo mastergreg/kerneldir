@@ -12,8 +12,13 @@
 #ifndef _SYSCURSE_H
 #define _SYSCURSE_H
 
+//pid_t, uin64_t on kernel.
 #include <linux/types.h>
-//#include "curse_list.h"
+//Inclusion of uint64_t on userspace.
+#ifndef __KERNEL__
+#include <stdint.h>
+#include "curse_list.h"
+#endif
 
 /* -------Curse commands-------
  * 1. list_all							:	<no_argument>
@@ -67,10 +72,6 @@ enum curse_command	{	LIST_ALL=0,
  */
 /*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
 enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
-
-#ifndef __KERNEL__
-#include <stdint.h>
-#endif
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {
