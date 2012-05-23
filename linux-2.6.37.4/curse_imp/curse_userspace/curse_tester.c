@@ -28,6 +28,7 @@ int main (void) {
 	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
 	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
 	printf("Deactivate: %d\n", curse(DEACTIVATE, 1, 1));
+	printf("List: %d\n", curse(LIST_ALL, 1, 1));
 
 	return 0;
 }

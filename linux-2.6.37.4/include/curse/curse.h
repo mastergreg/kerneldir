@@ -81,18 +81,19 @@ struct syscurse {
 	enum curse_status status;
 };
 
+//Procfs entry paths.
+#define proc_dir_name "curse"
+#define proc_out_node_name "listing"
+
 //TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
-//I will add more things later.
-
-//Check with each other to minimize conflicts in source modification.
-
 #ifdef __KERNEL__
 
 //Kernel specific code...
 #include <linux/semaphore.h>
+#include <linux/proc_fs.h>
 
 //Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
-int syscurse_list_all(void);
+int syscurse_list_all(char *, char **, off_t, int, int *, void *);
 int syscurse_activate(uint64_t);
 int syscurse_deactivate(uint64_t);
 int syscurse_check_curse_activity(uint64_t);
@@ -102,6 +103,9 @@ int syscurse_lift(uint64_t, pid_t);
 int syscurse_show_rules(void);
 int syscurse_add_rule(uint64_t, char *);
 int syscurse_rem_rule(uint64_t, char *);
+
+//Proc node pointer.
+struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
 
 #include "curse_sched.h"	//Source it here too.
 
