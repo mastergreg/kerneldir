@@ -66,7 +66,7 @@ void initial_actions (void) {
 /*This is the system call source base function.*/
 SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {	
-	long ret=-EINVAL;
+	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
 
 	if (atomic_read(&initial_actions_flag)) {		//Conditional will not be entered but the first time(s).
@@ -131,13 +131,14 @@ int syscurse_list_all (void) {
 	return 0;
 }
 int syscurse_activate (uint64_t curse_no) {
-	int i, ret =- EINVAL;
+	int i, ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
-	if ((curse_no != 0xABADDE5C) && bitmask_from_id(curse_no)) {	//Activation of an existing curse, activates the system too.
+	if (bitmask_from_id(curse_no)) {	//Activation of an existing curse, activates the system too.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
 			;
-		if (curse_list_pointer[i].status != ACTIVE) {
-			curse_list_pointer[i].status = ACTIVE;
+	printk(KERN_INFO "%d vs %d", curse_list_pointer[i].status, ACTIVATED|ACTIVE);
+		if (!(curse_list_pointer[i].status & (ACTIVATED|ACTIVE))) {
+			curse_list_pointer[i].status = ACTIVATED;
 			ret=1;
 		} else {
 			goto out_ret;
@@ -155,6 +156,19 @@ out_ret:
 	return ret;
 }
 int syscurse_deactivate (uint64_t curse_no) {
+	int i, ret = -EINVAL;
+	if (bitmask_from_id(curse_no)) {
+		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
+			;
+		if (curse_list_pointer[i].status == ACTIVE) {
+			curse_list_pointer[i].status = ACTIVE;
+			ret=1;
+		} else {
+			goto out_ret;
+		}
+	}//...
+
+out_ret:
 	if (curse_system_active.value) {
 		if (down_interruptible(&curse_system_active.guard))
 			return -EINTR;

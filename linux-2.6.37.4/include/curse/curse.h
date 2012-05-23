@@ -71,7 +71,7 @@ enum curse_command	{	LIST_ALL=0,
  * Active: currently running (influencing the system) (is implemented, and activated)
  */
 /*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
-enum curse_status {IMPLEMENTED=0, ACTIVATED, ACTIVE, INVALID_CURSE};
+enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=0x04};
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {
