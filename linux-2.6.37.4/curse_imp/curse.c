@@ -173,17 +173,18 @@ out:
 
 //TODO: Source helpful functions.
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
-	int i, ret=0;
+	int i, line_len, ret=0;
 	struct syscurse *c_list=(struct syscurse *)data;
-	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
+//	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
 	//TODO: ... Y' know...:)
 	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt
 		(*eof)=1;
 		goto out;
 	}
-	for (i=0; (c_list[i].entry->curse_id != 0xABADDE5C); i++) {
-		
-    }
+	//TODO: Fix error: we have to predict that the next print will not cause overflow, so I am being overly cautious.
+	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
+	for (i=0; ((c_list[i].entry->curse_id != 0xABADDE5C) && ((ret+line_len) < count)); i++)
+		ret+=scnprintf(&page[ret], count, "%s %llu\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
 out:
 	return ret;
 }
