@@ -167,7 +167,6 @@ int syscurse_activate (uint64_t curse_no) {
 		}
 	}
 	if (!curse_system_active.value) {											//On invalid id, system activation.	::	TODO: Race here.
-		ret = (curse_no == 0) ? 1 : -EINVAL ;
 		if (down_interruptible(&curse_system_active.guard)) {
 			ret = -EINTR;
 			goto out_ret;
@@ -192,7 +191,6 @@ int syscurse_deactivate (uint64_t curse_no) {
 			goto out_ret;
 		}
 	} else if (/*!bitmask_from_id(curse_no) && */ curse_system_active.value) {	//Invalid target deactivates the system.
-		ret = (curse_no == 0) ? 1 : -EINVAL ;
 		if (down_interruptible(&curse_system_active.guard)) {
 			ret = -EINTR;
 			goto out_ret;
