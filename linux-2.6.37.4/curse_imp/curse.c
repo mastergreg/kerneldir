@@ -57,14 +57,14 @@ inline int check_permissions (pid_t target) {
     /* sanity check FIXME */
     ret = -EINVAL;
     foreign_c = get_task_cred(foreign_task);
-    if (!foreign_creds)
+    if (!foreign_c)
         goto out_with_foreign;
 
     local_c = get_current_cred();
 
-     ret = ((local_c->uid == 0) || (local_c->uid == foreign_c->uid) || (local_c->gid == foreign_c->gid));
+    ret = ((local_c->uid == 0) || (local_c->uid == foreign_c->uid) || (local_c->gid == foreign_c->gid));
 
-out_with_local:
+//out_with_local:
     put_cred(local_c);
 out_with_foreign:
     put_cred(foreign_c);
@@ -180,9 +180,9 @@ int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof,
 		(*eof)=1;
 		goto out;
 	}
-	for (i=0; [i].; ) {
+	for (i=0; 1==0;) {
 		
-	}
+    }
 out:
 	return ret;
 }
