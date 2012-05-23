@@ -40,7 +40,7 @@ static inline void stub_use(void /*not*/) {
 struct curse_list_entry curse_full_list[] = {
 	{	"stub", 0x00000000	},
 
-	{	"sentinel", 0xBADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
+	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
 /*System call function pointer structure.*/

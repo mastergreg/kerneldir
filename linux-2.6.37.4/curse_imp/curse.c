@@ -25,7 +25,7 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
-	for (i=0; curse_list_pointer[i].entry->curse_id!=0xBADDE5C; i++)
+	for (i=0; curse_list_pointer[i].entry->curse_id!=0xABADDE5C; i++)
 		if (curse_list_pointer[i].entry->curse_id==a_c_id)
 			return curse_list_pointer[i].curse_bit;
 	return 0x0;
@@ -42,7 +42,7 @@ void initial_actions (void) {
 	sema_init(&curse_system_active.guard, 1);
 	curse_system_active.value=0;
 	//2. Initialize curse lookup table.
-	for (i=0; (curse_full_list[i].curse_id!=0xBADDE5C && i<MAX_CURSE_NO); i++) ;
+	for (i=0; (curse_full_list[i].curse_id!=0xABADDE5C && i<MAX_CURSE_NO); i++) ;
 	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
 	for (j=1, t=0x1; j<i+1; j++, t<<=1) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
@@ -136,7 +136,7 @@ int syscurse_activate (uint64_t curse_no) {
 	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
 	//FIXME...
 	if (curse_no) {		//On non-zero value, activate curse and mechanism (if necessary).
-		for (i=0; curse_list_pointer[i].entry->curse_id!=0xBADDE5C; i++) {
+		for (i=0; curse_list_pointer[i].entry->curse_id!=0xABADDE5C; i++) {
 			if (curse_list_pointer[i].entry->curse_id==curse_no) {
 				if (curse_list_pointer[i].status!=ACTIVE) {
 					curse_list_pointer[i].status=ACTIVE;
@@ -147,7 +147,7 @@ int syscurse_activate (uint64_t curse_no) {
 				break;
 			}
 		}
-		if (curse_list_pointer[i].entry->curse_id==0xBADDE5C)
+		if (curse_list_pointer[i].entry->curse_id==0xABADDE5C)
 			goto out_ret;
 	}
 	//On zero (common code) : system activation.
@@ -239,4 +239,3 @@ int syscurse_add_rule (uint64_t curse, char *path) {
 int syscurse_rem_rule (uint64_t curse, char *path) {
 	return 0;
 }
-
