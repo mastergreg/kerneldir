@@ -95,7 +95,7 @@ int syscurse_list_all(void);
 int syscurse_activate(uint64_t);
 int syscurse_deactivate(uint64_t);
 int syscurse_check_curse_activity(uint64_t);
-int syscurse_check_tainted_process(pid_t);
+int syscurse_check_tainted_process(uint64_t, pid_t);
 int syscurse_cast(uint64_t, pid_t);
 int syscurse_lift(uint64_t, pid_t);
 int syscurse_show_rules(void);

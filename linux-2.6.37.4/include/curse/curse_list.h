@@ -39,7 +39,8 @@ static inline void stub_use(void /*not*/) {
 /*[ADD] The system curse listing.*/
 struct curse_list_entry curse_full_list[] = {
 	{	"stub", 0x00000000	},
-
+	{	"opalakia", 0x00000001	},
+	{	"another_entry", 0x00000080	},
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
@@ -53,6 +54,9 @@ struct fun_element {
 /*[ADD] The system call function pointer array.*/
 struct fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_use	}, /* maybe a stub maybe not, depends on how we handle 0 */
+
+	{	stub_init, stub_destroy, stub_use	},
+	{	stub_init, stub_destroy, stub_use	},
 
 	{	stub_init, stub_destroy, stub_use	} /* you have made a grave mistace (sentinel speaking) */
 };
