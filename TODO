@@ -1,9 +1,9 @@
 * check function returns against new return policy --all --2
 * Check proper use of activation. --ale1ster --2
+* Need to create permissions verification mechanism (function?) --all --3
 * Initialize task_curse_struct (in fork?) --all --5
 * Create interface ioctl with user --all --6
 * Create permissions in task_curse_struct (3bit field UGS) --all --6
-* Need to create permissions verification mechanism (function?) --FirstComeFirstServed --3
 * Change curse_bit to curse_active_bit in syscurse (and all used points) --all --6
 * check for race conditions on task_struct and use of its spinlocks --nalfemp --7
  Fix binary op spaces (too tired right now) --ale1ster --1 --FIXED
