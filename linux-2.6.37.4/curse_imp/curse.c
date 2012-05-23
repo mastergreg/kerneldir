@@ -13,6 +13,7 @@
 #include <linux/spinlock.h>
 #include <asm/atomic.h>
 #include <linux/slab.h>
+#include <linux/proc_fs.h>
 
 #include <curse/curse.h>
 #include <curse/curse_list.h>
@@ -25,6 +26,7 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_from_id (uint64_t a_c_id) {
 	int i;
+	//Provided that the sentinel has a bit value of 0x0, the below is correct.
 	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
 		;
 	return i;
@@ -32,9 +34,7 @@ inline int index_from_id (uint64_t a_c_id) {
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
-	//Provided that the sentinel has a bit value of 0x0, the below is correct.
-	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
-		;
+	i=index_from_id(a_c_id);
 	return curse_list_pointer[i].curse_bit;
 }
 /*This function should return the function pointer array from a specified bitmask.*/		//TODO: Should it be here??
@@ -68,6 +68,21 @@ void initial_actions (void) {
 	curse_list_pointer[0].ref_count=(curse_list_pointer[i].ref_count=0);
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
 	curse_list_pointer[i].entry=(struct curse_list_entry *)&curse_full_list[i];
+	//3. Populate entries in /proc filesystem.
+	if (!(dir_node = proc_mkdir(proc_dir_name, NULL)))
+		goto out;
+/*
+	if (!(output_node = create_proc_read_entry(proc_out_node_name, <MODE>, dir_node, <READ_FUNCTION>, curse_list_pointer)))
+		goto out_dirred;
+
+
+out_nodded:
+	remove_proc_entry(proc_out_node_name, proc_dir_name);
+out_dirred:
+*/
+	remove_proc_entry(proc_dir_name, NULL);
+out:
+	return;		//Stub, but there night be others below.
 /*	
 	printk(KERN_INFO "all ok. malloced");
 	for (j=0; j<i+1; j++) {
