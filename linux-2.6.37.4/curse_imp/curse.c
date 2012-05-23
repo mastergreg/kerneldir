@@ -25,10 +25,9 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
-	for (i=0; curse_list_pointer[i].entry->curse_id!=0xABADDE5C; i++)
-		if (curse_list_pointer[i].entry->curse_id==a_c_id)
-			return curse_list_pointer[i].curse_bit;
-	return 0x0;
+	//Provided that the sentinel has a bit value of 0x0, the below is correct.
+	for (i=0; ( (curse_list_pointer[i].entry->curse_id != 0xABADDE5C) || (curse_list_pointer[i].entry->curse_id == a_c_id)); i++)
+	return curse_list_pointer[i].curse_bit;
 }
 /*TODO: This function should return the function pointer array from a specified bitmask.*/		//TODO:Should it be here??
 
@@ -40,9 +39,9 @@ void initial_actions (void) {
 	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
 	//1. Initialize active status boolean.
 	sema_init(&curse_system_active.guard, 1);
-	curse_system_active.value=0;
+	curse_system_active.value = 0;
 	//2. Initialize curse lookup table.
-	for (i=0; (curse_full_list[i].curse_id!=0xABADDE5C && i<MAX_CURSE_NO); i++) ;
+	for (i=0; ((curse_full_list[i].curse_id != 0xABADDE5C) && (i < MAX_CURSE_NO)); i++) ;
 	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
 	for (j=1, t=0x1; j<i+1; j++, t<<=1) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
@@ -70,7 +69,7 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, targe
 	int cmd_norm=(int)curse_cmd;
 
 	if (atomic_read(&initial_actions_flag)) {		//Conditional will not be entered but the first time(s).
-		if (atomic_read(&initial_actions_flag)==2)
+		if (atomic_read(&initial_actions_flag) == 2)
 			goto wait_init;
 		atomic_set(&initial_actions_flag, 2);
 		//Initializing actions.
@@ -131,15 +130,15 @@ int syscurse_list_all (void) {
 	return 0;
 }
 int syscurse_activate (uint64_t curse_no) {
-	int i, ret=-EINVAL;
+	int i, ret =- EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	//TODO: On the other hand, activation of  a particular curse, implies activation of system.
 	//FIXME...
 	if (curse_no) {		//On non-zero value, activate curse and mechanism (if necessary).
-		for (i=0; curse_list_pointer[i].entry->curse_id!=0xABADDE5C; i++) {
-			if (curse_list_pointer[i].entry->curse_id==curse_no) {
-				if (curse_list_pointer[i].status!=ACTIVE) {
-					curse_list_pointer[i].status=ACTIVE;
+		for (i=0; (curse_list_pointer[i].entry->curse_id != 0xABADDE5C); i++) {
+			if (curse_list_pointer[i].entry->curse_id == curse_no) {
+				if (curse_list_pointer[i].status != ACTIVE) {
+					curse_list_pointer[i].status = ACTIVE;
 					ret=1;
 				} else {
 					ret=0;
@@ -147,7 +146,7 @@ int syscurse_activate (uint64_t curse_no) {
 				break;
 			}
 		}
-		if (curse_list_pointer[i].entry->curse_id==0xABADDE5C)
+		if (curse_list_pointer[i].entry->curse_id == 0xABADDE5C)
 			goto out_ret;
 	}
 	//On zero (common code) : system activation.
@@ -156,7 +155,7 @@ int syscurse_activate (uint64_t curse_no) {
 			return -EINTR;
 		curse_system_active.value=1;
 		up(&curse_system_active.guard);
-	} else if (curse_no==0) {
+	} else if (curse_no == 0) {
 		ret=-EINVAL;
 	}
 out_ret:
@@ -175,10 +174,10 @@ int syscurse_deactivate (uint64_t curse_no) {
 	return 0;
 }
 int syscurse_check_curse_activity (uint64_t curse_no) {
-	int ret=-EINVAL;
+	int ret =- EINVAL;
 	if (down_interruptible(&curse_system_active.guard))
 		goto out_pos;
-	if (curse_system_active.value==0)
+	if (curse_system_active.value == 0)
 		goto out_sema_held;
 	//STUB: Check if any curse in the table is active.
 	//...
@@ -209,7 +208,7 @@ int syscurse_check_tainted_process (pid_t target) {
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	if (target_task->curse_data.curse_field){
-		err = 0;
+		err=0;
 		printk(KERN_INFO "curse_field is %llu",target_task->curse_data.curse_field);
 	} else {
 		err=1;
