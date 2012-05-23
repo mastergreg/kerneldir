@@ -30,7 +30,7 @@ inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 		;
 	return curse_list_pointer[i].curse_bit;
 }
-/*TODO: This function should return the function pointer array from a specified bitmask.*/		//TODO:Should it be here??
+/*This function should return the function pointer array from a specified bitmask.*/		//TODO: Should it be here??
 struct fun_element *fun_from_bitmask(uint64_t my_bm) {
 	int i;
 	//Same assumptions as with bitmask_from_id.
@@ -179,21 +179,26 @@ int syscurse_deactivate (uint64_t curse_no) {
 		curse_system_active.value=0;
 		up(&curse_system_active.guard);
 	}
-	//TODO: Do we have to unhook (call close pointer) all the active curses here?
+	//TODO: Do we have to unhook (call close pointer) all the active curses here?	::	No, we simply deactivate. On activation, it will continue as was.
 out_ret:
 	return ret;
 }
 int syscurse_check_curse_activity (uint64_t curse_no) {
-	int ret = -EINVAL;
+	int i, ret = -EINTR;
 	if (down_interruptible(&curse_system_active.guard))
 		goto out_pos;
 	if (curse_system_active.value == 0)
 		goto out_sema_held;
-	//STUB: Check if any curse in the table is active.
-	//...
-    //8a exoume max
-    if (curse_list_pointer[curse_no].status == ACTIVE) 
-        ret = 0;
+	for (i=0; ((curse_list_pointer[i].entry->curse_id != curse_no) && (curse_list_pointer[i].entry->curse_id != 0xABADDE5C)); i++)
+		;
+	if (curse_list_pointer[i].entry->curse_id == 0xABADDE5C) {
+		ret = -EINVAL;
+		goto out_sema_held;
+	}
+    if (curse_list_pointer[i].status & ACTIVE)
+        ret=1;
+	else
+		ret=0;
 out_sema_held:
 	up(&curse_system_active.guard);
 out_pos:
@@ -230,6 +235,8 @@ out_locked:
 out: 
 	return err;
 }
+//curse_list_pointer[i].ref_count=0;
+//change status too
 int syscurse_cast (uint64_t curse_no, pid_t target) {
 	//...
 	return 0;
