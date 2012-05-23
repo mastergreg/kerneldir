@@ -271,10 +271,10 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 		goto out_locked;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {
-		target_task->curse_data.curse_field &= new_mask;
-		err=1;
+		target_task->curse_data.curse_field |= new_mask;
 		curse_list_pointer[new_index].ref_count++;
 		curse_list_pointer[new_index].status=ACTIVE;
+		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	printk(KERN_INFO "Casting curse %llu to process %d \n",curse_no,target);
