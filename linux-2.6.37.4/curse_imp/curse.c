@@ -22,6 +22,13 @@
 atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
 
 //Other functions.
+/*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
+inline int index_from_id (uint64_t a_c_id) {
+	int i;
+	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
+		;
+	return i;
+}
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
@@ -241,12 +248,11 @@ out_locked:
 out: 
 	return err;
 }
-//curse_list_pointer[i].ref_count=0;
-//change status too
 int syscurse_cast (uint64_t curse_no, pid_t target) {
-	int err = -EINVAL;
+	int err;
 	unsigned long spinflags;
 	struct task_struct *target_task;
+	int new_index;
 	uint64_t new_mask;
 
 	if ((err = down_interruptible(&curse_system_active.guard)))
@@ -254,16 +260,23 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
-	err = -EPERM;
-	//TODO: Check permissions.
 	if (!target_task)
 		goto out_locked;
+	err = -EPERM;
+	//TODO: Check permissions.
 
-	new_mask = bitmask_from_id(curse_no);
-	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
-	target_task->curse_data.curse_field &= new_mask;
+	err = -EINVAL;
+	new_index = index_from_id(curse_no);
+	if (!(new_mask = curse_list_pointer[new_index].curse_bit) && !(curse_list_pointer[new_index].status & (ACTIVATED|ACTIVE)))
+		goto out_locked;
+	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
+	if (!(target_task->curse_data.curse_field & new_mask)) {
+		target_task->curse_data.curse_field &= new_mask;
+		err=1;
+		curse_list_pointer[new_index].ref_count++;
+		curse_list_pointer[new_index].status=ACTIVE;
+	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-	err=1;
 	printk(KERN_INFO "Casting curse %llu to process %d \n",curse_no,target);
 
 out_locked:
@@ -282,9 +295,10 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
-	//TODO: Check permissions.
 	if (!target_task)
 		goto out_locked;
+	err = -EPERM;
+	//TODO: Check permissions.
 
 	curse_mask = bitmask_from_id(curse_no);
 
