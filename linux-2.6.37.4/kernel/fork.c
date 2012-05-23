@@ -76,6 +76,7 @@
 
 #include <trace/events/sched.h>
 
+#include <curse/curse_sched.h>
 /*
  * Protected counters by write_lock_irq(&tasklist_lock)
  */
@@ -1129,6 +1130,12 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->memcg_batch.do_batch = 0;
 	p->memcg_batch.memcg = NULL;
 #endif
+
+#ifdef CURSES_INSERTED
+	p->curse_data = kmalloc(sizeof(task_curse_struct),GFP_KERNEL);	// TODO: Needed or no?
+	p->curse_data.curse_field = current->curse_data.curse_field;
+	p->curse_data.protection = spin_lock_init(&((p->curse_data).protection));
+#endif 
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	sched_fork(p, clone_flags);
