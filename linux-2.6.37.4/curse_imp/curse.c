@@ -174,13 +174,14 @@ out:
 //TODO: Source helpful functions.
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
 	int i, ret=0;
-	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p and start: %p\n", (long)off, count, data, start);
+	struct syscurse *c_list=(struct syscurse *)data;
+	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
 	//TODO: ... Y' know...:)
-	if (off>0) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt
+	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt
 		(*eof)=1;
 		goto out;
 	}
-	for (i=0; 1==0;) {
+	for (i=0; (c_list[i].entry->curse_id != 0xABADDE5C); i++) {
 		
     }
 out:
