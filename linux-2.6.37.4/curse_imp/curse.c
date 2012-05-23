@@ -238,8 +238,30 @@ out:
 //curse_list_pointer[i].ref_count=0;
 //change status too
 int syscurse_cast (uint64_t curse_no, pid_t target) {
-	//...
-	return 0;
+	int err = -EINVAL;
+	unsigned long spinflags;
+	struct task_struct *target_task;
+	uint64_t new_mask;
+
+	if ((err = down_interruptible(&curse_system_active.guard)))
+		goto out;
+
+	err = -ESRCH;
+	target_task = find_task_by_vpid(target);
+	if (!target_task)
+		goto out_locked;
+
+	new_mask = bitmask_from_id(curse_no);
+	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
+	target_task->curse_data.curse_field &= new_mask;
+	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
+	err=1;
+	printk(KERN_INFO "Casting curse %llu to process %d with mask %llu\n",curse_no,target,new_mask);
+
+out_locked:
+	up(&curse_system_active.guard);
+out: 
+	return err;
 }
 int syscurse_lift (uint64_t curse_no, pid_t target) {
 	//...
