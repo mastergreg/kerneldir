@@ -133,10 +133,9 @@ int syscurse_list_all (void) {
 int syscurse_activate (uint64_t curse_no) {
 	int i, ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
-	if (bitmask_from_id(curse_no)) {	//Activation of an existing curse, activates the system too.
+	if (bitmask_from_id(curse_no)) {											//Activation of an existing curse, activates the system too.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
 			;
-	printk(KERN_INFO "%d vs %d", curse_list_pointer[i].status, ACTIVATED|ACTIVE);
 		if (!(curse_list_pointer[i].status & (ACTIVATED|ACTIVE))) {
 			curse_list_pointer[i].status = ACTIVATED;
 			ret=1;
@@ -144,7 +143,7 @@ int syscurse_activate (uint64_t curse_no) {
 			goto out_ret;
 		}
 	}
-	if (!curse_system_active.value) {								//On invalid id, system activation.	::	TODO: Race here.
+	if (!curse_system_active.value) {											//On invalid id, system activation.	::	TODO: Race here.
 		if (down_interruptible(&curse_system_active.guard)) {
 			ret = -EINTR;
 			goto out_ret;
@@ -157,28 +156,26 @@ out_ret:
 }
 int syscurse_deactivate (uint64_t curse_no) {
 	int i, ret = -EINVAL;
-	if (bitmask_from_id(curse_no)) {
+	if (bitmask_from_id(curse_no)) {											//Targeted deactivation is normal.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
 			;
-		if (curse_list_pointer[i].status == ACTIVE) {
-			curse_list_pointer[i].status = ACTIVE;
+		if (curse_list_pointer[i].status & (ACTIVATED|ACTIVE)) {
+			curse_list_pointer[i].status = IMPLEMENTED;
 			ret=1;
 		} else {
 			goto out_ret;
 		}
-	}//...
-
-out_ret:
-	if (curse_system_active.value) {
-		if (down_interruptible(&curse_system_active.guard))
-			return -EINTR;
+	} else if (/*!bitmask_from_id(curse_no) && */ curse_system_active.value) {	//Invalid target deactivates the system.
+		if (down_interruptible(&curse_system_active.guard)) {
+			ret = -EINTR;
+			goto out_ret;
+		}
 		curse_system_active.value=0;
 		up(&curse_system_active.guard);
-	} else {
-		return -EINVAL;
 	}
 	//TODO: Do we have to unhook (call close pointer) all the active curses here?
-	return 0;
+out_ret:
+	return ret;
 }
 int syscurse_check_curse_activity (uint64_t curse_no) {
 	int ret = -EINVAL;

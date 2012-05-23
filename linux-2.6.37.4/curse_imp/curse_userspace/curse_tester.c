@@ -20,7 +20,7 @@ int main (void) {
 	//printf("Blob: %d\n", curse(98, 49, 24));		//Initial stub: outdated.
 	printf("Activate: %d\n", curse(ACTIVATE, 1, 1));
 	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 0, 1));
-//	printf("Deactivate: %d\n", curse(DEACTIVATE, 0, 0));
+	printf("Deactivate: %d\n", curse(DEACTIVATE, 1, 1));
 
 	return 0;
 }
