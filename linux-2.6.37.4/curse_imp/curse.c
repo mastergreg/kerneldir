@@ -301,26 +301,24 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	err = -EPERM;
 	//TODO: Check permissions.
 
+	err = -EINVAL;
 	index = index_from_id(curse_no);
-	curse_mask = curse_list_pointer[index].curse_bit;
-
-	/* set status to ACTIVATED if no other curses active */
+	if (!(curse_mask = curse_list_pointer[index].curse_bit))
+		goto out_locked;
+	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (target_task->curse_data.curse_field & curse_mask) {
+		target_task->curse_data.curse_field &= ~curse_mask;		//Just to be safe (^= toggles, not clears).
 		curse_list_pointer[index].ref_count--;
-		if (curse_list_pointer[index].ref_count == 0)
+		if (curse_list_pointer[index].ref_count == 0)		//Set curse status to ACTIVATED if ref 0ed-out.
 			curse_list_pointer[index].status = ACTIVATED;
+		err=1;
 	}
-
-	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
-	target_task->curse_data.curse_field ^= curse_mask;
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-	err=1;
-
 	printk(KERN_INFO "Lifting curse %llu from process %d\n",curse_no,target);
 
 out_locked:
 	up(&curse_system_active.guard);
-out: 
+out:
 	return err;
 }
 int syscurse_show_rules (void) {
