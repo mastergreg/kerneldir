@@ -26,7 +26,7 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
 	//Provided that the sentinel has a bit value of 0x0, the below is correct.
-	for (i=0; ( (curse_list_pointer[i].entry->curse_id != 0xABADDE5C) || (curse_list_pointer[i].entry->curse_id == a_c_id)); i++)
+	for (i=0; ( (curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
 		;
 	return curse_list_pointer[i].curse_bit;
 }
@@ -157,7 +157,7 @@ int syscurse_activate (uint64_t curse_no) {
 		curse_system_active.value=1;
 		up(&curse_system_active.guard);
 	} else if (curse_no == 0) {
-		ret=-EINVAL;
+		ret = -EINVAL;
 	}
 out_ret:
 	return ret;
@@ -175,7 +175,7 @@ int syscurse_deactivate (uint64_t curse_no) {
 	return 0;
 }
 int syscurse_check_curse_activity (uint64_t curse_no) {
-	int ret =- EINVAL;
+	int ret = -EINVAL;
 	if (down_interruptible(&curse_system_active.guard))
 		goto out_pos;
 	if (curse_system_active.value == 0)
