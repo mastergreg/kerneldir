@@ -139,7 +139,9 @@ int syscurse_list_all (void) {
 	return 0;
 }
 int syscurse_activate (uint64_t curse_no) {
-	int i, ret = -EINVAL;
+	int i, ret = -EPERM;
+	//TODO: Check permissions.
+	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_id(curse_no)) {											//Activation of an existing curse, activates the system too.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
@@ -163,7 +165,9 @@ out_ret:
 	return ret;
 }
 int syscurse_deactivate (uint64_t curse_no) {
-	int i, ret = -EINVAL;
+	int i, ret = -EPERM;
+	//TODO: Check permissions.
+	ret = -EINVAL;
 	if (bitmask_from_id(curse_no)) {											//Targeted deactivation is normal.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
 			;
@@ -216,12 +220,12 @@ int syscurse_check_tainted_process (uint64_t curse_no, pid_t target) {
 		goto out;
 	if ((err=down_interruptible(&curse_system_active.guard)))
 		goto out;
-	err = -EPERM;
-	//STUB: Check permissions on current.
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
 	if (!target_task)
 		goto out_locked;
+	err = -EPERM;
+	//TODO: Check permissions.
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	if (target_task->curse_data.curse_field & check_bit){
@@ -250,6 +254,8 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
+	err = -EPERM;
+	//TODO: Check permissions.
 	if (!target_task)
 		goto out_locked;
 
@@ -276,6 +282,7 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 
 	err = -ESRCH;
 	target_task = find_task_by_vpid(target);
+	//TODO: Check permissions.
 	if (!target_task)
 		goto out_locked;
 
