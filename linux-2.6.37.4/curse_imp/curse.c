@@ -26,12 +26,18 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
 	//Provided that the sentinel has a bit value of 0x0, the below is correct.
-	for (i=0; ( (curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
+	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
 		;
 	return curse_list_pointer[i].curse_bit;
 }
 /*TODO: This function should return the function pointer array from a specified bitmask.*/		//TODO:Should it be here??
-
+struct fun_element *fun_from_bitmask(uint64_t my_bm) {
+	int i;
+	//Same assumptions as with bitmask_from_id.
+	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].curse_bit != my_bm)); i++)
+		;
+	return &(fun_array[i]);
+}
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
 	int i, j;
