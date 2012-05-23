@@ -27,6 +27,7 @@ inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
 	//Provided that the sentinel has a bit value of 0x0, the below is correct.
 	for (i=0; ( (curse_list_pointer[i].entry->curse_id != 0xABADDE5C) || (curse_list_pointer[i].entry->curse_id == a_c_id)); i++)
+		;
 	return curse_list_pointer[i].curse_bit;
 }
 /*TODO: This function should return the function pointer array from a specified bitmask.*/		//TODO:Should it be here??
