@@ -147,9 +147,18 @@ out:
 
 //TODO: Source helpful functions.
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
+	int i, ret=0;
 	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p and start: %p\n", (long)off, count, data, start);
 	//TODO: ... Y' know...:)
-	return 0;
+	if (off>0) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt
+		(*eof)=1;
+		goto out;
+	}
+	for (i=0; [i].; ) {
+		
+	}
+out:
+	return ret;
 }
 int syscurse_activate (uint64_t curse_no) {
 	int i, ret = -EPERM;
