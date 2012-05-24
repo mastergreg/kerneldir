@@ -336,9 +336,9 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 		target_task->curse_data.curse_field |= new_mask;
 		curse_list_pointer[new_index].ref_count++;
 		if (GET_INHER(curse_list_pointer[new_index]))
-			curse_list_pointer[new_index].inherritance |= new_mask;
+			target_task->curse_data.inherritance |= new_mask;
 		else
-			curse_list_pointer[new_index].inherritance &= (~new_mask);
+			target_task->curse_data.inherritance &= (~new_mask);
 		curse_list_pointer[new_index].status=ACTIVE;
 		err=1;
 	}
@@ -376,7 +376,7 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	if (target_task->curse_data.curse_field & curse_mask) {
 		target_task->curse_data.curse_field &= (~curse_mask);		//Just to be safe (^= toggles, not clears).
 		curse_list_pointer[index].ref_count--;
-		curse_list_pointer[index].inherritance &= (~curse_mask);
+		target_task->curse_data.inherritance &= (~curse_mask);
 		if (curse_list_pointer[index].ref_count == 0)			//Set curse status to ACTIVATED if ref 0ed-out.
 			curse_list_pointer[index].status = ACTIVATED;
 		err=1;
