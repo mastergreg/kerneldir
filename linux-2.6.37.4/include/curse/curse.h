@@ -15,8 +15,7 @@
 #include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
 #ifndef __KERNEL__			/*Inclusion of uint64_t on userspace.*/
 #include <stdint.h>
-/*#include <curse/curse_list.h>*/
-#include "curse_list.h"
+#include <curse/curse_list.h>
 #endif
 
 /*Curse system call interface.*/
