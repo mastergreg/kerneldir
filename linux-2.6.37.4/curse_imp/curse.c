@@ -15,6 +15,7 @@
 #include <linux/slab.h>
 #include <linux/stat.h>
 #include <linux/proc_fs.h>
+#include <linux/rcupdate.h>
 
 #include <curse/curse.h>
 #include <curse/curse_list.h>
@@ -278,9 +279,13 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	if ((err=down_interruptible(&curse_system_active.guard)))
 		goto out;
 	err = -ESRCH;
+
+	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!target_task)
 		goto out_locked;
+
 	err = -EPERM;
 	//TODO: Check permissions.
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
