@@ -2,7 +2,7 @@
 * check for race conditions on task_struct and use of its spinlocks --nalfemp --3
 * Modularize curse_k_wrapper to be called from read, without make errors --ale1ster --4
 * Check the system initializing action. We have to insert the hook for initial actions there (current practice in bad practice) --all --5
-* Alter system wide activation on entry 0 of table -ale1ster --6
+* Alter system wide activation on entry 0 of table --ale1ster --6
 * Create interface ioctl with user --all --6
 * Hash function in userspace lib --all --7
 * Check ptrace mechanism for hijacking the syscall table at runtime --ale1ster --9
