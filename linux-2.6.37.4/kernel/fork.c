@@ -1133,7 +1133,8 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 
 #ifdef _CURSES_INSERTED
 	//p->curse_data = kmalloc(sizeof(task_curse_struct),GFP_KERNEL);	// TODO: Needed or no?
-	p->curse_data.curse_field = current->curse_data.curse_field;
+	p->curse_data.inherritance = current->curse_data.inherritance;
+	p->curse_data.curse_field = (current->curse_data.curse_field) & (current->curse_data.inherritance);
 	spin_lock_init(&p->curse_data.protection);
 #endif 
 

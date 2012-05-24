@@ -35,7 +35,6 @@ static inline void stub_use(void /*not*/) {
     return;
 }
 
-
 /*[ADD] The system curse listing.*/
 struct curse_list_entry curse_full_list[] = {
 	{	"stub", 0x00000000	},
