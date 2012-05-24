@@ -44,7 +44,9 @@ inline int check_permissions (pid_t target) {
 	int ret;
 
 	ret = -ESRCH;		//FIXME: Sanity check.
+	rcu_read_lock();
 	foreign_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!foreign_task)
 		goto out;
 	ret = -EINVAL;		//FIXME: Sanity check.
@@ -330,7 +332,9 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	err = -ESRCH;
+	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!target_task)
 		goto out_locked;
 	err = -EPERM;
@@ -371,7 +375,9 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	err = -ESRCH;
+	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!target_task)
 		goto out_locked;
 	err = -EPERM;
