@@ -65,15 +65,6 @@ inline int check_permissions (pid_t target) {
 		(local_c->gid == foreign_c->gid));			
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
-	//(ale1ster) Maybe we should use (if even one of the conditions is true, we have permission to interfere) :
-	// ! ((a->euid != 0) || (a->euid != b->uid) || (a->euid != b->euid) || (a->gid != b->gid) || !capable(ACTION))
-	// ... where ACTION is a function parameter.
-	//
-	//(master) EDIT: no we don't, this doesn't make sense. what is capable?
-	//capable means that i can perform an action. Unless we define some sort of ACTION in the kernel ourselves
-	//CAN_LIFT / CAN_CURSE or so then there is no such thing. Plus capable doesn't crosscheck with the proc we intend to change.
-	//Since we use (e)uid == 0, the superuser is allowed to do whatever we wish. This means we are covered.
-
 //out_with_local:
 	put_cred(local_c);
 out_with_foreign:
