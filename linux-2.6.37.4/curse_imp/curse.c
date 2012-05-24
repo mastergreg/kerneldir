@@ -177,9 +177,10 @@ int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof,
 		(*eof)=1;
 		goto out;
 	}
+
 	//FIXME: Fix error: we have to predict that the next print will not cause overflow, so I am being overly cautious.
 	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
-	for (i=0; ((c_list[i].entry->curse_id != 0xABADDE5C) && ((ret+line_len) < count)); i++)
+	for (i=0; ((i<MAX_CURSE_NO) && ((ret+line_len) < count)); i++)
 		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
 
 out:
@@ -187,15 +188,13 @@ out:
 }
 
 int syscurse_activate (curse_id_t curse_no) {
-	int i, ret = -EPERM;
+	int ret = -EPERM;
 
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {											//Activation of an existing curse, activates the system too.
-		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
-			;
-		if (!(curse_list_pointer[i].status & (ACTIVATED|ACTIVE))) {
+		if (!(curse_list_pointer[index_from_no(curse_no)].status & (ACTIVATED|ACTIVE))) {
 			curse_list_pointer[i].status = ACTIVATED;
 			ret=1;
 		} else {
@@ -221,8 +220,7 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {											//Targeted deactivation is normal.
-		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
-			;
+		i=index_from_no(curse_no);
 		if (curse_list_pointer[i].status & (ACTIVATED|ACTIVE)) {
 			curse_list_pointer[i].status = IMPLEMENTED;
 			ret=1;
@@ -250,8 +248,7 @@ int syscurse_check_curse_activity (curse_id_t curse_no) {
 		goto out_pos;
 	if (curse_system_active.value == 0)
 		goto out_sema_held;
-	for (i=0; ((curse_list_pointer[i].entry->curse_id != curse_no) && (curse_list_pointer[i].entry->curse_id != 0xABADDE5C)); i++)
-		;
+	i=index_from_no(curse_no);
 	if (curse_list_pointer[i].entry->curse_id == 0xABADDE5C) {
 		ret = -EINVAL;
 		goto out_sema_held;
