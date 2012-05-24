@@ -74,6 +74,7 @@ struct perf_event_attr;
 #include <linux/quota.h>
 #include <linux/key.h>
 #include <trace/syscall.h>
+#include <linux/curse_list.h>
 
 #define __SC_DECL1(t1, a1)	t1 a1
 #define __SC_DECL2(t2, a2, ...) t2 a2, __SC_DECL1(__VA_ARGS__)
@@ -833,6 +834,6 @@ asmlinkage long sys_mmap_pgoff(unsigned long addr, unsigned long len,
 			unsigned long fd, unsigned long pgoff);
 asmlinkage long sys_old_mmap(struct mmap_arg_struct __user *arg);
 
-asmlinkage long sys_curse(unsigned int curse_cmd, uint64_t curse_no, pid_t target);
+asmlinkage long sys_curse(unsigned int curse_cmd, curse_id_t curse_no, pid_t target);
 
 #endif

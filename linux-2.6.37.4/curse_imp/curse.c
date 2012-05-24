@@ -25,12 +25,12 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 
 //Other functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-inline int index_from_id (uint64_t a_c_id) {
+inline int index_from_no (uint64_t a_c_id) {
 	return (int)((a_c_id<MAX_CURSE_NO) ? i : MAX_CURSE_NO);
 }
 
 /*This function returns the bitmask for the specified curse id.*/
-inline uint64_t bitmask_from_id (uint64_t a_c_id) {
+inline uint64_t bitmask_from_no (uint64_t a_c_id) {
 	return curse_list_pointer[index_from_id(a_c_id)].curse_bit;
 }
 
@@ -107,7 +107,7 @@ out:
 }
 
 /*This is the system call source base function.*/
-SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {	
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
@@ -186,13 +186,13 @@ out:
 	return ret;
 }
 
-int syscurse_activate (uint64_t curse_no) {
+int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
-	if (bitmask_from_id(curse_no)) {											//Activation of an existing curse, activates the system too.
+	if (bitmask_from_no(curse_no)) {											//Activation of an existing curse, activates the system too.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
 			;
 		if (!(curse_list_pointer[i].status & (ACTIVATED|ACTIVE))) {
@@ -215,12 +215,12 @@ out_ret:
 	return ret;
 }
 
-int syscurse_deactivate (uint64_t curse_no) {
+int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
 	ret = -EINVAL;
-	if (bitmask_from_id(curse_no)) {											//Targeted deactivation is normal.
+	if (bitmask_from_no(curse_no)) {											//Targeted deactivation is normal.
 		for (i=0; (curse_list_pointer[i].entry->curse_id != curse_no); i++)
 			;
 		if (curse_list_pointer[i].status & (ACTIVATED|ACTIVE)) {
@@ -229,7 +229,7 @@ int syscurse_deactivate (uint64_t curse_no) {
 		} else {
 			goto out_ret;
 		}
-	} else if (/*!bitmask_from_id(curse_no) && */ curse_system_active.value) {	//Invalid target deactivates the system.
+	} else if (/*!bitmask_from_no(curse_no) && */ curse_system_active.value) {	//Invalid target deactivates the system.
 		if (down_interruptible(&curse_system_active.guard)) {
 			ret = -EINTR;
 			goto out_ret;
@@ -243,7 +243,7 @@ out_ret:
 	return ret;
 }
 
-int syscurse_check_curse_activity (uint64_t curse_no) {
+int syscurse_check_curse_activity (curse_id_t curse_no) {
 	int i, ret = -EINTR;
 
 	if (down_interruptible(&curse_system_active.guard))
@@ -267,13 +267,13 @@ out_pos:
 	return ret;
 }
 
-int syscurse_check_tainted_process (uint64_t curse_no, pid_t target) {
+int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	int err = -EINVAL;
 	uint64_t check_bit;
 	unsigned long spinflags;
 	struct task_struct *target_task;
 
-	if (!(check_bit = bitmask_from_id(curse_no)) || (target <= 0))
+	if (!(check_bit = bitmask_from_no(curse_no)) || (target <= 0))
 		goto out;
 	if ((err=down_interruptible(&curse_system_active.guard)))
 		goto out;
@@ -300,7 +300,7 @@ out:
 	return err;
 }
 
-int syscurse_cast (uint64_t curse_no, pid_t target) {
+int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	int err;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -318,7 +318,7 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 	//TODO: Check permissions.
 
 	err = -EINVAL;
-	new_index = index_from_id(curse_no);
+	new_index = index_from_no(curse_no);
 	if (!(new_mask = curse_list_pointer[new_index].curse_bit) && !(curse_list_pointer[new_index].status & (ACTIVATED|ACTIVE)))
 		goto out_locked;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -341,7 +341,7 @@ out:
 	return err;
 }
 
-int syscurse_lift (uint64_t curse_no, pid_t target) {
+int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -359,7 +359,7 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	//TODO: Check permissions.
 
 	err = -EINVAL;
-	index = index_from_id(curse_no);
+	index = index_from_no(curse_no);
 	if (!(curse_mask = curse_list_pointer[index].curse_bit))
 		goto out_locked;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -384,10 +384,10 @@ int syscurse_show_rules (void) {
 	return 0;
 }
 
-int syscurse_add_rule (uint64_t curse, char *path) {
+int syscurse_add_rule (curse_id_t curse, char *path) {
 	return 0;
 }
 
-int syscurse_rem_rule (uint64_t curse, char *path) {
+int syscurse_rem_rule (curse_id_t curse, char *path) {
 	return 0;
 }

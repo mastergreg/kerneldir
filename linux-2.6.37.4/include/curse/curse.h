@@ -55,15 +55,15 @@ struct syscurse {
 
 /*Function prototypes (although forwards are ugly:)).*/
 int syscurse_list_all(char *, char **, off_t, int, int *, void *);
-int syscurse_activate(uint64_t);
-int syscurse_deactivate(uint64_t);
-int syscurse_check_curse_activity(uint64_t);
-int syscurse_check_tainted_process(uint64_t, pid_t);
-int syscurse_cast(uint64_t, pid_t);
-int syscurse_lift(uint64_t, pid_t);
+int syscurse_activate(curse_id_t);
+int syscurse_deactivate(curse_id_t);
+int syscurse_check_curse_activity(curse_id_t);
+int syscurse_check_tainted_process(curse_id_t, pid_t);
+int syscurse_cast(curse_id_t, pid_t);
+int syscurse_lift(curse_id_t, pid_t);
 int syscurse_show_rules(void);
-int syscurse_add_rule(uint64_t, char *);
-int syscurse_rem_rule(uint64_t, char *);
+int syscurse_add_rule(curse_id_t, char *);
+int syscurse_rem_rule(curse_id_t, char *);
 
 /*Bitmasks to use for setting and checking the permissions field in struct syscurse.*/
 #define _U_M 0x01
