@@ -65,7 +65,7 @@ out:
 
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
-	int i, j;
+	int j;
 	curse_id_t t;
 
 	//Global activity status.
@@ -76,9 +76,8 @@ void initial_actions (void) {
 	curse_system_active.value = 0;
 
 	//2. Initialize curse lookup table.
-	for (i=0; ((curse_full_list[i].curse_id != 0xABADDE5C) && (i < MAX_CURSE_NO)); i++) ;
-	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
-	for (j=1, t=0x1; j<i; j++, t<<=1) {
+	curse_list_pointer=(struct syscurse *)kzalloc((MAX_CURSE_NO+1)*sizeof(struct syscurse), GFP_KERNEL);
+	for (j=0, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].curse_bit=t;
 		curse_list_pointer[j].ref_count=0;
@@ -86,11 +85,10 @@ void initial_actions (void) {
 		SET_INHER(curse_list_pointer[j]);
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
-	curse_list_pointer[0].status=(curse_list_pointer[i].status=INVALID_CURSE);
-	curse_list_pointer[0].curse_bit=(curse_list_pointer[i].curse_bit=0x0);
-	curse_list_pointer[0].ref_count=(curse_list_pointer[i].ref_count=0);
+	curse_list_pointer[0].status=INVALID_CURSE;
+	curse_list_pointer[0].curse_bit=0x0;
+	curse_list_pointer[0].ref_count=0;
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
-	curse_list_pointer[i].entry=(struct curse_list_entry *)&curse_full_list[i];
 
 	//3. Populate entries in /proc filesystem.
 	if (!(dir_node = proc_mkdir(proc_dir_name, NULL)))
