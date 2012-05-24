@@ -42,30 +42,33 @@ inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	return curse_list_pointer[i].curse_bit;
 }
 
-/*This function checks if we are allowed to change the state of the target proc.*/
+/*This function checks if current is allowed to change the state of the target proc.*/
 inline int check_permissions (pid_t target) {
 	struct task_struct *foreign_task;
-    const struct cred *foreign_c, *local_c;
-    int ret;
+	const struct cred *foreign_c, *local_c;
+	int ret;
 
-    ret = -ESRCH;		//FIXME: Sanity check.
+	ret = -ESRCH;		//FIXME: Sanity check.
 	foreign_task = find_task_by_vpid(target);
 	if (!foreign_task)
 		goto out;
-    ret = -EINVAL;		//FIXME: Sanity check.
-    foreign_c = get_task_cred(foreign_task);
-    if (!foreign_c)
-        goto out_with_foreign;
+	ret = -EINVAL;		//FIXME: Sanity check.
+	foreign_c = get_task_cred(foreign_task);
+	if (!foreign_c)
+		goto out_with_foreign;
 
-    local_c = get_current_cred();
-    ret = ((local_c->uid == 0) || (local_c->uid == foreign_c->uid) || (local_c->gid == foreign_c->gid));
+	local_c = get_current_cred();
+	ret = ((local_c->uid == 0) || (local_c->uid == foreign_c->uid) || (local_c->gid == foreign_c->gid));
+	//Maybe we should use (if even one of the conditions is true, we have permission to interfere) :
+	// ! ((a->euid != 0) || (a->euid != b->uid) || (a->euid != b->euid) || (a->gid != b->gid) || !capable(ACTION))
+	// ... where ACTION is a function parameter.
 
 //out_with_local:
-    put_cred(local_c);
+	put_cred(local_c);
 out_with_foreign:
-    put_cred(foreign_c);
+	put_cred(foreign_c);
 out:
-    return ret;
+	return ret;
 }
 
 /*This function initializes all needed resources (only) once, at the beginning.*/
@@ -87,6 +90,8 @@ void initial_actions (void) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].curse_bit=t;
 		curse_list_pointer[j].ref_count=0;
+		curse_list_pointer[j].permissions=(_S_M | _G_M | _U_M);
+		SET_INHER(curse_list_pointer[j]);
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
 	curse_list_pointer[0].status=(curse_list_pointer[i].status=INVALID_CURSE);
@@ -330,6 +335,10 @@ int syscurse_cast (uint64_t curse_no, pid_t target) {
 	if (!(target_task->curse_data.curse_field & new_mask)) {
 		target_task->curse_data.curse_field |= new_mask;
 		curse_list_pointer[new_index].ref_count++;
+		if (GET_INHER(curse_list_pointer[new_index]))
+			curse_list_pointer[new_index].inherritance |= new_mask;
+		else
+			curse_list_pointer[new_index].inherritance &= (~new_mask);
 		curse_list_pointer[new_index].status=ACTIVE;
 		err=1;
 	}
@@ -365,8 +374,9 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 		goto out_locked;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (target_task->curse_data.curse_field & curse_mask) {
-		target_task->curse_data.curse_field &= ~curse_mask;		//Just to be safe (^= toggles, not clears).
+		target_task->curse_data.curse_field &= (~curse_mask);		//Just to be safe (^= toggles, not clears).
 		curse_list_pointer[index].ref_count--;
+		curse_list_pointer[index].inherritance &= (~curse_mask);
 		if (curse_list_pointer[index].ref_count == 0)			//Set curse status to ACTIVATED if ref 0ed-out.
 			curse_list_pointer[index].status = ACTIVATED;
 		err=1;

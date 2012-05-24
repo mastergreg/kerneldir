@@ -17,7 +17,7 @@
 struct task_curse_struct {
 	spinlock_t protection;		//Because it is included in sched.h (and no semaphores are welcome there:))
 	uint64_t curse_field;
+	uint64_t inherritance;		//Bitwise association of this field's bits and the previous one's.
 };
 
-#endif
-
+#endif	/* _CURSE_TASK_STRUCT_DEFINED */
