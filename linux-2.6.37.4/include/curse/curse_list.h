@@ -16,10 +16,11 @@
 /*Maximum number of curses (-1 is the limit).*/
 #define MAX_CURSE_NO 65
 
+typedef uint64_t curse_id_t;
 /*Curse entry structure for logistic purposes.*/
 struct curse_list_entry {
 	char curse_name[CURSE_MAX_NAME_SIZE];
-	uint64_t curse_id;
+	curse_id_t curse_id;
 };
 
 #ifdef __KERNEL__
