@@ -30,5 +30,6 @@ int main (void) {
 	printf("Deactivate: %d\n", curse(DEACTIVATE, 1, 1));
 	printf("List: %d\n", curse(LIST_ALL, 1, 1));
 
+	printf("Activate: %d\n", curse(ACTIVATE, 1, 1172));
 	return 0;
 }
