@@ -59,9 +59,9 @@ inline int check_permissions (pid_t target) {
 	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	ret = ((local_c->euid == 0) ||			\
-		(local_c->euid == foreign_c->euid)	\
-		(local_c->euid == foreign_c->uid)	\
+	ret = ((local_c->euid == 0) 			||	\
+		(local_c->euid == foreign_c->euid)	||	\
+		(local_c->euid == foreign_c->uid)	||	\
 		(local_c->gid == foreign_c->gid));			
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
