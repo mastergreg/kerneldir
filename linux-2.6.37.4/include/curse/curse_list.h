@@ -14,7 +14,7 @@
 /*Maximum size for a curse name.*/
 #define CURSE_MAX_NAME_SIZE 24
 /*Maximum number of curses (-1 is the limit).*/
-#define MAX_CURSE_NO 65
+#define MAX_CURSE_NO 1
 
 typedef uint64_t curse_id_t;
 /*Curse entry structure for logistic purposes.*/
@@ -46,6 +46,9 @@ struct curse_list_entry curse_full_list[] = {
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
+#undef MAX_CURSE_NO
+#define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof struct curse_list_entry))-1)
+
 /*System call function pointer structure.*/
 struct fun_element {
 	void (*fun_init)(void /*List of arguments*/);
@@ -62,6 +65,8 @@ struct fun_element fun_array[] = {
 
 	{	stub_init, stub_destroy, stub_use	} /* you have made a grave mistace (sentinel speaking) */
 };
+
+
 
 #endif	/* __KERNEL__ */
 
