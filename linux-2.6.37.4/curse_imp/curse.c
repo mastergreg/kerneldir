@@ -31,7 +31,7 @@ inline int index_from_no (uint64_t a_c_id) {
 
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_no (uint64_t a_c_id) {
-	return curse_list_pointer[index_from_id(a_c_id)].curse_bit;
+	return curse_list_pointer[index_from_no(a_c_id)].curse_bit;
 }
 
 /*This function checks if current is allowed to change the state of the target proc.*/
@@ -188,13 +188,14 @@ out:
 }
 
 int syscurse_activate (curse_id_t curse_no) {
-	int ret = -EPERM;
+	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {											//Activation of an existing curse, activates the system too.
-		if (!(curse_list_pointer[index_from_no(curse_no)].status & (ACTIVATED|ACTIVE))) {
+		i=index_from_no(curse_no);
+		if (!(curse_list_pointer[i].status & (ACTIVATED|ACTIVE))) {
 			curse_list_pointer[i].status = ACTIVATED;
 			ret=1;
 		} else {
