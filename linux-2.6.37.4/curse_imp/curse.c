@@ -192,6 +192,7 @@ int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof,
 	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
 	for (i=0; ((i<MAX_CURSE_NO) && ((ret+line_len) < count)); i++)
 		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
+	(*start)=page;
 
 out:
 	return ret;
