@@ -44,7 +44,9 @@ inline int check_permissions (pid_t target) {
 	int ret;
 
 	ret = -ESRCH;		//FIXME: Sanity check.
+	rcu_read_lock();
 	foreign_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!foreign_task)
 		goto out;
 	ret = -EINVAL;		//FIXME: Sanity check.
@@ -54,12 +56,13 @@ inline int check_permissions (pid_t target) {
 
 	local_c = get_current_cred();     
 	/* am i root or sudo?? */
-	/* do we belong to the same (effective) user?*/
+	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	ret = ((local_c->uid == 0) || (local_c->euid == 0) || \
-			(local_c->euid == foreign_c->euid) || (local_c->uid == foreign_c->uid) || \
-			(local_c->gid == foreign_c->gid));			
+	ret = ((local_c->euid == 0) ||			\
+		(local_c->euid == foreign_c->euid)	\
+		(local_c->euid == foreign_c->uid)	\
+		(local_c->gid == foreign_c->gid));			
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
 	//(ale1ster) Maybe we should use (if even one of the conditions is true, we have permission to interfere) :
@@ -140,7 +143,6 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 			continue;
 	}
 
-	check_permissions(target);
 	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
 	
 	//Do not even call if curse system is not active.
@@ -330,7 +332,9 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	err = -ESRCH;
+	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!target_task)
 		goto out_locked;
 	err = -EPERM;
@@ -371,7 +375,9 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	err = -ESRCH;
+	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
+	rcu_read_unlock();
 	if (!target_task)
 		goto out_locked;
 	err = -EPERM;
