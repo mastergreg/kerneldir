@@ -18,6 +18,7 @@
 
 #include <curse/curse.h>
 #include <curse/curse_list.h>
+#include <curse/curse_types.h>
 
 //Global data (create them taking into account reentrancy: static usually prevents that).
 /*This flag helps to initialize what needs initializing in our envirronment.*/
@@ -25,12 +26,13 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 
 //Other functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-inline int index_from_no (uint64_t a_c_id) {
-	return (int)((a_c_id<MAX_CURSE_NO) ? i : MAX_CURSE_NO);
+inline int index_from_no (curse_id_t a_c_id) {
+    int i = ((a_c_id < MAX_CURSE_NO) ? a_c_id : MAX_CURSE_NO);
+	return i;
 }
 
 /*This function returns the bitmask for the specified curse id.*/
-inline uint64_t bitmask_from_no (uint64_t a_c_id) {
+inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 	return curse_list_pointer[index_from_no(a_c_id)].curse_bit;
 }
 

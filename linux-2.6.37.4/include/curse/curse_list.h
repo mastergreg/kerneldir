@@ -47,7 +47,7 @@ struct curse_list_entry curse_full_list[] = {
 };
 
 #undef MAX_CURSE_NO
-#define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof struct curse_list_entry))-1)
+#define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
 
 /*System call function pointer structure.*/
 struct fun_element {
