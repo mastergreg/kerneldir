@@ -1,6 +1,6 @@
 
 CC=gcc-4.4
-CCFLAGS=-I../linux/include/
+CFLAGS=-I./include/
 
 SRCFILES=$(wildcard *.c)
 OBJFILES=$(patsubst %.c,%.o,$(SRCFILES))
@@ -8,11 +8,11 @@ TARGET=curse_tester.out
 all:	$(TARGET)
 
 $(TARGET):	$(OBJFILES)
-	$(CC)	$(CCFLAGS) $^ -o $(TARGET)
+	$(CC)	$(CFLAGS) $^ -o $(TARGET)
 
 
 *.o:	*.c
-	$(CC) $(CCFLAGS) $< -c
+	$(CC) $(CFLAGS) $< -c
 
 clean:
 	$(RM) $(OBJFILES) $(TARGET)
