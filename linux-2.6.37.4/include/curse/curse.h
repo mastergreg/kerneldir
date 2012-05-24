@@ -12,10 +12,8 @@
 #ifndef _SYSCURSE_H
 #define _SYSCURSE_H
 
-//pid_t, uin64_t on kernel.
-#include <linux/types.h>
-//Inclusion of uint64_t on userspace.
-#ifndef __KERNEL__
+#include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
+#ifndef __KERNEL__			/*Inclusion of uint64_t on userspace.*/
 #include <stdint.h>
 #include "curse_list.h"
 #endif
@@ -81,18 +79,18 @@ struct syscurse {
 	enum curse_status status;
 };
 
-//Procfs entry paths.
+/*Procfs entry paths.*/
 #define proc_dir_name "curse"
 #define proc_out_node_name "listing"
 
 //TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
 #ifdef __KERNEL__
 
-//Kernel specific code...
+/*Kernel specific code.*/
 #include <linux/semaphore.h>
 #include <linux/proc_fs.h>
 
-//Function prototypes (although forwards are ugly:)). : All the functions return 0 for success, or one of the usual error codes for error.
+/*Function prototypes (although forwards are ugly:)).*/
 int syscurse_list_all(char *, char **, off_t, int, int *, void *);
 int syscurse_activate(uint64_t);
 int syscurse_deactivate(uint64_t);
@@ -104,10 +102,11 @@ int syscurse_show_rules(void);
 int syscurse_add_rule(uint64_t, char *);
 int syscurse_rem_rule(uint64_t, char *);
 
-//Proc node pointer.
+/*Proc node pointer.*/
 struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
 
-#include "curse_sched.h"	//Source it here too.
+//Source it here too.
+#include "curse_sched.h"
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
@@ -115,7 +114,6 @@ struct bool_wrapper {
 	_Bool value;
 };
 
-//Since the wrapper that checks is in the header, I think this should be there too.	:: Moved it here. curse_k_wrapper needs it. Not static - prevents reentrancy.
 /*Data holding the curse system status.*/
 struct bool_wrapper curse_system_active;
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
@@ -128,9 +126,6 @@ inline void curse_k_wrapper (void) {
 	//if so, retrieve the pointer from the fun* array and call.
 	return;
 }
-
-//Anything else?...
-
 
 #endif	/* __KERNEL__ */
 

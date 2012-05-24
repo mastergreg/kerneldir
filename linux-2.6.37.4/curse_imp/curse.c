@@ -8,7 +8,7 @@
 #include <linux/linkage.h>
 #include <linux/syscalls.h>
 #include <linux/kernel.h>
-#include <linux/types.h>		//Sentinels prevent multiple inclusion.
+#include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
 #include <linux/sched.h>
 #include <linux/spinlock.h>
 #include <asm/atomic.h>
@@ -27,6 +27,7 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_from_id (uint64_t a_c_id) {
 	int i;
+
 	//Provided that the sentinel has a bit value of 0x0, the below is correct.
 	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
 		;
@@ -36,32 +37,27 @@ inline int index_from_id (uint64_t a_c_id) {
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 	int i;
+
 	i=index_from_id(a_c_id);
 	return curse_list_pointer[i].curse_bit;
 }
 
 /*This function checks if we are allowed to change the state of the target proc.*/
 inline int check_permissions (pid_t target) {
-
 	struct task_struct *foreign_task;
-    const struct cred *foreign_c;
-    const struct cred *local_c;
+    const struct cred *foreign_c, local_c;
     int ret;
 
-    ret = -ESRCH;
+    ret = -ESRCH;		//FIXME: Sanity check.
 	foreign_task = find_task_by_vpid(target);
-    /* sanity check FIXME */
 	if (!foreign_task)
 		goto out;
-
-    /* sanity check FIXME */
-    ret = -EINVAL;
+    ret = -EINVAL;		//FIXME: Sanity check.
     foreign_c = get_task_cred(foreign_task);
     if (!foreign_c)
         goto out_with_foreign;
 
     local_c = get_current_cred();
-
     ret = ((local_c->uid == 0) || (local_c->uid == foreign_c->uid) || (local_c->gid == foreign_c->gid));
 
 //out_with_local:
@@ -76,11 +72,14 @@ out:
 void initial_actions (void) {
 	int i, j;
 	uint64_t t;
+
 	//Global activity status.
 	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
+
 	//1. Initialize active status boolean.
 	sema_init(&curse_system_active.guard, 1);
 	curse_system_active.value = 0;
+
 	//2. Initialize curse lookup table.
 	for (i=0; ((curse_full_list[i].curse_id != 0xABADDE5C) && (i < MAX_CURSE_NO)); i++) ;
 	curse_list_pointer=(struct syscurse *)kzalloc((i+1)*sizeof(struct syscurse), GFP_KERNEL);
@@ -95,12 +94,14 @@ void initial_actions (void) {
 	curse_list_pointer[0].ref_count=(curse_list_pointer[i].ref_count=0);
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
 	curse_list_pointer[i].entry=(struct curse_list_entry *)&curse_full_list[i];
+
 	//3. Populate entries in /proc filesystem.
 	if (!(dir_node = proc_mkdir(proc_dir_name, NULL)))
 		goto out;
 	if (!(output_node = create_proc_read_entry(proc_out_node_name, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
 		goto out_dirred;
-	//TODO: Is there anything else to be done here?
+	//FIXME: Is there anything else to be done here?
+
 	goto out;
 //out_nodded:
 	remove_proc_entry(proc_out_node_name, dir_node);
@@ -116,7 +117,7 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, uint64_t, curse_no, pid_t, targe
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
 
-	if (atomic_read(&initial_actions_flag)) {		//Conditional will not be entered but the first time(s).
+	if (atomic_read(&initial_actions_flag)) {		//Conditional will not be entered but the first time(s).	//FIXME: I think it disables local interests. We can protect it with a single boolean.
 		if (atomic_read(&initial_actions_flag) == 2)
 			goto wait_init;
 		atomic_set(&initial_actions_flag, 2);
@@ -171,25 +172,28 @@ out:
 	//return (long)(curse_cmd+curse_no+(int)target);
 }
 
-//TODO: Source helpful functions.
+/*TODO: Source helpful functions.*/
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
 	int i, line_len, ret=0;
 	struct syscurse *c_list=(struct syscurse *)data;
+
 //	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
-	//TODO: ... Y' know...:)
 	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt
 		(*eof)=1;
 		goto out;
 	}
-	//TODO: Fix error: we have to predict that the next print will not cause overflow, so I am being overly cautious.
+	//FIXME: Fix error: we have to predict that the next print will not cause overflow, so I am being overly cautious.
 	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
 	for (i=0; ((c_list[i].entry->curse_id != 0xABADDE5C) && ((ret+line_len) < count)); i++)
-		ret+=scnprintf(&page[ret], count, "%s %llu\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
+		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
+
 out:
 	return ret;
 }
+
 int syscurse_activate (uint64_t curse_no) {
 	int i, ret = -EPERM;
+
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
@@ -211,11 +215,14 @@ int syscurse_activate (uint64_t curse_no) {
 		curse_system_active.value=1;
 		up(&curse_system_active.guard);
 	}
+
 out_ret:
 	return ret;
 }
+
 int syscurse_deactivate (uint64_t curse_no) {
 	int i, ret = -EPERM;
+
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	if (bitmask_from_id(curse_no)) {											//Targeted deactivation is normal.
@@ -236,11 +243,14 @@ int syscurse_deactivate (uint64_t curse_no) {
 		up(&curse_system_active.guard);
 	}
 	//TODO: Do we have to unhook (call close pointer) all the active curses here?	::	No, we simply deactivate. On activation, it will continue as was.
+
 out_ret:
 	return ret;
 }
+
 int syscurse_check_curse_activity (uint64_t curse_no) {
 	int i, ret = -EINTR;
+
 	if (down_interruptible(&curse_system_active.guard))
 		goto out_pos;
 	if (curse_system_active.value == 0)
@@ -255,11 +265,13 @@ int syscurse_check_curse_activity (uint64_t curse_no) {
         ret=1;
 	else
 		ret=0;
+
 out_sema_held:
 	up(&curse_system_active.guard);
 out_pos:
 	return ret;
 }
+
 int syscurse_check_tainted_process (uint64_t curse_no, pid_t target) {
 	int err = -EINVAL;
 	uint64_t check_bit;
@@ -286,11 +298,13 @@ int syscurse_check_tainted_process (uint64_t curse_no, pid_t target) {
 		printk(KERN_INFO "no curse_field for you!\n");
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
+
 out_locked:
 	up(&curse_system_active.guard);
 out: 
 	return err;
 }
+
 int syscurse_cast (uint64_t curse_no, pid_t target) {
 	int err;
 	unsigned long spinflags;
@@ -327,6 +341,7 @@ out_locked:
 out: 
 	return err;
 }
+
 int syscurse_lift (uint64_t curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
@@ -352,7 +367,7 @@ int syscurse_lift (uint64_t curse_no, pid_t target) {
 	if (target_task->curse_data.curse_field & curse_mask) {
 		target_task->curse_data.curse_field &= ~curse_mask;		//Just to be safe (^= toggles, not clears).
 		curse_list_pointer[index].ref_count--;
-		if (curse_list_pointer[index].ref_count == 0)		//Set curse status to ACTIVATED if ref 0ed-out.
+		if (curse_list_pointer[index].ref_count == 0)			//Set curse status to ACTIVATED if ref 0ed-out.
 			curse_list_pointer[index].status = ACTIVATED;
 		err=1;
 	}
@@ -364,12 +379,15 @@ out_locked:
 out:
 	return err;
 }
+
 int syscurse_show_rules (void) {
 	return 0;
 }
+
 int syscurse_add_rule (uint64_t curse, char *path) {
 	return 0;
 }
+
 int syscurse_rem_rule (uint64_t curse, char *path) {
 	return 0;
 }

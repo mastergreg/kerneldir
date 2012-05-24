@@ -1,0 +1,44 @@
+======================================COMMANDS======================================
+1. LIST_ALL								:	<no_argument>
+Lists all curses in the curse list, implemented and not.
+	R: <?>
+//IMPORTANT: Depending on the way we do the copy to userspace, this should not even matter. I think it would be better if we went with the proc filesystem mapping solution (it is not a case where the data is time sensitive).
+2. ACTIVATE								:	id of curse to activate
+Activates the curse with the provided id, or activates the curse system if id is 0.
+	R: 1 on success - appropriate code on failure
+3. DEACTIVATE							:	id of curse to deactivate
+Deactivates the curse with the provided id or the whole system (disables the curse mechanism) if it is 0.
+	R: <same>
+4. CHECK_CURSE_ACTIVITY					:	id of curse to check
+Checks if a curse is active (false if the curse mechanism is deactivated).
+	R: 1 if a curse is active - 0 if no curse is active - appropriate code on error
+5. CHECK_TAINTED_PROCESS				:	pid_t of the process to check (-1 to check for any process (?TODO)), id of curse to check
+Check if the requested process has an active curse	(false if the user has not permissions to that process).
+	R: <same>
+6. CAST (ex deploy (ex unleash))		:	pid_t of the process to target, id of the curse to use
+Set a curse upon a target.
+	R: 1 on success - appropriate code on failure
+7. LIFT (ex retire)						:	<same>
+Remove a curse from a target.
+	R: <same>
+------RULES: Rules are static bindings of curses to binaries (paths) instead of processes.------ :: These are supplementary. We may implement them, after the main implementation of the system call.
+8. SHOW_RULES							:	<no_argument>
+Show all rules that are currently in the system.
+	R: <?>
+9. ADD_RULES							:	identifier to the binary (TODO: path/inode(?)), id of the curse to deploy
+Add a new rule (this adds a binding, and deploys the rule).
+	R: 1 on success - appropriate code on failure
+10.REM_RULE								:	<same>
+Remove an existing rule.
+	R: 1 on success - appropriate code on failure
+
+=======================================STATUS=======================================
+IMPLEMENTED		0x00
+Curse has code (vs. placeholders).
+ACTIVATED		0x01
+Curse can become active. (is implemented, not active)
+ACTIVE			0x02
+Currently running (influencing the system). (is implemented, and activated)
+INVALID_CURSE	0x04
+Not valid. (not implemented)
+
