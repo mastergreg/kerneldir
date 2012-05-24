@@ -68,6 +68,8 @@
 #include <linux/shmem_fs.h>
 #include <linux/slab.h>
 
+#include <curse/curse_kernel_interface.h>
+
 #include <asm/io.h>
 #include <asm/bugs.h>
 #include <asm/setup.h>
@@ -687,6 +689,9 @@ asmlinkage void __init start_kernel(void)
 	proc_root_init();
 #endif
 	cgroup_init();
+#ifdef CONFIG_CURSES
+	curses_init();
+#endif 
 	cpuset_init();
 	taskstats_init_early();
 	delayacct_init();

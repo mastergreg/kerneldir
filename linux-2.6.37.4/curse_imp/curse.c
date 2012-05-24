@@ -74,7 +74,7 @@ out:
 }
 
 /*This function initializes all needed resources (only) once, at the beginning.*/
-void initial_actions (void) {
+void curses_init (void) {
 	int j;
 	curse_id_t t;
 
@@ -127,7 +127,7 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 			goto wait_init;
 		atomic_set(&initial_actions_flag, 2);
 		//Initializing actions.
-		initial_actions();
+		//initial_actions();
 		atomic_set(&initial_actions_flag, 0);
 		wait_init:
 		while (atomic_read(&initial_actions_flag))

@@ -9,11 +9,15 @@
  *
  */
 
+
 #ifndef _SYSCURSE_H
 #define _SYSCURSE_H
 
 #include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
 #ifndef __KERNEL__			/*Inclusion of uint64_t on userspace.*/
+
+
+
 #include <stdint.h>
 #include <curse/curse_list.h>
 #endif
@@ -51,6 +55,7 @@ struct syscurse {
 /*Kernel specific code.*/
 #include <linux/semaphore.h>
 #include <linux/proc_fs.h>
+
 
 /*Function prototypes (although forwards are ugly:)).*/
 int syscurse_list_all(char *, char **, off_t, int, int *, void *);
