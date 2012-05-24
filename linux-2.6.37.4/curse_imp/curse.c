@@ -45,7 +45,7 @@ inline uint64_t bitmask_from_id (uint64_t a_c_id) {
 /*This function checks if we are allowed to change the state of the target proc.*/
 inline int check_permissions (pid_t target) {
 	struct task_struct *foreign_task;
-    const struct cred *foreign_c, local_c;
+    const struct cred *foreign_c, *local_c;
     int ret;
 
     ret = -ESRCH;		//FIXME: Sanity check.
