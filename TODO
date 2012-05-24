@@ -6,6 +6,7 @@
 * Create interface ioctl with user --all --6
 * Hash function in userspace lib --all --7
 * Check ptrace mechanism for hijacking the syscall table at runtime --ale1ster --9
+* check for race conditions on task_struct and use of its spinlocks --nalfemp --3 --FIXED
 * Change kernelspace calls to accept index --aleister-master --1 --FIXED
 * Need to check effective permissions verification mechanism --master --6 --FIXED
 * Create permissions in task_curse_struct (3bit field UGS) --ale1ster --6 --FIXED
