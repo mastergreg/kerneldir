@@ -10,13 +10,13 @@
 #define _CURSE_LIST_LIB
 
 #include <linux/types.h>
+#include <curse/curse_types.h>
 
 /*Maximum size for a curse name.*/
 #define CURSE_MAX_NAME_SIZE 24
 /*Maximum number of curses (-1 is the limit).*/
 #define MAX_CURSE_NO 1
 
-typedef uint64_t curse_id_t;
 /*Curse entry structure for logistic purposes.*/
 struct curse_list_entry {
 	char curse_name[CURSE_MAX_NAME_SIZE];
