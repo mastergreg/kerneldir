@@ -1,22 +1,20 @@
-* check function returns against new return policy --all --2
-* Check proper use of activation. --ale1ster --2
-* Need to check effective permissions verification mechanism --all --5
+* check function returns against new return policy --all --2 --STICKY
 * Create interface ioctl with user --all --6
 * Create permissions in task_curse_struct (3bit field UGS) --all --6
-* Change curse_bit to curse_active_bit in syscurse (and all used points) --all --6
 * check for race conditions on task_struct and use of its spinlocks --nalfemp --7
+* Change curse_bit to curse_active_bit in syscurse (and all used points) --ale1ster --6
 * Initialize task_curse_struct in fork (allocation pending?) --all --5 --FIXED
- Fix binary op spaces (too tired right now) --ale1ster --1 --FIXED
- Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified) --ale1ster --3 --FIXED
 * Need to create permissions verification mechanism (function?) --master --3 --FIXED
- Fix deactivation (Policy: we act on list_pointer only after we take system_status sema). --ale1ster --4 --FIXED
+* Need to check effective permissions verification mechanism --all --5
+
+
+And so the story goes...
+
+ Fix binary op spaces (too tired right now) --ale1ster --1 --FIXED
+ Beautify library from userspace inclusion (done from laptop after 12:00) --ale1ster --1 --FIXED
+ Check proper use of activation. --ale1ster --2 --FIXED
+ Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified) --ale1ster --3 --FIXED
  Make bitmask_from_id proper (for-if-return) --ale1ster --3 --FIXED
+ Fix deactivation (Policy: we act on list_pointer only after we take system_status sema). --ale1ster --4 --FIXED
  Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5 --FIXED
  Maybe change todo.py to ignore everything after an empty line or a ============ delimiter, so we can keep history? --master --6 --FIXED
- Beautify library from userspace inclusion (done from laptop after 12:00) --ale1ster --1 --FIXED
-
-We don't need a delimiter for history
-we simply don't start the lines with *
-if a line doesn't start with * then it's ignored
-so this can be used for keeping tabs on history maybe with times
-
