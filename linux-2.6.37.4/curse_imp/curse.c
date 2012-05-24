@@ -52,11 +52,16 @@ inline int check_permissions (pid_t target) {
 	if (!foreign_c)
 		goto out_with_foreign;
 
-	local_c = get_current_cred();
-	ret = ((local_c->uid == 0) || (local_c->euid == 0) || \     /* am i root or sudo?? */
-			(local_c->euid == foreign_c->euid) || (local_c->uid == foreign_c->uid) || \	/* do we belong to the same (effective) user?*/
-			(local_c->gid == foreign_c->gid));			/* or the same group? */
+	local_c = get_current_cred();     
+	/* am i root or sudo?? */
+	/* do we belong to the same (effective) user?*/
+	/* or the same group? */
 
+	ret = ((local_c->uid == 0) || (local_c->euid == 0) || \
+			(local_c->euid == foreign_c->euid) || (local_c->uid == foreign_c->uid) || \
+			(local_c->gid == foreign_c->gid));			
+
+	printk(KERN_INFO "perm ret =%d\n", ret);
 	//(ale1ster) Maybe we should use (if even one of the conditions is true, we have permission to interfere) :
 	// ! ((a->euid != 0) || (a->euid != b->uid) || (a->euid != b->euid) || (a->gid != b->gid) || !capable(ACTION))
 	// ... where ACTION is a function parameter.
@@ -135,6 +140,7 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 			continue;
 	}
 
+	check_permissions(target);
 	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
 	
 	//Do not even call if curse system is not active.
