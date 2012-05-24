@@ -26,20 +26,12 @@ atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/
 //Other functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_from_no (uint64_t a_c_id) {
-	int i;
-
-	//Provided that the sentinel has a bit value of 0x0, the below is correct.
-	for (i=0; ((curse_list_pointer[i].entry->curse_id != 0xABADDE5C) && (curse_list_pointer[i].entry->curse_id != a_c_id)); i++)
-		;
-	return i;
+	return (int)((a_c_id<MAX_CURSE_NO) ? i : MAX_CURSE_NO);
 }
 
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_no (uint64_t a_c_id) {
-	int i;
-
-	i=index_from_no(a_c_id);
-	return curse_list_pointer[i].curse_bit;
+	return curse_list_pointer[index_from_id(a_c_id)].curse_bit;
 }
 
 /*This function checks if current is allowed to change the state of the target proc.*/
@@ -74,7 +66,7 @@ out:
 /*This function initializes all needed resources (only) once, at the beginning.*/
 void initial_actions (void) {
 	int i, j;
-	uint64_t t;
+	curse_id_t t;
 
 	//Global activity status.
 	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
