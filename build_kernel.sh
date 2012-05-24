@@ -10,6 +10,11 @@ if [ -z $1 ];
 
 fi
 
-make -C $kerneldir defconfig ARCH=um SUBARCH=$(uname -m)
-make -C $kerneldir ARCH=um SUBARCH=$(uname -m)  CC=gcc-4.4 -j4
+if [ ! -f $kerneldir/.config ]
+  then
+	make -C $kerneldir defconfig ARCH=um SUBARCH=$(uname -m)
+  else
+	echo Using old config
+fi
+make -C $kerneldir ARCH=um SUBARCH=$(uname -m)  CC=gcc-4.4 -j5
 

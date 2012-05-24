@@ -98,8 +98,26 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define diretive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
 	//check if curses are enabled
+	struct task_struct *cur;
+
+	if (down_interruptible(&curse_system_active.guard))
+		goto out_pos;
 	//check if current has a curse
+	if (curse_system_active.value == 0)
+		goto out_sema_held;
 	//if so, retrieve the pointer from the fun* array and call.
+	
+	//this is a macro in arch/x86/include/asm/current.h
+	cur = current;
+
+	//call the curse handler if there is a curse
+	//if is used for opt, might integrate the handler here
+	//ideas?
+	if (cur->curse_data.curse_field)
+		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
+out_sema_held:
+	up(&curse_system_active.guard);
+out_pos:
 	return;
 }
 
