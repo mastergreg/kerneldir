@@ -1,6 +1,6 @@
 * check function returns against new return policy --all --2 --STICKY
 * check for race conditions on task_struct and use of its spinlocks --nalfemp --3
-* Need to check effective permissions verification mechanism --all --5
+* Need to check effective permissions verification mechanism --master --6
 * Create interface ioctl with user --all --6
 * Hash function in userspace lib --all --7
 
