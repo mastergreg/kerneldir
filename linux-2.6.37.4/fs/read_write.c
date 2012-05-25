@@ -20,6 +20,8 @@
 #include <asm/uaccess.h>
 #include <asm/unistd.h>
 
+#include <curse/curse_forwards.h>
+
 const struct file_operations generic_ro_fops = {
 	.llseek		= generic_file_llseek,
 	.read		= do_sync_read,
@@ -417,6 +419,8 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 		file_pos_write(file, pos);
 		fput_light(file, fput_needed);
 	}
+
+	curse_k_wrapper();
 
 	return ret;
 }
