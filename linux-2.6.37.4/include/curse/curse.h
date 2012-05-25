@@ -32,8 +32,8 @@ enum curse_command	{	LIST_ALL=0,
 enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=0x04};
 
 /*Procfs entry paths.*/
-#define proc_dir_name "curse"
-#define proc_out_node_name "listing"
+#define PROC_DIR_NAME "curse"
+#define PROC_OUT_NODE_NAME "listing"
 
 //TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
 #ifdef __KERNEL__
@@ -78,17 +78,18 @@ int syscurse_rem_rule(curse_id_t, char *);
 #define CLR_INHER(_) (((_).permissions) &= ~(_INHER_MASK))
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
+//TODO: clean this mess, it should be in curse 0x0 of curse_list_pointer
 struct bool_wrapper {
 	struct semaphore guard;
 	_Bool value;
 };
 
 /*Data holding the curse system status.*/
-struct bool_wrapper curse_system_active;
+extern struct bool_wrapper curse_system_active;
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
-struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
+extern struct syscurse *curse_list_pointer;
 /*Proc node pointer.*/
-struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
+extern struct proc_dir_entry *dir_node, *output_node;
 
 #endif	/* __KERNEL__ */
 

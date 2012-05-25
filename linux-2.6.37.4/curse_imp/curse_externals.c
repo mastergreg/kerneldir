@@ -14,8 +14,18 @@
 #include <curse/curse_types.h>
 /*
 #include <curse/curse.h>
+/*
 #include <curse/curse_forwards.h>
 */
+
+
+/*Data holding the curse system status.*/
+struct bool_wrapper curse_system_active;
+/*Pointer to the implemented curse array (loaded at init of syscall).*/
+struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
+/*Proc node pointer.*/
+struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
+
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
 	//check if curses are enabled
@@ -52,7 +62,7 @@ out_pos:
 }
 
 /*This function initializes all needed resources (only) once, at the beginning.*/
-void curses_init (void) {
+void curse_init (void) {
 	int j;
 	curse_id_t t;
 
@@ -79,17 +89,17 @@ void curses_init (void) {
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
 
 	//3. Populate entries in /proc filesystem.
-	if (!(dir_node = proc_mkdir(proc_dir_name, NULL)))
+	if (!(dir_node = proc_mkdir(PROC_DIR_NAME, NULL)))
 		goto out;
-	if (!(output_node = create_proc_read_entry(proc_out_node_name, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
+	if (!(output_node = create_proc_read_entry(PROC_OUT_NODE_NAME, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
 		goto out_dirred;
 	//FIXME: Is there anything else to be done here?
 
 	goto out;
 //out_nodded:
-	remove_proc_entry(proc_out_node_name, dir_node);
+	remove_proc_entry(PROC_OUT_NODE_NAME, dir_node);
 out_dirred:
-	remove_proc_entry(proc_dir_name, NULL);
+	remove_proc_entry(PROC_DIR_NAME, NULL);
 out:
 	return;		//Stub, but there might be others below.
 }

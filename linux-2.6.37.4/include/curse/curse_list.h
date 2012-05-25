@@ -15,7 +15,9 @@
 #include <curse/curse_types.h>
 
 /*Maximum number of curses (1 is the lower limit).*/
+#ifndef MAX_CURSE_NO
 #define MAX_CURSE_NO 1
+#endif
 
 /*[ADD] The individual curse header includes.*/
 #include <curse/no_fs_cache.h>
@@ -34,6 +36,8 @@ struct curse_list_entry curse_full_list[] = {
 
 #undef MAX_CURSE_NO
 #define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
+
+const int max_curse_no = (((sizeof (curse_full_list))/(sizeof (struct curse_list_entry)))-1);
 
 /*[ADD] The system call function pointer array.*/
 struct curse_fun_element fun_array[] = {
