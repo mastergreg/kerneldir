@@ -335,6 +335,8 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 		inc_syscr(current);
 	}
 
+	curse_k_wrapper();
+
 	return ret;
 }
 
@@ -419,8 +421,6 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 		file_pos_write(file, pos);
 		fput_light(file, fput_needed);
 	}
-
-	curse_k_wrapper();
 
 	return ret;
 }
