@@ -9,9 +9,10 @@
 #include <linux/stat.h>
 #include <linux/proc_fs.h>
 #include <linux/rcupdate.h>
-/*
+
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
+/*
 #include <curse/curse.h>
 #include <curse/curse_forwards.h>
 */
