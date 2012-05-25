@@ -27,12 +27,15 @@ struct curse_list_entry {
 
 /*[ADD] The individual curse header includes.*/
 static inline void stub_init(void /*or not*/) {
-    return;
+    printk("Open of curse initiated\n");
+	return;
 }
 static inline void stub_destroy(void /*or not*/) {
+    printk("Close of curse initiated\n");
     return;
 }
-static inline void stub_use(void /*not*/) {
+static inline void stub_inject(void /*not*/) {
+    printk("Run of curse initiated\n");
     return;
 }
 
@@ -53,17 +56,17 @@ struct curse_list_entry curse_full_list[] = {
 struct fun_element {
 	void (*fun_init)(void /*List of arguments*/);
 	void (*fun_destroy)(void /*List of arguments*/);
-	void (*fun_use)(void /*List of arguments*/);
+	void (*fun_inject)(void /*List of arguments*/);
 };
 
 /*[ADD] The system call function pointer array.*/
 struct fun_element fun_array[] = {
-	{	stub_init, stub_destroy, stub_use	}, /* maybe a stub maybe not, depends on how we handle 0 */
+	{	stub_init, stub_destroy, stub_inject	}, /* maybe a stub maybe not, depends on how we handle 0 */
 
-	{	stub_init, stub_destroy, stub_use	},
-	{	stub_init, stub_destroy, stub_use	},
+	{	stub_init, stub_destroy, stub_inject	},
+	{	stub_init, stub_destroy, stub_inject	},
 
-	{	stub_init, stub_destroy, stub_use	} /* you have made a grave mistace (sentinel speaking) */
+	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
 };
 
 
