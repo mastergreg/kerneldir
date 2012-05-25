@@ -76,7 +76,7 @@
 
 #include <trace/events/sched.h>
 
-#include <curse/curse_sched.h>
+#include <curse/curse_types.h>
 /*
  * Protected counters by write_lock_irq(&tasklist_lock)
  */
