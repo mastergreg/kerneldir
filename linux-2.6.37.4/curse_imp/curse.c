@@ -55,9 +55,9 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	ret = (((local_c->euid == 0) && ((curse_list_pointer[curse_no].permissions) & _U_M))													|| \	//su
-		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && ((curse_list_pointer[curse_no].permissions) & _U_M))	||	\	//user
-		((local_c->gid == foreign_c->gid) && ((curse_list_pointer[curse_no].permissions) & _U_M)));													//group
+	ret = (((local_c->euid == 0) && ((curse_list_pointer[curse_no].permissions) & _U_M))													|| \
+		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && ((curse_list_pointer[curse_no].permissions) & _U_M))	||	\
+		((local_c->gid == foreign_c->gid) && ((curse_list_pointer[curse_no].permissions) & _U_M)));			//su, user, group
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
 //out_with_local:
