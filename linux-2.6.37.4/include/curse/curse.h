@@ -1,4 +1,4 @@
-/* 
+/*
  * This library is the main library for the curse system call.
  * 
  * It is to be included by both userspace and kernel programs, so we take care to define the public interface properly.

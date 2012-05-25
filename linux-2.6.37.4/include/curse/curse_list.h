@@ -69,8 +69,6 @@ struct fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
 };
 
-
-
 #endif	/* __KERNEL__ */
 
 #endif /* _CURSE_LIST_LIB */
