@@ -12,6 +12,10 @@
 #include <linux/types.h>
 #include <curse/curse_types.h>
 
+
+//TODO: one entry point
+#include <curse/no_fs_cache.h>
+
 /*Maximum size for a curse name.*/
 #define CURSE_MAX_NAME_SIZE 24
 /*Maximum number of curses (-1 is the limit).*/
@@ -39,14 +43,16 @@ static inline void stub_inject(void /*not*/) {
     return;
 }
 
+//TODO: another entry point
 /*[ADD] The system curse listing.*/
 struct curse_list_entry curse_full_list[] = {
-	{	"stub", 0x00000000	},
+	{	"stub"		, 0x00000000	},
 	
-	{	"opalakia", 0x00000001	},
-	{	"another_entry", 0x00000080	},
+	{	"opalakia"	, 0x00000001	},
+	{	"no_fs_cache"	, 0x00000002	},
+	{	"another_entry"	, 0x00000080	},
 	
-	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
+	{	"sentinel"	, 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
 #undef MAX_CURSE_NO
@@ -59,11 +65,13 @@ struct fun_element {
 	void (*fun_inject)(void /*List of arguments*/);
 };
 
+//TODO: another entry point
 /*[ADD] The system call function pointer array.*/
 struct fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_inject	}, /* maybe a stub maybe not, depends on how we handle 0 */
 
 	{	stub_init, stub_destroy, stub_inject	},
+	{	no_fs_cache_init, no_fs_cache_destroy, no_fs_cache_inject},
 	{	stub_init, stub_destroy, stub_inject	},
 
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
