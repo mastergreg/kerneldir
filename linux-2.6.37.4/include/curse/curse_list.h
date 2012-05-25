@@ -37,6 +37,7 @@ struct curse_list_entry curse_full_list[] = {
 #undef MAX_CURSE_NO
 #define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
 
+/* External linking for number of curses. */
 const int max_curse_no = (((sizeof (curse_full_list))/(sizeof (struct curse_list_entry)))-1);
 
 /*[ADD] The system call function pointer array.*/

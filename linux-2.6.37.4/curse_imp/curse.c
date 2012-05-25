@@ -18,12 +18,12 @@
 #include <linux/rcupdate.h>
 
 #include <curse/curse.h>
-//#include <curse/curse_externals.h>
-//#include <curse/curse_list.h>
 #include <curse/curse_types.h>
 
-//Other functions.
+//External declarations.
 extern int max_curse_no;
+
+//Other functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_from_no (curse_id_t a_c_id) {
     int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);

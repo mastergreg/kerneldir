@@ -12,12 +12,7 @@
 
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
-/*
-#include <curse/curse.h>
-/*
-#include <curse/curse_forwards.h>
-*/
-
+#include <curse/curse.h>			//Right now needed for the curse_system_active type, but will deprecate it (:)) before long.
 
 /*Data holding the curse system status.*/
 struct bool_wrapper curse_system_active;
