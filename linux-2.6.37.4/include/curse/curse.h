@@ -38,7 +38,7 @@ struct syscurse {
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	unsigned int ref_count;				//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
-	uint8_t permissions;				//Inherritance - UserGroupSuperuser(Permissions) flag field.
+	uint8_t permissions;				//Inheritance - UserGroupSuperuser(Permissions) flag field.
 	enum curse_status status;
 };
 
@@ -71,7 +71,7 @@ int syscurse_rem_rule(curse_id_t, char *);
 #define _U_M 0x01
 #define _G_M 0x02
 #define _S_M 0x04
-/*Inherritance specific macros (curse-specific inherritance is inserted in permissions field of syscurse struct.*/
+/*Inheritance specific macros (curse-specific inheritance is inserted in permissions field of syscurse struct.*/
 #define _INHER_MASK 0x20
 #define GET_INHER(_) (((_).permissions) & (_INHER_MASK))
 #define SET_INHER(_) (((_).permissions) |= (_INHER_MASK))
