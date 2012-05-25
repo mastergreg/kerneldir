@@ -37,6 +37,8 @@ inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c, *local_c;
+	struct syscurse * current_curse;
+	uint64_t current_perms;
 	int ret;
 
 	ret = -ESRCH;		//FIXME: Sanity check.
@@ -55,9 +57,14 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	ret = (((local_c->euid == 0) && ((curse_list_pointer[curse_no].permissions) & _U_M))													|| \
-		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && ((curse_list_pointer[curse_no].permissions) & _U_M))	||	\
-		((local_c->gid == foreign_c->gid) && ((curse_list_pointer[curse_no].permissions) & _U_M)));			//su, user, group
+	/* FIXME: ale1ster said sth about a wrapper, this is just temprary */
+	current_curse = &curse_list_pointer[index_from_no(curse_no)];
+	current_perms = current_curse->permissions;
+
+
+	ret = (((local_c->euid == 0) && (current_perms & _S_M))													|| \
+		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M))	||	\
+		((local_c->gid == foreign_c->gid) && (current_perms & _G_M)));			//su, user, group
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
 //out_with_local:
