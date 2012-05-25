@@ -79,6 +79,7 @@ int syscurse_rem_rule(curse_id_t, char *);
 
 //Source it here too.
 #include "curse_sched.h"
+#include "curse_list.h"
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
