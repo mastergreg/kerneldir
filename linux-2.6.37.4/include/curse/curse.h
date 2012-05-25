@@ -77,10 +77,6 @@ int syscurse_rem_rule(curse_id_t, char *);
 #define SET_INHER(_) (((_).permissions) |= (_INHER_MASK))
 #define CLR_INHER(_) (((_).permissions) &= ~(_INHER_MASK))
 
-//Source it here too.
-#include "curse_types.h"
-//#include "curse_list.h"
-
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
 	struct semaphore guard;
