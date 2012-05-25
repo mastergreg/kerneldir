@@ -2,8 +2,7 @@
 #Called during kernel compilation, provided that we have added the curse source folder in the kernel makefile.
 
 EXTRA_CFLAGS+=-Werror -Wuninitialized
-obj-y	:= curse.o
-#curse_externals.o
+obj-y	:= curse.o curse_externals.o
 
 # TODO: Add invocation to curse makefile (the one that compiles the available curses).
 

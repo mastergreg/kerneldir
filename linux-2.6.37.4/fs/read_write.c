@@ -20,7 +20,7 @@
 #include <asm/uaccess.h>
 #include <asm/unistd.h>
 
-#include <curse/curse_forwards.h>
+#include <curse/curse_externals.h>
 
 const struct file_operations generic_ro_fops = {
 	.llseek		= generic_file_llseek,

@@ -68,7 +68,7 @@
 #include <linux/shmem_fs.h>
 #include <linux/slab.h>
 
-#include <curse/curse_kernel_interface.h>
+#include <curse/curse_externals.h>
 
 #include <asm/io.h>
 #include <asm/bugs.h>
@@ -690,7 +690,7 @@ asmlinkage void __init start_kernel(void)
 #endif
 	cgroup_init();
 #ifdef CONFIG_CURSES
-	curses_init();
+	curse_init();
 #endif 
 	cpuset_init();
 	taskstats_init_early();

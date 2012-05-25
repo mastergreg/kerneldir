@@ -2,7 +2,10 @@
 #define _CURSE_FORWARD_DECLARATIONS
 
 /* curse init function */
-void curses_init (void);
+#ifndef CONFIG_CURSES
+#define CONFIG_CURSES
+#endif
+void curse_init (void);
 
 /* general curse trigger */
 //inline void curse_trigger_checkpoint ();
