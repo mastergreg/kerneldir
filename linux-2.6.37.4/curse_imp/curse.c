@@ -21,10 +21,6 @@
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
 
-//Global data (create them taking into account reentrancy: static usually prevents that).
-/*This flag helps to initialize what needs initializing in our envirronment.*/
-atomic_t initial_actions_flag = { 1 };		//Check for info: http://www.win.tue.nl/~aeb/linux/lk/lk-13.html
-
 //Other functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_from_no (curse_id_t a_c_id) {
@@ -38,7 +34,7 @@ inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 }
 
 /*This function checks if current is allowed to change the state of the target proc.*/
-inline int check_permissions (pid_t target) {
+inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c, *local_c;
 	int ret;
@@ -54,15 +50,14 @@ inline int check_permissions (pid_t target) {
 	if (!foreign_c)
 		goto out_with_foreign;
 
-	local_c = get_current_cred();     
+	local_c = get_current_cred();
 	/* am i root or sudo?? */
 	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	ret = ((local_c->euid == 0) 			||	\
-		(local_c->euid == foreign_c->euid)	||	\
-		(local_c->euid == foreign_c->uid)	||	\
-		(local_c->gid == foreign_c->gid));			
+	ret = (((local_c->euid == 0) && ((curse_list_pointer[curse_no].permissions) & _U_M))													|| \	//su
+		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && ((curse_list_pointer[curse_no].permissions) & _U_M))	||	\	//user
+		((local_c->gid == foreign_c->gid) && ((curse_list_pointer[curse_no].permissions) & _U_M)));													//group
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
 //out_with_local:
@@ -122,18 +117,6 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
 
-	if (atomic_read(&initial_actions_flag)) {		//Conditional will not be entered but the first time(s).	//FIXME: I think it disables local interests. We can protect it with a single boolean.
-		if (atomic_read(&initial_actions_flag) == 2)
-			goto wait_init;
-		atomic_set(&initial_actions_flag, 2);
-		//Initializing actions.
-		//initial_actions();
-		atomic_set(&initial_actions_flag, 0);
-		wait_init:
-		while (atomic_read(&initial_actions_flag))
-			continue;
-	}
-
 	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
 	
 	//Do not even call if curse system is not active.
@@ -174,7 +157,6 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 
 out:
 	return ret;
-	//return (long)(curse_cmd+curse_no+(int)target);
 }
 
 /*TODO: Source helpful functions.*/

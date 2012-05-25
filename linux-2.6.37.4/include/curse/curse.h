@@ -9,14 +9,11 @@
  *
  */
 
-
 #ifndef _SYSCURSE_H
 #define _SYSCURSE_H
 
 #include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
 #ifndef __KERNEL__			/*Inclusion of uint64_t on userspace.*/
-
-
 
 #include <stdint.h>
 #include <curse/curse_list.h>
@@ -56,7 +53,6 @@ struct syscurse {
 #include <linux/semaphore.h>
 #include <linux/proc_fs.h>
 
-
 /*Function prototypes (although forwards are ugly:)).*/
 int syscurse_list_all(char *, char **, off_t, int, int *, void *);
 int syscurse_activate(curse_id_t);
@@ -68,6 +64,8 @@ int syscurse_lift(curse_id_t, pid_t);
 int syscurse_show_rules(void);
 int syscurse_add_rule(curse_id_t, char *);
 int syscurse_rem_rule(curse_id_t, char *);
+
+/*.*/
 
 /*Bitmasks to use for setting and checking the permissions field in struct syscurse.*/
 #define _U_M 0x01
