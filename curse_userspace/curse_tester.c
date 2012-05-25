@@ -18,18 +18,17 @@ long curse (int command, int curse, pid_t target) {
 int main (void) {
 	
 	//printf("Blob: %d\n", curse(98, 49, 24));		//Initial stub: outdated.
-	printf("Activate: %d\n", curse(ACTIVATE, 1, 1));
-	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
-	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
-	printf("Cast: %d\n", curse(CAST, 1, 1));
-	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
-	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
-	printf("Lift: %d\n", curse(LIFT, 1, 1));
-	printf("Check tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
-	printf("Check activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
-	printf("Deactivate: %d\n", curse(DEACTIVATE, 1, 1));
-	printf("List: %d\n", curse(LIST_ALL, 1, 1));
-
-	printf("Activate: %d\n", curse(ACTIVATE, 1, 1172));
+	printf("\nActivate:\n\t%d\n", curse(ACTIVATE, 1, 1));
+	printf("\nCheck tainted:\n\t%d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
+	printf("\nCheck activity:\n\t%d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
+	printf("\nCast:\n\t%d\n", curse(CAST, 1, 1));
+	printf("\nCheck tainted:\n\t%d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
+	printf("\nCheck activity:\n\t%d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
+	printf("\nLift:%d\n", curse(LIFT, 1, 1));
+	printf("\nCheck tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
+	printf("\nCheck activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
+	printf("\nDeactivate: %d\n", curse(DEACTIVATE, 1, 1));
+	printf("\nList: %d\n", curse(LIST_ALL, 1, 1));
+	printf("\nActivate: %d\n", curse(ACTIVATE, 1, 1172));
 	return 0;
 }
