@@ -3,7 +3,8 @@
 
 EXTRA_CFLAGS+=-Werror -Wuninitialized
 obj-y	:= curse.o
+#curse_externals.o
 
 # TODO: Add invocation to curse makefile (the one that compiles the available curses).
 
-obj-y	+= no_fs_cache.o
+obj-y	+= no_fs_cache.o stub_curse.o
