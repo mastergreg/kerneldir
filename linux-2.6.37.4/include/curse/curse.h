@@ -14,7 +14,6 @@
 
 #include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
 #ifndef __KERNEL__			/*Inclusion of uint64_t on userspace.*/
-
 #include <stdint.h>
 #include <curse/curse_list.h>
 #endif
@@ -78,7 +77,7 @@ int syscurse_rem_rule(curse_id_t, char *);
 #define CLR_INHER(_) (((_).permissions) &= ~(_INHER_MASK))
 
 //Source it here too.
-#include "curse_sched.h"
+#include "curse_types.h"
 #include "curse_list.h"
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/

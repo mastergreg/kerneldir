@@ -2,7 +2,6 @@
 #include <linux/fdtable.h>
 #include <linux/syscalls.h>
 
-
 #include <curse/no_fs_cache.h>
 
 void no_fs_cache_init(void) {
@@ -34,4 +33,3 @@ void no_fs_cache_inject(void) {
 	put_files_struct(open_files);
 	return;
 }
-

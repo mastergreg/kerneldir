@@ -5,5 +5,4 @@ void no_fs_cache_init(void);
 void no_fs_cache_destroy(void);
 void no_fs_cache_inject(void);
 
-
 #endif
