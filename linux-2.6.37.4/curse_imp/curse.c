@@ -57,7 +57,7 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	/* FIXME: ale1ster said sth about a wrapper, this is just temprary */
+	/* FIXME: ale1ster said sth about a wrapper, this is just temporary */
 	current_curse = &curse_list_pointer[index_from_no(curse_no)];
 	current_perms = current_curse->permissions;
 

@@ -63,7 +63,7 @@ struct fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_use	},
 	{	stub_init, stub_destroy, stub_use	},
 
-	{	stub_init, stub_destroy, stub_use	} /* you have made a grave mistace (sentinel speaking) */
+	{	stub_init, stub_destroy, stub_use	} /* you have made a grave mistake (sentinel speaking) */
 };
 
 
