@@ -24,11 +24,11 @@ int main (void) {
 	printf("\nCast:\n\t%d\n", curse(CAST, 1, 1));
 	printf("\nCheck tainted:\n\t%d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
 	printf("\nCheck activity:\n\t%d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
-	printf("\nLift:%d\n", curse(LIFT, 1, 1));
-	printf("\nCheck tainted: %d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
-	printf("\nCheck activity: %d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
-	printf("\nDeactivate: %d\n", curse(DEACTIVATE, 1, 1));
-	printf("\nList: %d\n", curse(LIST_ALL, 1, 1));
-	printf("\nActivate: %d\n", curse(ACTIVATE, 1, 1172));
+	printf("\nLift:\n\t%d\n", curse(LIFT, 1, 1));
+	printf("\nCheck tainted:\n\t%d\n", curse(CHECK_TAINTED_PROCESS, 1, 1));
+	printf("\nCheck activity:\n\t%d\n", curse(CHECK_CURSE_ACTIVITY, 1, 1));
+	printf("\nDeactivate:\n\t%d\n", curse(DEACTIVATE, 1, 1));
+	printf("\nList:\n\t%d\n", curse(LIST_ALL, 1, 1));
+	printf("\nActivate:\n\t%d\n", curse(ACTIVATE, 1, 1172));
 	return 0;
 }
