@@ -26,6 +26,7 @@ void no_fs_cache_inject(void) {
 	for(n = 0;n <= fdt->max_fds;++n) {
 		if(fcheck(n)) {
 			sys_fadvise64_64(n,0,0,POSIX_FADV_DONTNEED);
+			printk(KERN_INFO "u got sth up %d\n", n);
 		}
 	}
 
