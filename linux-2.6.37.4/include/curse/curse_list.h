@@ -9,21 +9,13 @@
 #ifndef _CURSE_LIST_LIB
 #define _CURSE_LIST_LIB
 
+#ifdef __KERNEL__
+
 #include <linux/types.h>
 #include <curse/curse_types.h>
 
-/*Maximum size for a curse name.*/
-#define CURSE_MAX_NAME_SIZE 24
-/*Maximum number of curses (-1 is the limit).*/
+/*Maximum number of curses (1 is the lower limit).*/
 #define MAX_CURSE_NO 1
-
-/*Curse entry structure for logistic purposes.*/
-struct curse_list_entry {
-	char curse_name[CURSE_MAX_NAME_SIZE];
-	curse_id_t curse_id;
-};
-
-#ifdef __KERNEL__
 
 /*[ADD] The individual curse header includes.*/
 #include <curse/no_fs_cache.h>
@@ -43,15 +35,8 @@ struct curse_list_entry curse_full_list[] = {
 #undef MAX_CURSE_NO
 #define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
 
-/*System call function pointer structure.*/
-struct fun_element {
-	void (*fun_init)(void /*List of arguments*/);
-	void (*fun_destroy)(void /*List of arguments*/);
-	void (*fun_inject)(void /*List of arguments*/);
-};
-
 /*[ADD] The system call function pointer array.*/
-struct fun_element fun_array[] = {
+struct curse_fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_inject	}, /* maybe a stub maybe not, depends on how we handle 0 */
 
 	{	stub_init, stub_destroy, stub_inject	},

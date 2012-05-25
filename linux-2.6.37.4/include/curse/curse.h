@@ -12,11 +12,10 @@
 #ifndef _SYSCURSE_H
 #define _SYSCURSE_H
 
-#include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
 #ifndef __KERNEL__			/*Inclusion of uint64_t on userspace.*/
 #include <stdint.h>
-#include <curse/curse_list.h>
 #endif
+#include <curse/curse_types.h>
 
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, 
@@ -32,6 +31,18 @@ enum curse_command	{	LIST_ALL=0,
 /*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
 enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=0x04};
 
+/*Procfs entry paths.*/
+#define proc_dir_name "curse"
+#define proc_out_node_name "listing"
+
+//TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
+#ifdef __KERNEL__
+
+/*Kernel specific libraries.*/
+#include <linux/semaphore.h>
+#include <linux/proc_fs.h>
+#include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
+
 /*Structure describing a curse (and its status).*/
 struct syscurse { 
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
@@ -41,16 +52,6 @@ struct syscurse {
 	enum curse_status status;
 };
 
-/*Procfs entry paths.*/
-#define proc_dir_name "curse"
-#define proc_out_node_name "listing"
-
-//TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
-#ifdef __KERNEL__
-
-/*Kernel specific code.*/
-#include <linux/semaphore.h>
-#include <linux/proc_fs.h>
 
 /*Function prototypes (although forwards are ugly:)).*/
 int syscurse_list_all(char *, char **, off_t, int, int *, void *);
@@ -78,7 +79,7 @@ int syscurse_rem_rule(curse_id_t, char *);
 
 //Source it here too.
 #include "curse_types.h"
-#include "curse_list.h"
+//#include "curse_list.h"
 
 /*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
 struct bool_wrapper {
