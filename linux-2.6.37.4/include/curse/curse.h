@@ -34,7 +34,7 @@ enum curse_command	{	LIST_ALL=0,
 enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=0x04};
 
 /*Structure describing a curse (and its status).*/
-struct syscurse {
+struct syscurse { 
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	unsigned int ref_count;				//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
@@ -103,18 +103,24 @@ inline void curse_k_wrapper (void) {
 	//check if current has a curse
 	if (curse_system_active.value == 0)
 		goto out_sema_held;
-	//if so, retrieve the pointer from the fun* array and call.
-	
 	//this is a macro in arch/x86/include/asm/current.h
 	cur = current;
 
 	//call the curse handler if there is a curse
 	//if is used for opt, might integrate the handler here
 	//ideas?
-	if (cur->curse_data.curse_field)
+	if (cur->curse_data.curse_field) {
+		int i=1;
+		uint64_t c_m=0x0001, c_f = cur->curse_data.curse_field;
 		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
-
-	//... This is where curse and check take place.
+		
+		//... This is where curse and check take place.
+		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
+			fun_array[i].fun_inject();
+			c_f >>= 1;
+			i++;
+		}
+	}
 
 out_sema_held:
 	up(&curse_system_active.guard);
