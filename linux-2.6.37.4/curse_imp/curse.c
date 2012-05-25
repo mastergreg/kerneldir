@@ -18,6 +18,7 @@
 #include <linux/rcupdate.h>
 
 #include <curse/curse.h>
+#include <curse/curse_forwards.h>
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
 
@@ -73,6 +74,41 @@ out_with_foreign:
 	put_cred(foreign_c);
 out:
 	return ret;
+}
+
+/*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
+inline void curse_k_wrapper (void) {
+	//check if curses are enabled
+	struct task_struct *cur;
+
+	if (down_interruptible(&curse_system_active.guard))
+		goto out_pos;
+	//check if current has a curse
+	if (curse_system_active.value == 0)
+		goto out_sema_held;
+	//this is a macro in arch/x86/include/asm/current.h
+	cur = current;
+
+	//call the curse handler if there is a curse
+	//if is used for opt, might integrate the handler here
+	//ideas?
+	if (cur->curse_data.curse_field) {
+		int i=1;
+		uint64_t c_m=0x0001, c_f = cur->curse_data.curse_field;
+		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
+		
+		//... This is where curse and check take place.
+		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
+			fun_array[i].fun_inject();
+			c_f >>= 1;
+			i++;
+		}
+	}
+
+out_sema_held:
+	up(&curse_system_active.guard);
+out_pos:
+	return;
 }
 
 /*This function initializes all needed resources (only) once, at the beginning.*/
