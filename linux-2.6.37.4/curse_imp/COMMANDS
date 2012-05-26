@@ -21,6 +21,9 @@ Set a curse upon a target.
 7. LIFT (ex retire)						:	<same>
 Remove a curse from a target.
 	R: <same>
+8. CTRL									:	id of curse to modify, control operation to perform
+Control the behavior of a curse. This can affect the inheritance attribute of a curse (previously affected objects are not affected), or the permissions of that curse (common for all processes)
+	R: <same>
 ------RULES: Rules are static bindings of curses to binaries (paths) instead of processes.------ :: These are supplementary. We may implement them, after the main implementation of the system call.
 8. SHOW_RULES							:	<no_argument>
 Show all rules that are currently in the system.
@@ -41,4 +44,19 @@ ACTIVE			0x02
 Currently running (influencing the system). (is implemented, and activated)
 INVALID_CURSE	0x04
 Not valid. (not implemented)
+
+=====================================ATTRIBUTES=====================================
+1. Inheritance		:	defaults to true.
+	A curse has an inheritance attribute that controls whether children of an infected process (spawned after the parent was infected) will be infected themselves.
+2. Permissions		:	defaults to full permissions for user, group and super user
+	A curse has 3 characteristic permissions that influence the permission checking during limited access operations. These attributes are global to each curse, meaning that 2 users in a system have the same value on those fields on each curse they have accessible.
+		User Permission:		Control whether the user will have permission to perform controlled operations with the curse system call.
+		Group Permission:		Same, applying to the effective user group.
+		Super User Permission:	Same, applicable in case of super user.
+
+=================================CONTROL_OPERATIONS=================================
+SET_INH				:	Sets the inheritance attribute to true for the specified curse.
+CLR_INH				:	<the opposite>
+SET_{USR, GRP, SU}	:	Sets the permissions for the current curse for user, group and super user respectively.
+CLR_{USR, GRP, SU}	:	<the opposite>
 

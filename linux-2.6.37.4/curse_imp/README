@@ -12,10 +12,14 @@
 
 #
 # CURSE ADDITION METHOD:
-# The method of adding a new curse in the system, is described below.
+# The method of adding a new curse in the system is described below.
 # 1. Source code: You have to have the kernel source code for the system call in a source file.
-# 2. Curse entry: You have to add an entry to the curse table. An entry consists of a unique name and a descriptive hex value of type uint64_t, like 0xBOOBBOOB.
-# 3. Curse function pointers: You have to include the curse header and the function pointers in the appropriate array in the curse table library.
-# 4. Makefile entry: You have to add a new rule for the curse to the existing makefile in the curses subdirectory.
-# 5. Recompilation: For the new curse to be added to the system, you have to recompile the curse system.
+# 2. You have to add the function curse_trigger with the id of your curse to the points in the kernel source code where you want to act as trigger points for your curse.
+#	2.i.   If a curse_trigger call is not present in a desired point in the kernel source, you have to include the header <curse/curse_externals.h>, and then proceed to step ii.
+#   2.ii.  A curse_trigger call needs an argument of type curse_id_t (the curse id type) with the number of the curse to mark as triggered. The argument can consist of an OR mask of multiple curse_id_t values. That means that if a curse_trigger call already exists in a desired point, you just have to OR your curse id with the ones that are there.
+#   2.iii. Cases where a single curse has multiple OR a single checkpoint activated during a single process scheduling, the behavior of the curse implementation will be exactly the same.
+# 3. Curse entry: You have to add an entry to the curse table. An entry consists of a unique name and a descriptive hex value of type uint64_t, like 0xBOOBBOOB.
+# 4. Curse function pointers: You have to include the curse header and the function pointers in the appropriate array in the curse table library.
+# 5. Makefile entry: You have to add a new rule for the curse to the existing makefile in the curses directory.
+# 6. Recompilation: For the new curse to be added to the system, you have to recompile the kernel.
 #
