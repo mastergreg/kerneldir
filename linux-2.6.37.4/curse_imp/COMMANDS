@@ -40,7 +40,7 @@ IMPLEMENTED		0x00
 Curse has code (vs. placeholders).
 ACTIVATED		0x01
 Curse can become active. (is implemented, not active)
-ACTIVE			0x02
+CASTED			0x02
 Currently running (influencing the system). (is implemented, and activated)
 INVALID_CURSE	0x04
 Not valid. (not implemented)

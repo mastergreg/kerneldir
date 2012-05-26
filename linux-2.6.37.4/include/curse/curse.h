@@ -29,7 +29,7 @@ enum curse_command	{	LIST_ALL=0,
 					};
 
 /*Lists every possible status for a curse (for userspace portability).*/
-enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=0x04};
+enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, CASTED=0x02, INVALID_CURSE=0x04};
 
 /*Procfs entry names.*/
 #define PROC_DIR_NAME "curse"

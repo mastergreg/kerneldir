@@ -156,7 +156,7 @@ int syscurse_activate (curse_id_t curse_no) {
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
 		i=index_from_no(curse_no);
-		if (!(CURSE_FIELD(i, status) & (ACTIVATED|ACTIVE))) {
+		if (!(CURSE_FIELD(i, status) & (ACTIVATED | CASTED))) {
 			CURSE_FIELD(i, status) = ACTIVATED;
 			ret=1;
 		} else {
@@ -178,7 +178,7 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
 		i=index_from_no(curse_no);
-		if (CURSE_FIELD(i, status) & (ACTIVATED|ACTIVE)) {
+		if (CURSE_FIELD(i, status) & (ACTIVATED | CASTED)) {
 			CURSE_FIELD(i, status) = IMPLEMENTED;
 			ret=1;
 		} else {
@@ -204,7 +204,7 @@ int syscurse_check_curse_activity (curse_id_t curse_no) {
 		ret = -EINVAL;
 		goto out;
 	}
-	if (CURSE_FIELD(i, status) & ACTIVE)
+	if (CURSE_FIELD(i, status) & CASTED)
 		ret=1;
 	else
 		ret=0;
@@ -271,7 +271,7 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 
 	err = -EINVAL;
 	new_index = index_from_no(curse_no);
-	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED|ACTIVE)))
+	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
 		goto out;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {
@@ -281,7 +281,7 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 			target_task->curse_data.inherritance |= new_mask;
 		else
 			target_task->curse_data.inherritance &= (~new_mask);
-		CURSE_FIELD(new_index, status)=ACTIVE;
+		CURSE_FIELD(new_index, status) = CASTED;
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
