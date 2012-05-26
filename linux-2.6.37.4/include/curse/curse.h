@@ -28,10 +28,10 @@ enum curse_command	{	LIST_ALL=0,
 						ILLEGAL_COMMAND
 					};
 
-/*Lists every possible status for a curse (for userspace portability).*/		//Maybe in bitmask style. :: No need, enum elements are inclusive.
+/*Lists every possible status for a curse (for userspace portability).*/
 enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=0x04};
 
-/*Procfs entry paths.*/
+/*Procfs entry names.*/
 #define PROC_DIR_NAME "curse"
 #define PROC_OUT_NODE_NAME "listing"
 
@@ -54,7 +54,7 @@ struct syscurse {
 };
 
 /*Function prototypes (although forwards are ugly:)).*/
-int syscurse_list_all(char *, char **, off_t, int, int *, void *);
+int syscurse_list_all(char *, char **, off_t, int, int *, void *);		//FIXME: This is isn't used by the syscurse call, so we should move it to externals.
 int syscurse_activate(curse_id_t);
 int syscurse_deactivate(curse_id_t);
 int syscurse_check_curse_activity(curse_id_t);

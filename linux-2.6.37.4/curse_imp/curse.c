@@ -19,10 +19,10 @@
 #include <curse/curse.h>
 #include <curse/curse_types.h>
 
-//External declarations.
+//=====External declarations.
 extern int max_curse_no;
 
-//Various wrapper functions.
+//=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_from_no (curse_id_t a_c_id) {
     int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
@@ -76,6 +76,7 @@ out:
 	return ret;
 }
 
+//=====Syscall kernel source.
 /*This is the system call source base function.*/
 SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {	
@@ -124,7 +125,7 @@ out:
 	return ret;
 }
 
-/*Source helpful sub-functions.*/
+//=====Source helpful sub-functions.
 int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
 	int i, line_len, ret=0;
 	/*We provided the data pointer during creation of read handler for our proc entry.*/
@@ -136,7 +137,7 @@ int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof,
 		goto out;
 	}
 
-	//FIXME: Fix error: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
+	//FIXME: Fix exaggeration: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
 	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
 	for (i=0; ((i<max_curse_no) && ((ret+line_len) < count)); i++)
 		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
@@ -153,7 +154,7 @@ int syscurse_activate (curse_id_t curse_no) {
 
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
-	if (bitmask_from_no(curse_no)) {											//Activation of an existing curse, activates the system too.
+	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
 		i=index_from_no(curse_no);
 		if (!(CURSE_FIELD(i, status) & (ACTIVATED|ACTIVE))) {
 			CURSE_FIELD(i, status) = ACTIVATED;
@@ -175,7 +176,7 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	//TODO: Check permissions.
 
 	ret = -EINVAL;
-	if (bitmask_from_no(curse_no)) {											//Targeted deactivation is normal.
+	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
 		i=index_from_no(curse_no);
 		if (CURSE_FIELD(i, status) & (ACTIVATED|ACTIVE)) {
 			CURSE_FIELD(i, status) = IMPLEMENTED;
@@ -233,7 +234,7 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	err = -EPERM;
 	//TODO: Check permissions.
 
-	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
+	//Check if target has an active curse on it.	::	FIXME: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	if (target_task->curse_data.curse_field & check_bit){
 		err=1;
@@ -319,7 +320,7 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		target_task->curse_data.curse_field &= (~curse_mask);		//Just to be safe (^= toggles, not clears).
 		atomic_dec(&CURSE_FIELD(index, ref_count));
 		target_task->curse_data.inherritance &= (~curse_mask);
-		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)			//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
+		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)		//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
 			CURSE_FIELD(index, status) = ACTIVATED;
 		err=1;
 	}

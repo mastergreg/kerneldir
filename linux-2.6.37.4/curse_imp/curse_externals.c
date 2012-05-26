@@ -6,23 +6,23 @@
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
 #include <linux/sched.h>
 #include <linux/spinlock.h>
-#include <asm/atomic.h>
 #include <linux/slab.h>
 #include <linux/stat.h>
 #include <linux/proc_fs.h>
 #include <linux/rcupdate.h>
+#include <asm/atomic.h>
 
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
-#include <curse/curse.h>			//Right now needed for the curse_system_active type, but will deprecate it (:)) before long.
+#include <curse/curse.h>			//Now it is only needed for the macros.
 
-//Global data.
+//=====Global data.
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
 /*Proc node pointer.*/
 struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
 
-//Kernel functions.
+//=====Kernel functions.
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
 	struct task_struct *cur;
@@ -56,15 +56,9 @@ void curse_init (void) {
 	int j;
 	curse_id_t t;
 
-	//Global activity status.
-	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
-
-	//1. Initialize active status boolean.	::	Could default on an initial status here (based on build options).
-	CURSE_SYSTEM_DOWN;
-
-	//2. Initialize curse lookup table.
+	//1. Initialize curse lookup table.
 	curse_list_pointer=(struct syscurse *)kzalloc((MAX_CURSE_NO+1)*sizeof(struct syscurse), GFP_KERNEL);
-	for (j=0, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {		//ERROR HERE: j starts from 1.	//URGENT: TODO: FIXME: TODO: !!!!
+	for (j=1, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {		//ERROR HERE: j starts from 1.	//URGENT: TODO: FIXME: TODO: !!!! :: FIXED:: Check if no_fs_cache works, or revert and check again.
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].curse_bit=t;
 		atomic_set(&(curse_list_pointer[j].ref_count), 0);
@@ -77,11 +71,15 @@ void curse_init (void) {
 	atomic_set(&(curse_list_pointer[0].ref_count), 0);
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
 
+	//2. Initialize active status boolean.	::	Could default on an initial status here (based on build options).
+	CURSE_SYSTEM_DOWN;
+
 	//3. Populate entries in /proc filesystem.
 	if (!(dir_node = proc_mkdir(PROC_DIR_NAME, NULL)))
 		goto out;
 	if (!(output_node = create_proc_read_entry(PROC_OUT_NODE_NAME, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
 		goto out_dirred;
+
 	//FIXME: Is there anything else to be done here?
 
 	goto out;
@@ -90,6 +88,5 @@ void curse_init (void) {
 out_dirred:
 	remove_proc_entry(PROC_DIR_NAME, NULL);
 out:
-	return;		//Stub, but there might be others below.
+	return;		//Stub: there might be others below.
 }
-
