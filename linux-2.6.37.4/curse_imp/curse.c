@@ -196,7 +196,7 @@ out_ret:
 int syscurse_check_curse_activity (curse_id_t curse_no) {
 	int i, ret = -EINTR;
 
-	if (CURSE_SYSTEM_Q)
+	if (!CURSE_SYSTEM_Q)
 		goto out;
 
 	i=index_from_no(curse_no);
