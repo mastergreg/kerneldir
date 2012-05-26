@@ -2,6 +2,7 @@
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2
 * Userspace lib --all --3
 * Permission checking is still not included in the source code --all --3
+* Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --all --4
 * Modularize curse_k_wrapper to be called from read, without make errors --ale1ster-master --4 --HALFDONE "Have to move it elsewhere: after scheduler?"
 * Initialize trigger field during field initialization of task_curse_struct. --someone --4
 * Check curse_externals.c on curse_init --master --4
