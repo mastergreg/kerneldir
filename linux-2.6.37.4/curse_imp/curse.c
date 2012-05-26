@@ -88,9 +88,9 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 	//Do not even call if curse system is not active.
 	#ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
-	//	case LIST_ALL:			//Fall-through: read through proc.
-	//		ret = syscurse_list_all();
-	//		break;
+		case LIST_ALL:
+			ret = syscurse_list_all();
+			break;
 		case ACTIVATE:
 			ret = syscurse_activate(curse_no);
 			break;
@@ -126,24 +126,9 @@ out:
 }
 
 //=====Source helpful sub-functions.
-int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof, void *data) {
-	int i, line_len, ret=0;
-	/*We provided the data pointer during creation of read handler for our proc entry.*/
-	struct syscurse *c_list=(struct syscurse *)data;
+int syscurse_list_all (void) {
+	int ret = -EINVAL;
 
-	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
-	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
-		(*eof)=1;
-		goto out;
-	}
-
-	//FIXME: Fix exaggeration: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
-	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
-	for (i=0; ((i<max_curse_no) && ((ret+line_len) < count)); i++)
-		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
-	(*start)=page;
-
-out:
 	return ret;
 }
 

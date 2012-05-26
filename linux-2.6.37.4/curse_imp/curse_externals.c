@@ -67,6 +67,27 @@ out:
 	return;
 }
 
+int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data) {
+	int i, line_len, ret=0;
+	/*We provided the data pointer during creation of read handler for our proc entry.*/
+	struct syscurse *c_list=(struct syscurse *)data;
+
+	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
+	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
+		(*eof)=1;
+		goto out;
+	}
+
+	//FIXME: Fix exaggeration: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
+	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
+	for (i=0; ((i<max_curse_no) && ((ret+line_len) < count)); i++)
+		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
+	(*start)=page;
+
+out:
+	return ret;
+}
+
 /*This function initializes all needed resources (only) once, during system init.*/
 void curse_init (void) {
 	int j;
@@ -93,7 +114,7 @@ void curse_init (void) {
 	//3. Populate entries in /proc filesystem.
 	if (!(dir_node = proc_mkdir(PROC_DIR_NAME, NULL)))
 		goto out;
-	if (!(output_node = create_proc_read_entry(PROC_OUT_NODE_NAME, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, syscurse_list_all, curse_list_pointer)))
+	if (!(output_node = create_proc_read_entry(PROC_OUT_NODE_NAME, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, proc_curse_read, curse_list_pointer)))
 		goto out_dirred;
 
 	//FIXME: Is there anything else to be done here?
@@ -128,3 +149,4 @@ inline void curse_trigger (curse_id_t _) {
 	return;
 }
 #endif
+
