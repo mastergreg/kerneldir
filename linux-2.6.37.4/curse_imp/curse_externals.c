@@ -27,18 +27,12 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 //Kernel functions.
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
-	//check if curses are enabled
 	struct task_struct *cur;
 
-//	if (down_interruptible(&curse_system_active.guard))
 	if (CURSE_SYSTEM_Q)
 		goto out;
-	//check if current has a curse
-//	if (curse_system_active.value == 0)
-//		goto out_sema_held;
-	//this is a macro in arch/x86/include/asm/current.h
-	cur = current;
 
+	cur = current;
 	//call the curse handler if there is a curse
 	//if is used for opt, might integrate the handler here
 	//ideas?
@@ -55,8 +49,6 @@ inline void curse_k_wrapper (void) {
 		}
 	}
 
-//out_sema_held:
-//	up(&curse_system_active.guard);
 out:
 	return;
 }
@@ -69,10 +61,7 @@ void curse_init (void) {
 	//Global activity status.
 	printk(KERN_INFO "Entered initialization function.\n");		//Testing if it is really called only the first time.
 
-	//1. Initialize active status boolean.
-//	sema_init(&curse_system_active.guard, 1);
-//	curse_system_active.value = 0;
-	//Could default on an initial status here (based on build options).
+	//1. Initialize active status boolean.	::	Could default on an initial status here (based on build options).
 	CURSE_SYSTEM_DOWN;
 
 	//2. Initialize curse lookup table.

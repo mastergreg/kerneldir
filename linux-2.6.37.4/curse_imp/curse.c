@@ -41,7 +41,6 @@ inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c, *local_c;
-//	struct syscurse * current_curse;
 	uint64_t current_perms;
 	int ret;
 
@@ -51,6 +50,7 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	rcu_read_unlock();
 	if (!foreign_task)
 		goto out;
+
 	ret = -EINVAL;		//FIXME: Sanity check.
 	foreign_c = get_task_cred(foreign_task);
 	if (!foreign_c)
@@ -61,14 +61,11 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	/* do we belong to the same effective user?*/
 	/* or the same group? */
 
-	/* FIXME: ale1ster said sth about a wrapper, this is just temporary */
-//	current_curse = &curse_list_pointer[index_from_no(curse_no)];
-//	current_perms = current_curse->permissions;
 	current_perms = CURSE_FIELD(index_from_no(curse_no), permissions);
 
-	ret = (((local_c->euid == 0) && (current_perms & _S_M))													|| \
+	ret = (((local_c->euid == 0) && (current_perms & _S_M))														|| \
 		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M))	||	\
-		((local_c->gid == foreign_c->gid) && (current_perms & _G_M)));			//su, user, group
+		((local_c->gid == foreign_c->gid) && (current_perms & _G_M)));
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
 //out_with_local:
@@ -134,7 +131,7 @@ int syscurse_list_all (char *page, char **start, off_t off, int count, int *eof,
 	struct syscurse *c_list=(struct syscurse *)data;
 
 	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
-	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt
+	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
 		(*eof)=1;
 		goto out;
 	}
@@ -153,6 +150,7 @@ int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
+
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {											//Activation of an existing curse, activates the system too.
@@ -164,15 +162,8 @@ int syscurse_activate (curse_id_t curse_no) {
 			goto out_ret;
 		}
 	}
-	if (!CURSE_SYSTEM_Q) {											//On invalid id, system activation.	::	TODO: Race here.
-//		if (down_interruptible(&curse_system_active.guard)) {
-//			ret = -EINTR;
-//			goto out_ret;
-//		}
-//		curse_system_active.value=1;
-//		up(&curse_system_active.guard);
+	if (!CURSE_SYSTEM_Q)											//On invalid id, system activation.
 		CURSE_SYSTEM_UP;
-	}
 
 out_ret:
 	return ret;
@@ -182,6 +173,7 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
+
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {											//Targeted deactivation is normal.
 		i=index_from_no(curse_no);
@@ -191,15 +183,9 @@ int syscurse_deactivate (curse_id_t curse_no) {
 		} else {
 			goto out_ret;
 		}
-	} else if (/*!bitmask_from_no(curse_no) && */ CURSE_SYSTEM_Q) {	//Invalid target deactivates the system.
-//		if (down_interruptible(&curse_system_active.guard)) {
-//			ret = -EINTR;
-//			goto out_ret;
-//		}
-//		curse_system_active.value=0;
-//		up(&curse_system_active.guard);
+	} else if (/*!bitmask_from_no(curse_no) && */ CURSE_SYSTEM_Q)	//Invalid target deactivates the system.
 		CURSE_SYSTEM_DOWN;
-	}
+
 	//TODO: Do we have to unhook (call close pointer) all the active curses here?	::	No, we simply deactivate. On activation, it will continue as was.
 
 out_ret:
@@ -209,15 +195,12 @@ out_ret:
 int syscurse_check_curse_activity (curse_id_t curse_no) {
 	int i, ret = -EINTR;
 
-//	if (down_interruptible(&curse_system_active.guard))
 	if (CURSE_SYSTEM_Q)
 		goto out;
-//	if (curse_system_active.value == 0)
-//		goto out_sema_held;
+
 	i=index_from_no(curse_no);
 	if (CURSE_FIELD(i, entry)->curse_id == 0xABADDE5C) {
 		ret = -EINVAL;
-//		goto out_sema_held;
 		goto out;
 	}
 	if (CURSE_FIELD(i, status) & ACTIVE)
@@ -225,8 +208,6 @@ int syscurse_check_curse_activity (curse_id_t curse_no) {
 	else
 		ret=0;
 
-//out_sema_held:
-//	up(&curse_system_active.guard);
 out:
 	return ret;
 }
@@ -239,7 +220,6 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 
 	if (!(check_bit = bitmask_from_no(curse_no)) || (target <= 0))
 		goto out;
-//	if ((err=down_interruptible(&curse_system_active.guard)))
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
@@ -248,11 +228,11 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	target_task = find_task_by_vpid(target);
 	rcu_read_unlock();
 	if (!target_task)
-//		goto out_locked;
 		goto out;
 
 	err = -EPERM;
 	//TODO: Check permissions.
+
 	//Check if target has an active curse on it.	::	TODO: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection) , spinflags);
 	if (target_task->curse_data.curse_field & check_bit){
@@ -264,8 +244,6 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
-//out_locked:
-//	up(&curse_system_active.guard);
 out: 
 	return err;
 }
@@ -277,7 +255,6 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	int new_index;
 	uint64_t new_mask;
 
-//	if ((err = down_interruptible(&curse_system_active.guard)))
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
@@ -286,15 +263,14 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	target_task = find_task_by_vpid(target);
 	rcu_read_unlock();
 	if (!target_task)
-//		goto out_locked;
 		goto out;
+
 	err = -EPERM;
 	//TODO: Check permissions.
 
 	err = -EINVAL;
 	new_index = index_from_no(curse_no);
 	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED|ACTIVE)))
-//		goto out_locked;
 		goto out;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {
@@ -310,8 +286,6 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	printk(KERN_INFO "Casting curse %llu to process %d\n",curse_no,target);
 
-//out_locked:
-//	up(&curse_system_active.guard);
 out: 
 	return err;
 }
@@ -323,7 +297,6 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	uint64_t curse_mask;
 	int index;
 
-//	if ((err = down_interruptible(&curse_system_active.guard)))
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
@@ -332,7 +305,6 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	target_task = find_task_by_vpid(target);
 	rcu_read_unlock();
 	if (!target_task)
-//		goto out_locked;
 		goto out;
 	
 	err = -EPERM;
@@ -341,7 +313,6 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	err = -EINVAL;
 	index = index_from_no(curse_no);
 	if (!(curse_mask = CURSE_FIELD(index, curse_bit)))
-//		goto out_locked;
 		goto out;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (target_task->curse_data.curse_field & curse_mask) {
@@ -355,8 +326,6 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	printk(KERN_INFO "Lifting curse %llu from process %d\n",curse_no,target);
 
-//out_locked:
-//	up(&curse_system_active.guard);
 out:
 	return err;
 }
