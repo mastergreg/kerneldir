@@ -8,17 +8,35 @@
 #include <linux/stat.h>
 #include <linux/proc_fs.h>
 #include <linux/rcupdate.h>
+//#include <asm/current.h>		//Does it compile without this?
 #include <asm/atomic.h>
 
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
-#include <curse/curse.h>			//Now it is only needed for the macros.
+#include <curse/curse.h>		//Now it is only needed for the macros.
 
 //=====Global data.
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
 /*Proc node pointer.*/
 struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
+
+//=====Helpful functions (locally needed).		//TODO: We shouldn't add symbols we don't need to be external.
+//FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation. ::Possible conflicts with curse_init, that creates the masks.
+uint64_t mask_from_curse_id (curse_id_t _) {
+	int i=0;
+	uint64_t r = 0x00;
+
+	if (_ == 0x00)
+		goto out;
+	for (i=1, r=0x01; i<MAX_CURSE_NO; i++, r <<= 1) {
+		if ((curse_list_pointer[i].entry->curse_id) == _)
+			goto out;
+	}
+
+out:
+	return r;
+}
 
 //=====Kernel functions.
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
@@ -89,7 +107,24 @@ out:
 	return;		//Stub: there might be others below.
 }
 
+/*This function is inserted in the places of the kernel source code that act as triggers for each curse, and inserts a trigger indicator in task struct of each task.*/
+//FIXME: Have to swap out with define directive. Also, remove excessive overhead.
+#ifdef _CURSES_INSERTED
 inline void curse_trigger (curse_id_t cid) {
-	
+	struct task_curse_struct *cur_struct;
+	unsigned long spinf;
+	uint64_t mask;
+
+	mask = mask_from_curse_id(cid);
+	cur_struct = &(current->curse_data);
+
+	spin_lock_irqsave(&(cur_struct->protection), spinf);
+	cur_struct->triggered &= mask;
+	spin_unlock_irqrestore(&(cur_struct->protection), spinf);
+
+}
+#else
+inline void curse_trigger (curse_id_t _) {
 	return;
 }
+#endif
