@@ -75,15 +75,6 @@ int syscurse_rem_rule(curse_id_t, char *);
 #define SET_INHER(_) (((_).permissions) |= (_INHER_MASK))
 #define CLR_INHER(_) (((_).permissions) &= ~(_INHER_MASK))
 
-/*This struct is a protective wrapper on a boolean variable (needed for concurrent calls on rw access to it).*/
-//TODO: clean this mess, it should be in curse 0x0 of curse_list_pointer
-struct bool_wrapper {
-	struct semaphore guard;
-	_Bool value;
-};
-
-/*Data holding the curse system status.*/
-extern struct bool_wrapper curse_system_active;
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 extern struct syscurse *curse_list_pointer;
 /*Proc node pointer.*/

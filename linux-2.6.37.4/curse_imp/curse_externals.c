@@ -17,8 +17,6 @@
 #include <curse/curse.h>			//Right now needed for the curse_system_active type, but will deprecate it (:)) before long.
 
 //Global data.
-/*Data holding the curse system status.*/
-struct bool_wrapper curse_system_active;
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
 /*Proc node pointer.*/

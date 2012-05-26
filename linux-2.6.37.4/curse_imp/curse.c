@@ -319,7 +319,7 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		target_task->curse_data.curse_field &= (~curse_mask);		//Just to be safe (^= toggles, not clears).
 		atomic_dec(&CURSE_FIELD(index, ref_count));
 		target_task->curse_data.inherritance &= (~curse_mask);
-		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)			//Revert curse status to ACTIVATED if ref 0ed-out.
+		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)			//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
 			CURSE_FIELD(index, status) = ACTIVATED;
 		err=1;
 	}
