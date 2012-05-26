@@ -42,14 +42,15 @@ enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, ACTIVE=0x02, INVALID_CURSE=
 #include <linux/semaphore.h>
 #include <linux/proc_fs.h>
 #include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
+#include <asm/atomic.h>
 
 /*Structure describing a curse (and its status).*/
 struct syscurse { 
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
-	unsigned int ref_count;				//Count of how many active deployments exist for this curse.
+	atomic_t ref_count;					//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
 	uint8_t permissions;				//Inheritance - UserGroupSuperuser(Permissions) flag field.
-	enum curse_status status;
+	enum curse_status status;			//Activation status for this curse.
 };
 
 /*Function prototypes (although forwards are ugly:)).*/
@@ -87,6 +88,11 @@ extern struct bool_wrapper curse_system_active;
 extern struct syscurse *curse_list_pointer;
 /*Proc node pointer.*/
 extern struct proc_dir_entry *dir_node, *output_node;
+
+/*This macro gives encapsulated access to the curse system general status.*/
+#define CURSE_SYSTEM_Q (atomic_read(&(curse_list_pointer[0].ref_count)))
+#define CURSE_SYSTEM_DOWN atomic_set(&(curse_list_pointer[0].ref_count), 0)
+#define CURSE_SYSTEM_UP atomic_set(&(curse_list_pointer[0].ref_count), 1)
 
 #endif	/* __KERNEL__ */
 
