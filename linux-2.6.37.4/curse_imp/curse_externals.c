@@ -1,5 +1,3 @@
-//EXPERIMENTAL
-
 #include <linux/linkage.h>
 #include <linux/syscalls.h>
 #include <linux/kernel.h>
@@ -24,9 +22,6 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 
 //=====Kernel functions.
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
-inline void curse_trigger (curse_id_t cid) {
-	return;
-}
 inline void curse_k_wrapper (void) {
 	struct task_struct *cur;
 
@@ -92,4 +87,9 @@ out_dirred:
 	remove_proc_entry(PROC_DIR_NAME, NULL);
 out:
 	return;		//Stub: there might be others below.
+}
+
+inline void curse_trigger (curse_id_t cid) {
+	
+	return;
 }

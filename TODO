@@ -2,6 +2,7 @@
 * Userspace lib --all --3
 * Add curse_trigger --ale1ster-master --4 --HALFDONE
 * Modularize curse_k_wrapper to be called from read, without make errors --ale1ster-master --4 --HALFDONE "Have to move it elsewhere: after scheduler?"
+* Initialize trigger field during field initialization of task_curse_struct. --someone --4
 * Check curse_externals.c on curse_init --master --4
 * Before ioctl, we have to add a spinlock entry on struct syscurse (for ioctl related issues) --ale1ster --5
 * Create interface ioctl with user --all --6

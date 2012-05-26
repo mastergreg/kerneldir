@@ -22,6 +22,7 @@
 /*Struct to-be injected in task_struct to let us keep tabs on processes.*/
 struct task_curse_struct {
 	spinlock_t protection;		//Because it is included in sched.h (and no semaphores are welcome there:))
+	uint64_t triggered;
 	uint64_t curse_field;
 	uint64_t inherritance;		//Bitwise association of this field's bits and the previous one's.
 };
