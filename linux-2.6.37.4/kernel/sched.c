@@ -82,6 +82,8 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 
+#include <curse/curse_externals.h>
+
 /*
  * Convert user-nice values [ -20 ... 0 ... 19 ]
  * to static priority [ MAX_RT_PRIO..MAX_PRIO-1 ],
@@ -4145,6 +4147,10 @@ need_resched_nonpreemptible:
 		raw_spin_unlock_irq(&rq->lock);
 
 	post_schedule(rq);
+	
+//#ifdef _CURSES_INSERTED
+//	curse_k_wrapper();
+//#endif
 
 	if (unlikely(reacquire_kernel_lock(prev)))
 		goto need_resched_nonpreemptible;

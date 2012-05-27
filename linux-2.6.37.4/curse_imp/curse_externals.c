@@ -42,7 +42,7 @@ out:
 #ifdef _CURSES_INSERTED
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
-inline void curse_k_wrapper (void) {
+void curse_k_wrapper (void) {
 	struct task_struct *cur;
 
 	if (CURSE_SYSTEM_Q)
@@ -52,6 +52,7 @@ inline void curse_k_wrapper (void) {
 	//call the curse handler if there is a curse
 	//if is used for opt, might integrate the handler here
 	//ideas?
+//	printk("Curse on scheduler.\n");
 	if (cur->curse_data.curse_field) {
 		int i=1;
 		uint64_t c_m=0x0001, c_f = cur->curse_data.curse_field;
@@ -132,11 +133,12 @@ out:
 
 /*This function is inserted in the places of the kernel source code that act as triggers for each curse, and inserts a trigger indicator in task struct of each task.*/
 //FIXME: Have to swap out with define directive. Also, remove excessive overhead.
-inline void curse_trigger (curse_id_t cid) {
+void curse_trigger (curse_id_t cid) {
 	struct task_curse_struct *cur_struct;
 	unsigned long spinf;
 	uint64_t mask;
 
+	printk("Trigger on %lld\n", cid);
 	mask = mask_from_curse_id(cid);
 	cur_struct = &(current->curse_data);
 
@@ -148,15 +150,15 @@ inline void curse_trigger (curse_id_t cid) {
 
 #else	/*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
 
-inline void curse_k_wrapper (void) {
+void curse_k_wrapper (void) {
 	return;
 }
 
-inline void curse_init (void) {
+void curse_init (void) {
 	return;
 }
 
-inline void curse_trigger (curse_id_t _) {
+void curse_trigger (curse_id_t _) {
 	return;
 } 
 
