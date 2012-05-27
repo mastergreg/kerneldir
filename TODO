@@ -1,6 +1,8 @@
 * Check function returns against new return policy --all --2 --STICKY
 * Userspace lib --all --3
 * Permission checking is still not included in the source code --master --3
+* Add triggerred && check in curse_k_wrapper while condition. --master --3
+* Add curse specific init and destroy calls in cast and lift. --all --3
 * Before ioctl, we have to add a spinlock entry on struct syscurse (for ioctl related issues) --ale1ster --5
 * Create interface ioctl with user --all --6
 * Hash function in userspace lib --all --7

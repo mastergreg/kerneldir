@@ -335,9 +335,7 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 		inc_syscr(current);
 	}
 
-	//TODO: FIXME: TEMPORARY
-//	curse_k_wrapper();
-	curse_trigger(0x00000002);
+	curse_trigger(0x00000002);	/*no_fs_cache*/
 
 	return ret;
 }

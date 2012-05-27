@@ -20,6 +20,7 @@
 #endif
 
 /*[ADD] The individual curse header includes.*/
+#include <curse/no_curse.h>
 #include <curse/no_fs_cache.h>
 #include <curse/stub_curse.h>
 
@@ -27,9 +28,8 @@
 struct curse_list_entry curse_full_list[] = {
 	{	"stub", 0x00000000	},
 	
-	{	"opalakia", 0x00000001	},
+	{	"no_curse", 0xBEA7CE5C	}
 	{	"no_fs_cache", 0x00000002	},
-	{	"another_entry", 0x00000080	},
 	
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
@@ -44,9 +44,8 @@ const int max_curse_no = (((sizeof (curse_full_list))/(sizeof (struct curse_list
 struct curse_fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_inject	}, /* maybe a stub maybe not, depends on how we handle 0 */
 
-	{	stub_init, stub_destroy, stub_inject	},
+	{	stub_init, stub_destroy, no_curse_inject	},
 	{	no_fs_cache_init, no_fs_cache_destroy, no_fs_cache_inject	},
-	{	stub_init, stub_destroy, stub_inject	},
 
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
 };
