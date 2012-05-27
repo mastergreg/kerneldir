@@ -4,10 +4,12 @@
 #ifndef CONFIG_CURSES
 #define CONFIG_CURSES
 #endif
+
 /* curse init function */
 void curse_init (void);
 
 //typedef curse_id_t;
+
 /* general curse trigger */
 inline void curse_trigger (curse_id_t cid);
 

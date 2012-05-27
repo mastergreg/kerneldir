@@ -2,7 +2,6 @@
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2
 * Userspace lib --all --3
 * Permission checking is still not included in the source code --all --3
-* Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --all --4
 * Modularize curse_k_wrapper to be called from read, without make errors --ale1ster-master --4 --HALFDONE "Have to move it elsewhere: after scheduler?"
 * Initialize trigger field during field initialization of task_curse_struct. --someone --4
 * Check curse_externals.c on curse_init --master --4
@@ -13,6 +12,7 @@
 * Check ptrace mechanism for hijacking the syscall table at runtime --ale1ster --9
 
 * Add curse_trigger --ale1ster-master --4 --FIXED
+* Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --ale1ster --4 --FIXED
 * Alter system wide activation on entry 0 of table --ale1ster --5 --FIXED "Check proper behavior of no_fs_cache"
 * Check the system initializing action. We have to insert the hook for initial actions there (current practice in bad practice) --all --5 --FIXED
 * When we are a little bit more loose, I need to remodularize the whole code. --ale1ster-master --6 --FIXED

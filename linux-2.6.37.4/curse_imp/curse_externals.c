@@ -39,6 +39,8 @@ out:
 }
 
 //=====Kernel functions.
+#ifdef _CURSES_INSERTED
+
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 inline void curse_k_wrapper (void) {
 	struct task_struct *cur;
@@ -65,7 +67,7 @@ inline void curse_k_wrapper (void) {
 
 out:
 	return;
-}
+} 
 
 int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data) {
 	int i, line_len, ret=0;
@@ -130,7 +132,6 @@ out:
 
 /*This function is inserted in the places of the kernel source code that act as triggers for each curse, and inserts a trigger indicator in task struct of each task.*/
 //FIXME: Have to swap out with define directive. Also, remove excessive overhead.
-#ifdef _CURSES_INSERTED
 inline void curse_trigger (curse_id_t cid) {
 	struct task_curse_struct *cur_struct;
 	unsigned long spinf;
@@ -143,10 +144,21 @@ inline void curse_trigger (curse_id_t cid) {
 	cur_struct->triggered &= mask;
 	spin_unlock_irqrestore(&(cur_struct->protection), spinf);
 
-}
-#else
-inline void curse_trigger (curse_id_t _) {
+ }
+
+#else	/*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
+
+inline void curse_k_wrapper (void) {
 	return;
 }
-#endif
+
+inline void curse_init (void) {
+	return;
+}
+
+inline void curse_trigger (curse_id_t _) {
+	return;
+} 
+
+#endif	/* _CURSES_INSERTED */
 
