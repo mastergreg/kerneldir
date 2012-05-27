@@ -45,7 +45,7 @@ out:
 void curse_k_wrapper (void) {
 	struct task_struct *cur;
 
-	if (CURSE_SYSTEM_Q)
+	if (!CURSE_SYSTEM_Q)
 		goto out;
 
 	cur = current;
