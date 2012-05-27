@@ -9,6 +9,7 @@
 * Create interface ioctl with user --all --6
 * Hash function in userspace lib --all --7
 * If there is time, we have to create a normal list_all function (with copy_to_user) as an alternative to proc entry (case of unmounted) --ale1ster --8
+* Also, remodel proc_read to read partial. --all --8
 
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::future static creation of curse list"
 * Add curse_trigger --ale1ster-master --4 --FIXED
