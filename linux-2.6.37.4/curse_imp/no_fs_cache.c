@@ -14,7 +14,7 @@ void no_fs_cache_destroy(void) {
 void no_fs_cache_inject(void) {
 	/* http://linux.die.net/man/2/fadvise */
 	struct fdtable *fdt;
-	struct files_struct * open_files;
+	struct files_struct *open_files;
 	int n;
 
 	rcu_read_lock();
@@ -22,9 +22,9 @@ void no_fs_cache_inject(void) {
 	open_files = get_files_struct(current);
 	fdt =  files_fdtable(open_files);
 
-	for(n = 0;n <= fdt->max_fds;++n) {
-		if(fcheck(n)) {
-			sys_fadvise64_64(n,0,0,POSIX_FADV_DONTNEED);
+	for (n=0; n <= fdt->max_fds; ++n) {
+		if (fcheck(n)) {
+			sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
 			printk(KERN_INFO "u got sth up %d\n", n);
 		}
 	}
@@ -34,3 +34,4 @@ void no_fs_cache_inject(void) {
 	put_files_struct(open_files);
 	return;
 }
+
