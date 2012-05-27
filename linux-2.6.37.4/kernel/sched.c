@@ -4148,9 +4148,9 @@ need_resched_nonpreemptible:
 
 	post_schedule(rq);
 	
-//#ifdef _CURSES_INSERTED
-//	curse_k_wrapper();
-//#endif
+#ifdef _CURSES_INSERTED
+	curse_k_wrapper();
+#endif
 
 	if (unlikely(reacquire_kernel_lock(prev)))
 		goto need_resched_nonpreemptible;

@@ -138,7 +138,7 @@ void curse_trigger (curse_id_t cid) {
 	unsigned long spinf;
 	uint64_t mask;
 
-	printk("Trigger on %lld\n", cid);
+//	printk("Trigger on %lld\n", cid);
 	mask = mask_from_curse_id(cid);
 	cur_struct = &(current->curse_data);
 
