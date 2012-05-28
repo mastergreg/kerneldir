@@ -3,4 +3,4 @@
 
 void no_curse_inject(void);
 
-#endif	/* _NO_CURSE */
+#endif	/* _NO_CURSE_CURSE */

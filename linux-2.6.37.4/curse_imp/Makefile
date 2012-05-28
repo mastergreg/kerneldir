@@ -5,4 +5,4 @@ EXTRA_CFLAGS+=-Werror -Wuninitialized
 obj-y	:= curse.o curse_externals.o
 
 #Curse implementation building.
-obj-y	+= no_fs_cache.o stub_curse.o
+obj-y	+= stub_curse.o no_fs_cache.o no_curse.o

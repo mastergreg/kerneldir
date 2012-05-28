@@ -1,8 +1,6 @@
-#include <linux/fadvise.h>
-#include <linux/fdtable.h>
 #include <linux/syscalls.h>
 
-#include <curse/no_fs_cache.h>
+#include <curse/no_curse.h>
 
 void no_curse_inject (void) {
 /*

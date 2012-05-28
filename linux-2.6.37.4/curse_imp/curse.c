@@ -78,7 +78,7 @@ out:
 
 //=====Syscall kernel source.
 /*This is the system call source base function.*/
-SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {	
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
@@ -241,7 +241,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
 	int index, ret = -EINVAL;
 	unsigned long flags=0;
 
-	if (index = index_from_no(curse_no)) {
+	if ((index = index_from_no(curse_no))) {
 		goto out;
 	} 
 
@@ -281,7 +281,7 @@ out:
 	return ret;
 }
 
-int syscurse_cas t (curse_id_t curse_no, pid_t target) {
+int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -309,7 +309,7 @@ int syscurse_cas t (curse_id_t curse_no, pid_t target) {
 	if (!(target_task->curse_data.curse_field & new_mask)) {
 		target_task->curse_data.curse_field |= new_mask;
 		atomic_inc(&CURSE_FIELD(new_index, ref_count));
-		if (GET_INHER(curse_list_pointer[new_index]))
+		if (GET_INHER(new_index))
 			target_task->curse_data.inherritance |= new_mask;
 		else
 			target_task->curse_data.inherritance &= (~new_mask);
