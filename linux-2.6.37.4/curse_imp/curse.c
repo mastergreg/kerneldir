@@ -92,7 +92,7 @@ SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 			ret = syscurse_list_all();
 			break;
 		case CURSE_CTRL:
-			ret = syscurse_ctrl(curse_no, cur_ctrl);
+			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
 			break;
 		case ACTIVATE:
 			ret = syscurse_activate(curse_no);
@@ -247,8 +247,9 @@ out:
 	return err;
 }
 
-int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
+int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	int index, ret = -EINVAL;
+	struct task_struct *target_task;
 	unsigned long flags=0;
 
 	if ((index = index_normalizer(curse_no))) {
@@ -257,13 +258,26 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
 
 	spin_lock_irqsave(&CURSE_FIELD(index, perm_lock), flags);
 	ret=1;
-	switch (ctrl) {
+	switch (ctrl) {		/*Inherritance (on curse_list_ponter array)*/
 		case INH_ON			:
 			SET_INHER(index);
 			break;
 		case INH_OFF		:
 			CLR_INHER(index);
 			break;
+		default:
+			ret=-1;
+	}
+	if (ret == 1)
+		goto out;
+
+	rcu_read_lock();
+	target_task = find_task_by_vpid(pid);
+	rcu_read_unlock();
+	if (!target_task)
+		goto out;
+
+	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
 		case USR_PERM_ON	:
 //			SET_PERM(index, _U_M);
 			break;
@@ -284,7 +298,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
 			break;
 		default				:
 			ret = -EINVAL;
-	} 
+	}
 	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
 
 out:

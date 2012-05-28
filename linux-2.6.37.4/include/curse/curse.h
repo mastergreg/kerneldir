@@ -86,14 +86,13 @@ extern struct proc_dir_entry *dir_node, *output_node;
 #define CLR_INHER(_index) (((curse_list_pointer[_index]).var_flags) &= ~(_INHER_MASK))
 
 /*Bitmasks to use for setting and checking the permissions field in struct tast_curse_struct.*/
-#define _USR_ACTIVE_PERM	0x01
+#define _USR_ACTIVE_PERM	0x01		/*Active permissions denote a capability to cast/lift.*/
 #define _GRP_ACTIVE_PERM	0x02
 #define _SU_ACTIVE_PERM		0x04
-#define _USR_PASSIVE_PERM	0x10
+#define _USR_PASSIVE_PERM	0x10		/*Passive permissions denote a capability to have a curse cast upon us.*/
 #define _GRP_PASSIVE_PERM	0x20
 #define _SU_PASSIVE_PERM	0x40
 /*Permission specific macros (first argument is a task_curse_struct variable, and the second a permission mask).*/
-//FIXME: Make them act on a task_curse_struct.
 #define GET_PERM(el, perm_mask) (((el).permissions) & (perm_mask))
 #define SET_PERM(el, perm_mask) (((el).permissions) |= (perm_mask))
 #define CLR_PERM(el, perm_mask) (((el).permissions) &= ~(perm_mask))
