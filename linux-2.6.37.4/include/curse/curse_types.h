@@ -25,6 +25,7 @@ struct task_curse_struct {
 	uint64_t triggered;
 	uint64_t curse_field;
 	uint64_t inherritance;		//Bitwise association of this field's bits and the previous one's.
+	uint8_t permissions;
 };
 
 #endif	/* _CURSE_TASK_STRUCT_DEFINED */

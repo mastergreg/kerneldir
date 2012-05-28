@@ -57,7 +57,7 @@ struct syscurse {
 	atomic_t ref_count;					//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
 	spinlock_t perm_lock;
-	uint8_t permissions;				//Inheritance - UserGroupSuperuser(Permissions) flag field.
+	uint8_t var_flags;					//Flags field.
 	enum curse_status status;			//Activation status for this curse.
 };
 
@@ -79,19 +79,24 @@ extern struct syscurse *curse_list_pointer;
 /*Proc node pointer.*/
 extern struct proc_dir_entry *dir_node, *output_node;
 
-/*Bitmasks to use for setting and checking the permissions field in struct syscurse.*/
-#define _U_M 0x01
-#define _G_M 0x02
-#define _S_M 0x04
-/*Inheritance specific macros (curse-specific inheritance is inserted in permissions field of syscurse struct.*/
-#define _INHER_MASK 0x20
-#define GET_INHER(_) (((curse_list_pointer[_]).permissions) & (_INHER_MASK))
-#define SET_INHER(_) (((curse_list_pointer[_]).permissions) |= (_INHER_MASK))
-#define CLR_INHER(_) (((curse_list_pointer[_]).permissions) &= ~(_INHER_MASK))
-/*Permission specific macros.*/
-#define GET_PERM(_, perm_mask) ((curse_list_pointer[_].permissions) & (perm_mask))
-#define SET_PERM(_, perm_mask) ((curse_list_pointer[_].permissions) |= (perm_mask))
-#define CLR_PERM(_, perm_mask) ((curse_list_pointer[_].permissions) &= ~(perm_mask))
+/*Inheritance specific macros (curse-specific inheritance is inserted in var_flags field of syscurse struct.*/
+#define _INHER_MASK	0x20
+#define GET_INHER(_index) (((curse_list_pointer[_index]).var_flags) & (_INHER_MASK))
+#define SET_INHER(_index) (((curse_list_pointer[_index]).var_flags) |= (_INHER_MASK))
+#define CLR_INHER(_index) (((curse_list_pointer[_index]).var_flags) &= ~(_INHER_MASK))
+
+/*Bitmasks to use for setting and checking the permissions field in struct tast_curse_struct.*/
+#define _USR_ACTIVE_PERM	0x01
+#define _GRP_ACTIVE_PERM	0x02
+#define _SU_ACTIVE_PERM		0x04
+#define _USR_PASSIVE_PERM	0x10
+#define _GRP_PASSIVE_PERM	0x20
+#define _SU_PASSIVE_PERM	0x40
+/*Permission specific macros (first argument is a task_curse_struct variable, and the second a permission mask).*/
+//FIXME: Make them act on a task_curse_struct.
+#define GET_PERM(el, perm_mask) (((el).permissions) & (perm_mask))
+#define SET_PERM(el, perm_mask) (((el).permissions) |= (perm_mask))
+#define CLR_PERM(el, perm_mask) (((el).permissions) &= ~(perm_mask))
 
 /*This macro gives encapsulated access to the curse system general status.*/
 #define CURSE_SYSTEM_Q (atomic_read(&(curse_list_pointer[0].ref_count)))
