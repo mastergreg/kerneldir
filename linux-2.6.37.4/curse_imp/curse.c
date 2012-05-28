@@ -41,8 +41,10 @@ inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c, *local_c;
-//	uint64_t current_perms;
+	uint8_t local_curse_perms;
+	uint8_t foreign_curse_perms;
 	int ret;
+	unsigned long spinflags;
 
 	ret = -ESRCH;		//FIXME: Sanity check.
 	rcu_read_lock();
@@ -59,6 +61,14 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	local_c = get_current_cred();
 	/* am i root or sudo?? */
 	/* do we belong to the same effective user?*/
+	
+	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+	local_curse_perms = current->curse_data.permissions;
+	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+
+	spin_lock_irqsave(&((foreign_task->curse_data).protection), spinflags);
+	foreign_curse_perms = foreign_task->curse_data.permissions;
+	spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 //	current_perms = CURSE_FIELD(index_normalizer(curse_no), permissions);
 /*
