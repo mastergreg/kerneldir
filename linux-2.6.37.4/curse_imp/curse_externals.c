@@ -54,7 +54,7 @@ void curse_k_wrapper (void) {
 //	printk("Curse on scheduler.\n");
 	if (cur->curse_data.curse_field) {
 		int i=1;
-		uint64_t c_m=0x0001, c_f = cur->curse_data.curse_field;
+		uint64_t c_m=0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
 		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
 		
 		//... This is where check and curse take place.
