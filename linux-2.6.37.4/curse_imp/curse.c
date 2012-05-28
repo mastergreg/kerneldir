@@ -154,14 +154,26 @@ out:
 //=====Source helpful sub-functions.
 int syscurse_list_all (char __user *buf, int len) {
 	int ret = -EINVAL;
+	size_t length;
+	static size_t offset=0;
+
+	if (len <= 0)
+		goto out;
+
+	length = sizeof(curse_full_list);
+	ret = ((length - offset) >= len) ? len : (length - offset);
 	
-	if (copy_to_user(buf,curse_full_list,len))	{
+	if (copy_to_user(buf, curse_full_list+offset, (unsigned long)ret)) {
 		ret=-EFAULT;
 		goto out;
 	}
 
-	out:
-		return ret;
+	offset += ret;
+	if (offset == length)
+		offset=0;
+
+out:
+	return ret;
 }
 
 int syscurse_activate (curse_id_t curse_no) {
