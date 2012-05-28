@@ -99,8 +99,8 @@ out:
 
 //=====Syscall kernel source.
 /*This is the system call source base function.*/
-SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
-{	
+SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+{
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
 
@@ -110,7 +110,7 @@ SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 #ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
-			ret = syscurse_list_all();
+			ret = syscurse_list_all(buf, cur_ctrl);
 			break;
 		case CURSE_CTRL:
 			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
@@ -150,7 +150,7 @@ out:
 }
 
 //=====Source helpful sub-functions.
-int syscurse_list_all (void) {
+int syscurse_list_all (char __user *buf, int len) {
 	int ret = -EINVAL;
 
 	return ret;
