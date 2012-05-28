@@ -18,9 +18,10 @@
 
 #include <curse/curse.h>
 #include <curse/curse_types.h>
+#include <curse/curse_list.h>
 
 //=====External declarations.
-extern int max_curse_no;
+//extern int max_curse_no;
 
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
@@ -152,8 +153,14 @@ out:
 //=====Source helpful sub-functions.
 int syscurse_list_all (char __user *buf, int len) {
 	int ret = -EINVAL;
+	
+	if (copy_to_user(buf,curse_full_list,len))	{
+		ret=-EFAULT;
+		goto out;
+	}
 
-	return ret;
+	out:
+		return ret;
 }
 
 int syscurse_activate (curse_id_t curse_no) {
