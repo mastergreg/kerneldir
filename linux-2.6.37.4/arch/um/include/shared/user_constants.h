@@ -5,32 +5,28 @@
  *
  */
 
-#define HOST_SC_CR2 176 /* offsetof(struct sigcontext, cr2)	# */
-#define HOST_SC_ERR 152 /* offsetof(struct sigcontext, err)	# */
-#define HOST_SC_TRAPNO 160 /* offsetof(struct sigcontext, trapno)	# */
-#define HOST_FP_SIZE 64 /* sizeof(struct _fpstate) / sizeof(unsigned long)	# */
-#define HOST_RBX 5 /* RBX	# */
-#define HOST_RCX 11 /* RCX	# */
-#define HOST_RDI 14 /* RDI	# */
-#define HOST_RSI 13 /* RSI	# */
-#define HOST_RDX 12 /* RDX	# */
-#define HOST_RBP 4 /* RBP	# */
-#define HOST_RAX 10 /* RAX	# */
-#define HOST_R8 9 /* R8	# */
-#define HOST_R9 8 /* R9	# */
-#define HOST_R10 7 /* R10	# */
-#define HOST_R11 6 /* R11	# */
-#define HOST_R12 3 /* R12	# */
-#define HOST_R13 2 /* R13	# */
-#define HOST_R14 1 /* R14	# */
-#define HOST_R15 0 /* R15	# */
-#define HOST_ORIG_RAX 15 /* ORIG_RAX	# */
-#define HOST_CS 17 /* CS	# */
-#define HOST_SS 20 /* SS	# */
-#define HOST_EFLAGS 18 /* EFLAGS	# */
-#define HOST_IP 16 /* RIP	# */
-#define HOST_SP 19 /* RSP	# */
-#define UM_FRAME_SIZE 216 /* sizeof(struct user_regs_struct)	# */
+#define HOST_SC_TRAPNO 48 /* offsetof(struct sigcontext, trapno)	# */
+#define HOST_SC_ERR 52 /* offsetof(struct sigcontext, err)	# */
+#define HOST_SC_CR2 84 /* offsetof(struct sigcontext, cr2)	# */
+#define HOST_FP_SIZE 27 /* sizeof(struct user_fpregs_struct)	# */
+#define HOST_FPX_SIZE 128 /* sizeof(struct user_fpxregs_struct)	# */
+#define HOST_IP 12 /* EIP	# */
+#define HOST_SP 15 /* UESP	# */
+#define HOST_EFLAGS 14 /* EFL	# */
+#define HOST_EAX 6 /* EAX	# */
+#define HOST_EBX 0 /* EBX	# */
+#define HOST_ECX 1 /* ECX	# */
+#define HOST_EDX 2 /* EDX	# */
+#define HOST_ESI 3 /* ESI	# */
+#define HOST_EDI 4 /* EDI	# */
+#define HOST_EBP 5 /* EBP	# */
+#define HOST_CS 13 /* CS	# */
+#define HOST_SS 16 /* SS	# */
+#define HOST_DS 7 /* DS	# */
+#define HOST_FS 9 /* FS	# */
+#define HOST_ES 8 /* ES	# */
+#define HOST_GS 10 /* GS	# */
+#define UM_FRAME_SIZE 68 /* sizeof(struct user_regs_struct)	# */
 #define UM_POLLIN 1 /* POLLIN	# */
 #define UM_POLLPRI 2 /* POLLPRI	# */
 #define UM_POLLOUT 4 /* POLLOUT	# */

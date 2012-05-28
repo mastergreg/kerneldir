@@ -59,13 +59,13 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	local_c = get_current_cred();
 	/* am i root or sudo?? */
 	/* do we belong to the same effective user?*/
-	/* or the same group? */
 
 	current_perms = CURSE_FIELD(index_from_no(curse_no), permissions);
 
-	ret = (((local_c->euid == 0) && (current_perms & _S_M))														|| \
-		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M))	||	\
-		((local_c->gid == foreign_c->gid) && (current_perms & _G_M)));
+	ret = -EPERM;
+	if(((local_c->euid == 0) && (current_perms & _S_M))														|| \
+		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M)))
+		ret = 1;
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
 //out_with_local:
@@ -219,8 +219,11 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 
-	err = -EPERM;
 	//TODO: Check permissions.
+	if((err = check_permissions(curse_no, target) == -EPERM))
+			goto out;
+	err = 0;
+	
 
 	//Check if target has an active curse on it.	::	FIXME: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -298,8 +301,10 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 
-	err = -EPERM;
 	//TODO: Check permissions.
+	if((err = check_permissions(curse_no, target) == -EPERM))
+			goto out;
+	err = 0;
 
 	err = -EINVAL;
 	new_index = index_from_no(curse_no);
