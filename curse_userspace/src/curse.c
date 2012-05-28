@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : curse.c
 * Creation Date : 28-05-2012
-* Last Modified : Mon 28 May 2012 02:49:34 PM EEST
+* Last Modified : Mon 28 May 2012 10:40:05 PM EEST
 * Created By : Greg Liras <gregliras@gmail.com>
 _._._._._._._._._._._._._._._._._._._._._.*/
 
@@ -17,9 +17,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include <sys/types.h>
 
 #ifdef __i386__
-# define __NR_curse 341
+#define __NR_curse 341
 #else
-# define __NR_curse 303 
+#define __NR_curse 303 
 #endif
 
 
