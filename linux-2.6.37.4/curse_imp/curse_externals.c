@@ -141,10 +141,10 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 //	printk("Trigger on %lld\n", cid);
 	index = index_from_curse_id(cid);
-	
+
 	cur_struct = &(current->curse_data);
 
-	if (unlikely(defer_action)) {
+	if (unlikely(!defer_action)) {
 		(curse_list_pointer[index].functions)->fun_inject();
 	} else {
 		spin_lock_irqsave(&(cur_struct->protection), spinf);

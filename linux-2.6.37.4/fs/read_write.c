@@ -335,7 +335,7 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 		inc_syscr(current);
 	}
 
-	curse_trigger(0x00000002);	/*no_fs_cache*/
+	curse_trigger(1, 0x00000002);	/*no_fs_cache*/
 
 	return ret;
 }
