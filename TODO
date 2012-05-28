@@ -6,21 +6,14 @@
 * Add triggerred && check in curse_k_wrapper while condition. --master --3
 * Add curse specific init and destroy calls in cast and lift. --all --3
 * Ioctl added (ctrl). We have to test inherritance of calls in fork (exec), where tack_curse_struct is initialized. --all --3
-* Before ioctl, we have to add a spinlock entry on struct syscurse (for ioctl related issues) --ale1ster --5
-* Create interface ioctl with user --all --6
 * Hash function in userspace lib --all --7
 * If there is time, we have to create a normal list_all function (with copy_to_user) as an alternative to proc entry (case of unmounted) --ale1ster --8
 * Also, remodel proc_read to read partial. --all --8
 
-* Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::future static creation of curse list"
-* Add curse_trigger --ale1ster-master --4 --FIXED
-* Check curse_externals.c on curse_init --master --4 --FIXED
-* Modularize curse_k_wrapper to be called from read, without make errors --ale1ster-master --4 --FIXED "Have to move it elsewhere: after scheduler?"
+* Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
 * Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --ale1ster --4 --FIXED
-* Initialize trigger field during field initialization of task_curse_struct. --master --4 --FIXED
-* Alter system wide activation on entry 0 of table --ale1ster --5 --FIXED "Check proper behavior of no_fs_cache"
-* Check the system initializing action. We have to insert the hook for initial actions there (current practice in bad practice) --all --5 --FIXED
-* Check ptrace mechanism for hijacking the syscall table at runtime --ale1ster --9 --REJECTED
+* Before ioctl, we have to add a spinlock entry on struct syscurse (for ioctl related issues) --ale1ster --5 --FIXED
+* Create interface ioctl with user --all --6 --FIXED
 
 
 And so the story goes...
@@ -34,6 +27,12 @@ And so the story goes...
  Need to create permissions verification mechanism (function?) --master --3 --FIXED
  Make bitmask_from_id proper (for-if-return) --ale1ster --3 --FIXED
  Fix deactivation (Policy: we act on list_pointer only after we take system_status sema). --ale1ster --4 --FIXED
+ Initialize trigger field during field initialization of task_curse_struct. --master --4 --FIXED
+ Add curse_trigger --ale1ster-master --4 --FIXED
+ Modularize curse_k_wrapper to be called from read, without make errors --ale1ster-master --4 --FIXED "Have to move it elsewhere: after scheduler?"
+ Check curse_externals.c on curse_init --master --4 --FIXED
+* Alter system wide activation on entry 0 of table --ale1ster --5 --FIXED "Check proper behavior of no_fs_cache"
+* Check the system initializing action. We have to insert the hook for initial actions there (current practice in bad practice) --all --5 --FIXED
  Initialize task_curse_struct in fork (allocation pending?) --all --5 --FIXED
  Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5 --FIXED
  Change curse_bit to curse_active_bit in syscurse (and all used points) --ale1ster --6 --REJECTED "Too long name."
@@ -41,3 +40,4 @@ And so the story goes...
  Create permissions in task_curse_struct (3bit field UGS) --ale1ster --6 --FIXED
  Maybe change todo.py to ignore everything after an empty line or a ============ delimiter, so we can keep history? --master --6 --FIXED
  When we are a little bit more loose, I need to remodularize the whole code. --ale1ster-master --6 --FIXED
+ Check ptrace mechanism for hijacking the syscall table at runtime --ale1ster --9 --REJECTED
