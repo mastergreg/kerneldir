@@ -18,9 +18,11 @@
 
 #include <curse/curse.h>
 #include <curse/curse_types.h>
+//#include <curse/curse_list.h>
 
 //=====External declarations.
 extern int max_curse_no;
+extern struct curse_list_entry *curse_full_list;
 
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
@@ -40,7 +42,7 @@ inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 /*This function checks if current is allowed to change the state of the target proc.*/
 inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	struct task_struct *foreign_task;
-	const struct cred *foreign_c, *local_c;
+	const struct cred *foreign_c=NULL, *local_c=NULL;
 	uint8_t local_curse_perms;
 	uint8_t foreign_curse_perms;
 	int ret;
@@ -85,8 +87,8 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	}
 	else {
 		ret = -EPERM;
-		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) || (local_curse_perms & _USR_ACTIVE_PERM))
-			ret = 1;
+//		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) || (local_curse_perms & _USR_ACTIVE_PERM))			//TODO: Compiler warning
+//			ret = 1;
 	}
 
 	put_cred(local_c);
