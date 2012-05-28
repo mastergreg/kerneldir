@@ -154,8 +154,14 @@ out:
 //=====Source helpful sub-functions.
 int syscurse_list_all (char __user *buf, int len) {
 	int ret = -EINVAL;
+	
+	if (copy_to_user(buf,curse_full_list,len))	{
+		ret=-EFAULT;
+		goto out;
+	}
 
-	return ret;
+	out:
+		return ret;
 }
 
 int syscurse_activate (curse_id_t curse_no) {
