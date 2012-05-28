@@ -363,9 +363,7 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-
-	CURSE_FIELD(new_index, functions)->fun_init();
-
+	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
 	printk(KERN_INFO "Casting curse %llu to process %d %llx\n",curse_no,target,new_mask);
 
 out: 
