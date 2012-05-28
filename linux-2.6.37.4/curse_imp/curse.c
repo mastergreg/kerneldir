@@ -139,6 +139,9 @@ int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
+	if((err = check_permissions(curse_no, 0) == -EPERM))
+			goto out;
+	err = 0;
 
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
@@ -162,6 +165,9 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
+	if((err = check_permissions(curse_no, 0) == -EPERM))
+			goto out;
+	err = 0;
 
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
@@ -220,8 +226,11 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	//TODO: Check permissions.
+	err = -EINVAL;
+	if(target <= 0)
+		goto out;
 	if((err = check_permissions(curse_no, target) == -EPERM))
-			goto out;
+		goto out;
 	err = 0;
 	
 
@@ -302,8 +311,11 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	//TODO: Check permissions.
+	err = -EINVAL;
+	if(target <= 0 )
+		goto out;
 	if((err = check_permissions(curse_no, target) == -EPERM))
-			goto out;
+		goto out;
 	err = 0;
 
 	err = -EINVAL;
@@ -345,8 +357,12 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 	
-	err = -EPERM;
 	//TODO: Check permissions.
+	err = -EINVAL;
+	if(target <= 0)
+		goto out;
+	if((err = check_permissions(curse_no, target) == -EPERM))
+		goto out;
 
 	err = -EINVAL;
 	index = index_from_no(curse_no);
