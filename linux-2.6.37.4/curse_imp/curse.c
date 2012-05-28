@@ -26,7 +26,7 @@ extern struct curse_list_entry *curse_full_list;
 
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-inline int index_normalizer (curse_id_t a_c_id) {
+inline int index_normalizer (curse_id_t a_ c_id) {
 	int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
 	return i;
 }
@@ -105,6 +105,9 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 {
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
+	cmd_norm=index_normalizer(curse_no);		//Sanity check.
+	if ((cmd_norm < 0) || (cmd_norm >=max_curse_no))
+		goto out;
 
 	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
@@ -155,23 +158,24 @@ out:
 int syscurse_list_all (char __user *buf, int len) {
 	int ret = -EINVAL;
 	size_t length;
-	static size_t offset=0;
+//	static size_t offset=0;
 
 	if (len <= 0)
 		goto out;
 
 	length = sizeof(curse_full_list);
-	ret = ((length - offset) >= len) ? len : (length - offset);
+//	ret = ((length - offset) >= len) ? len : (length - offset);
+	ret=length;
 	
-	if (copy_to_user(buf, curse_full_list+offset, (unsigned long)ret)) {
+	if (copy_to_user(buf, curse_full_list/*+offset*/, (unsigned long)ret)) {
 		ret=-EFAULT;
 		goto out;
 	}
-
+/*
 	offset += ret;
 	if (offset == length)
 		offset=0;
-
+*/
 out:
 	return ret;
 }
