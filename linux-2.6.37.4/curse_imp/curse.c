@@ -24,14 +24,14 @@ extern int max_curse_no;
 
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-inline int index_from_no (curse_id_t a_c_id) {
+inline int index_normalizer (curse_id_t a_c_id) {
     int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
 	return i;
 }
 
 /*This function returns the bitmask for the specified curse id.*/
 inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
-	return curse_list_pointer[index_from_no(a_c_id)].curse_bit;
+	return curse_list_pointer[index_normalizer(a_c_id)].curse_bit;
 }
 
 /*This macro expands to the requested field of the requested element of curse_list_pointer array.*/
@@ -60,7 +60,7 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	/* am i root or sudo?? */
 	/* do we belong to the same effective user?*/
 
-	current_perms = CURSE_FIELD(index_from_no(curse_no), permissions);
+	current_perms = CURSE_FIELD(index_normalizer(curse_no), permissions);
 
 	ret = -EPERM;
 	if(((local_c->euid == 0) && (current_perms & _S_M))														|| \
@@ -145,7 +145,7 @@ int syscurse_activate (curse_id_t curse_no) {
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
-		i=index_from_no(curse_no);
+		i=index_normalizer(curse_no);
 		if (!(CURSE_FIELD(i, status) & (ACTIVATED | CASTED))) {
 			CURSE_FIELD(i, status) = ACTIVATED;
 			ret=1;
@@ -169,7 +169,7 @@ int syscurse_deactivate (curse_id_t curse_no) {
 
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
-		i=index_from_no(curse_no);
+		i=index_normalizer(curse_no);
 		if (CURSE_FIELD(i, status) & (ACTIVATED | CASTED)) {
 			CURSE_FIELD(i, status) = IMPLEMENTED;
 			ret=1;
@@ -191,7 +191,7 @@ int syscurse_check_curse_activity (curse_id_t curse_no) {
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
-	i=index_from_no(curse_no);
+	i=index_normalizer(curse_no);
 	if (CURSE_FIELD(i, entry)->curse_id == 0xABADDE5C) {
 		ret = -EINVAL;
 		goto out;
@@ -251,7 +251,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
 	int index, ret = -EINVAL;
 	unsigned long flags=0;
 
-	if ((index = index_from_no(curse_no))) {
+	if ((index = index_normalizer(curse_no))) {
 		goto out;
 	} 
 
@@ -317,7 +317,7 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	err = 0;
 
 	err = -EINVAL;
-	new_index = index_from_no(curse_no);
+	new_index = index_normalizer(curse_no);
 	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
 		goto out;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -364,7 +364,7 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		goto out;
 
 	err = -EINVAL;
-	index = index_from_no(curse_no);
+	index = index_normalizer(curse_no);
 	if (!(curse_mask = CURSE_FIELD(index, curse_bit)))
 		goto out;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
