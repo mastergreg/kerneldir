@@ -40,7 +40,7 @@ enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, CASTED=0x02, INVALID_CURSE=
 
 /*Procfs entry names.*/
 #define PROC_DIR_NAME "curse"
-#define PROC_OUT_NODE_NAME "listing"
+#define PROC_OUT_NODE_NAME "curse_list"
 
 //TODO: Cleanup and check comments. Also move around things between kernel and userspace. See header.
 #ifdef __KERNEL__
