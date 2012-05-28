@@ -59,6 +59,7 @@ struct syscurse {
 	spinlock_t perm_lock;
 	uint8_t var_flags;					//Flags field.
 	enum curse_status status;			//Activation status for this curse.
+	struct curse_fun_element *fun;
 };
 
 /*Function prototypes (although forwards are ugly:)).*/
@@ -67,7 +68,7 @@ int syscurse_activate(curse_id_t);
 int syscurse_deactivate(curse_id_t);
 int syscurse_check_curse_activity(curse_id_t);
 int syscurse_check_tainted_process(curse_id_t, pid_t);
-int syscurse_ctrl(curse_id_t, int);
+int syscurse_ctrl(curse_id_t, int, pid_t);
 int syscurse_cast(curse_id_t, pid_t);
 int syscurse_lift(curse_id_t, pid_t);
 int syscurse_show_rules(void);
