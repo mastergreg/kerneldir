@@ -2,8 +2,8 @@
 
 #include <curse/no_curse.h>
 
-void no_curse_inject (void) {
-/*
+void no_curse_inject (uint64_t mask) {
+/* 
 	struct curse_struct *cur_curse;
 	unsigned long irqflags;
 

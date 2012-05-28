@@ -9,12 +9,12 @@ void stub_init (void /*or not*/) {
 	return;
 }
 
-void stub_destroy (void /*or not*/) {
+ void stub_destroy (void /*or not*/) {
     printk("Close of curse initiated\n");
     return;
 }
 
-void stub_inject (void /*not*/) {
+void stub_inject (uint64_t mask) {
     printk("Run of curse initiated\n");
     return;
 }
