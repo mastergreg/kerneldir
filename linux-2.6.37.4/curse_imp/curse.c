@@ -148,7 +148,6 @@ int syscurse_list_all (void) {
 int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
-	//TODO: Check permissions.
 	if((ret = check_permissions(curse_no, 0) == -EPERM))
 			goto out_ret;
 
@@ -173,7 +172,6 @@ out_ret:
 int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
-	//TODO: Check permissions.
 	if((ret = check_permissions(curse_no, 0) == -EPERM))
 			goto out_ret;
 
@@ -233,7 +231,6 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 
-	//TODO: Check permissions.
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
@@ -332,7 +329,6 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 
-	//TODO: Check permissions.
 	err = -EINVAL;
 	if(target <= 0 )
 		goto out;
@@ -380,7 +376,6 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 	
-	//TODO: Check permissions.
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
