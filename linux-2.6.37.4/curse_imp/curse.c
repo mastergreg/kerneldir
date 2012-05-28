@@ -260,6 +260,7 @@ out:
 int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	int index, ret = -EINVAL;
 	struct task_struct *target_task;
+	struct task_curse_struct *cur_curse_field;
 	unsigned long flags=0;
 
 	if ((index = index_normalizer(curse_no))) {
@@ -278,6 +279,8 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 		default:
 			ret=-1;
 	}
+	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
+
 	if (ret == 1)
 		goto out;
 
@@ -286,30 +289,34 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	rcu_read_unlock();
 	if (!target_task)
 		goto out;
+	cur_curse_field = target_task->curse_data;
+	
+	//TODO: Check permissions.
 
+	spin_lock_irqsave(&(cur_curse_field.protection), flags);
 	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
 		case USR_PERM_ON	:
-//			SET_PERM(index, _U_M);
+//			SET_PERM(cur_curse_field.permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_ON	:
-//			SET_PERM(index, _G_M);
+//			SET_PERM(cur_curse_field.permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_ON		:
-//			SET_PERM(index, _S_M);
+//			SET_PERM(cur_curse_field.permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
 			break;
 		case USR_PERM_OFF	:
-//			CLR_PERM(index, _U_M);
+//			CLR_PERM(cur_curse_field.permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_OFF	:
-//			CLR_PERM(index, _G_M);
+//			CLR_PERM(cur_curse_field.permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_OFF	:
-//			CLR_PERM(index, _S_M);
+//			CLR_PERM(cur_curse_field.permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
 			break;
 		default				:
 			ret = -EINVAL;
 	}
-	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
+	spin_unlock_irqrestore(&(cur_curse_struct.protection), flags);
 
 out:
 	return ret;
