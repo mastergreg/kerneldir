@@ -59,7 +59,7 @@ void curse_k_wrapper (void) {
 		
 		//... This is where check and curse take place.
 		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
-			fun_array[i].fun_inject();
+			fun_array[i].fun_inject(curse_list_pointer[i].curse_bit);
 			c_f >>= 1;
 			i++;
 		}
@@ -145,7 +145,7 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 	cur_struct = &(current->curse_data);
 
 	if (unlikely(defer_action)) {
-		(curse_list_pointer[index].functions)->fun_inject();
+		(curse_list_pointer[index].functions)->fun_inject(curse_list_pointer[index].curse_bit);
 	} else {
 		spin_lock_irqsave(&(cur_struct->protection), spinf);
 		cur_struct->triggered &= (curse_list_pointer[index].curse_bit);
