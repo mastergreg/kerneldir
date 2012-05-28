@@ -289,34 +289,34 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	rcu_read_unlock();
 	if (!target_task)
 		goto out;
-	cur_curse_field = target_task->curse_data;
+	cur_curse_field = &(target_task->curse_data);
 	
 	//TODO: Check permissions.
 
-	spin_lock_irqsave(&(cur_curse_field.protection), flags);
+	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
 		case USR_PERM_ON	:
-//			SET_PERM(cur_curse_field.permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
+//			SET_PERM(cur_curse_field->permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_ON	:
-//			SET_PERM(cur_curse_field.permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
+//			SET_PERM(cur_curse_field->permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_ON		:
-//			SET_PERM(cur_curse_field.permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
+//			SET_PERM(cur_curse_field->permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
 			break;
 		case USR_PERM_OFF	:
-//			CLR_PERM(cur_curse_field.permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
+//			CLR_PERM(cur_curse_field->permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_OFF	:
-//			CLR_PERM(cur_curse_field.permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
+//			CLR_PERM(cur_curse_field->permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_OFF	:
-//			CLR_PERM(cur_curse_field.permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
+//			CLR_PERM(cur_curse_field->permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
 			break;
 		default				:
 			ret = -EINVAL;
 	}
-	spin_unlock_irqrestore(&(cur_curse_struct.protection), flags);
+	spin_unlock_irqrestore(&(cur_curse_field->protection), flags);
 
 out:
 	return ret;
