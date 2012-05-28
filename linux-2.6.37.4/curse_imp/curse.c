@@ -4,7 +4,7 @@
  * [The functions used by the system call are sourced below it.]
  *
  */
- 
+
 #include <linux/linkage.h>
 #include <linux/syscalls.h>
 #include <linux/kernel.h>
@@ -25,7 +25,7 @@ extern int max_curse_no;
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
 inline int index_normalizer (curse_id_t a_c_id) {
-    int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
+	int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
 	return i;
 }
 
@@ -45,39 +45,50 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	uint8_t foreign_curse_perms;
 	int ret;
 	unsigned long spinflags;
-
-	ret = -ESRCH;		//FIXME: Sanity check.
-	rcu_read_lock();
-	foreign_task = find_task_by_vpid(target);
-	rcu_read_unlock();
-	if (!foreign_task)
-		goto out;
-
-	ret = -EINVAL;		//FIXME: Sanity check.
-	foreign_c = get_task_cred(foreign_task);
-	if (!foreign_c)
-		goto out_with_foreign;
-
-	local_c = get_current_cred();
-	/* am i root or sudo?? */
-	/* do we belong to the same effective user?*/
-	
 	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
 	local_curse_perms = current->curse_data.permissions;
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+	local_c = get_current_cred();
 
-	spin_lock_irqsave(&((foreign_task->curse_data).protection), spinflags);
-	foreign_curse_perms = foreign_task->curse_data.permissions;
-	spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
+	if (target) {
+		ret = -ESRCH;		//FIXME: Sanity check.
+		rcu_read_lock();
+		foreign_task = find_task_by_vpid(target);
+		rcu_read_unlock();
+		if (!foreign_task)
+			goto out;
 
-//	current_perms = CURSE_FIELD(index_normalizer(curse_no), permissions);
-	ret = -EPERM;
-	if(((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))					||	\
-		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) &&\
-		   (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
-		ret = 1;
+		ret = -EINVAL;		//FIXME: Sanity check.
+		foreign_c = get_task_cred(foreign_task);
+		if (!foreign_c)
+			goto out_with_foreign;
 
-//out_with_local:
+		/* am i root or sudo?? */
+		/* do we belong to the same effective user?*/
+
+/*
+		this is handled a few lines above regardless of target (above if)
+
+		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+		local_curse_perms = current->curse_data.permissions;
+		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+*/
+		spin_lock_irqsave(&((foreign_task->curse_data).protection), spinflags);
+		foreign_curse_perms = foreign_task->curse_data.permissions;
+		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
+
+		ret = -EPERM;
+		if(((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
+				(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
+				 (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
+			ret = 1;
+	}
+	else {
+		ret = -EPERM;
+		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) || (local_curse_perms & _USR_ACTIVE_PERM))
+			ret = 1;
+	}
+
 	put_cred(local_c);
 out_with_foreign:
 	put_cred(foreign_c);
@@ -94,9 +105,9 @@ SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 	int cmd_norm=(int)curse_cmd;
 
 	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
-	
+
 	//Do not even call if curse system is not active.
-	#ifdef _CURSES_INSERTED
+#ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
 			ret = syscurse_list_all();
@@ -132,7 +143,7 @@ SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 		default:
 			goto out;
 	}
-	#endif
+#endif
 
 out:
 	return ret;
@@ -149,7 +160,7 @@ int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	if((ret = check_permissions(curse_no, 0) == -EPERM))
-			goto out_ret;
+		goto out_ret;
 
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
@@ -173,7 +184,7 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	if((ret = check_permissions(curse_no, 0) == -EPERM))
-			goto out_ret;
+		goto out_ret;
 
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
@@ -237,7 +248,7 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	if((err = check_permissions(curse_no, target) == -EPERM))
 		goto out;
 	err = 0;
-	
+
 
 	//Check if target has an active curse on it.	::	FIXME: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -279,7 +290,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
 
 	if (ret == 1)
-		goto out;
+		goto out_with_lock;
 
 	rcu_read_lock();
 	target_task = find_task_by_vpid(pid);
@@ -359,7 +370,11 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
+<<<<<<< HEAD
 	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
+=======
+	//Call init after cast.
+>>>>>>> 747e1e1b0e3d2159f38862e8462c9431d6905e6a
 	printk(KERN_INFO "Casting curse %llu to process %d %llx\n",curse_no,target,new_mask);
 
 out: 
@@ -382,7 +397,7 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	rcu_read_unlock();
 	if (!target_task)
 		goto out;
-	
+
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
