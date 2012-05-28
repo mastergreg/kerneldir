@@ -59,7 +59,7 @@ struct syscurse {
 	spinlock_t perm_lock;
 	uint8_t var_flags;					//Flags field.
 	enum curse_status status;			//Activation status for this curse.
-	struct curse_fun_element *fun;
+	struct curse_fun_element *functions;
 };
 
 /*Function prototypes (although forwards are ugly:)).*/

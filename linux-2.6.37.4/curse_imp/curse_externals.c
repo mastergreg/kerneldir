@@ -105,11 +105,13 @@ void curse_init (void) {
 		curse_list_pointer[j].var_flags=_INHER_MASK;
 		SET_INHER(j);
 		curse_list_pointer[j].status=IMPLEMENTED;
+		curse_list_pointer[j].functions=&fun_array[j];
 	}
 	curse_list_pointer[0].status=INVALID_CURSE;
 	curse_list_pointer[0].curse_bit=0x0;
 	atomic_set(&(curse_list_pointer[0].ref_count), 0);
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
+	curse_list_pointer[0].functions=&fun_array[0];
 
 	//2. Initialize active status boolean.	::	Could default on an initial status here (based on build options).
 	CURSE_SYSTEM_DOWN;
