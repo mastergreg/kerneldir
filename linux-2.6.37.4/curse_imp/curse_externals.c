@@ -1,3 +1,4 @@
+#include <linux/compiler.h>
 #include <linux/linkage.h>
 #include <linux/syscalls.h>
 #include <linux/kernel.h>
@@ -23,19 +24,17 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 
 //=====Helpful functions (locally needed).		//TODO: We shouldn't add symbols we don't need to be external.
 //FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation. ::Possible conflicts with curse_init, that creates the masks.
-uint64_t mask_from_curse_id (curse_id_t _) {
+inline int index_from_curse_id (curse_id_t _) {
 	int i=0;
-	uint64_t r = 0x00;
 
 	if (_ == 0x00)
 		goto out;
-	for (i=1, r=0x01; i<MAX_CURSE_NO; i++, r <<= 1) {
+	for (i=1; i<MAX_CURSE_NO; i++)
 		if ((curse_list_pointer[i].entry->curse_id) == _)
 			goto out;
-	}
 
 out:
-	return r;
+	return i;
 }
 
 //=====Kernel functions.
@@ -135,18 +134,23 @@ out:
 
 /*This function is inserted in the places of the kernel source code that act as triggers for each curse, and inserts a trigger indicator in task struct of each task.*/
 //FIXME: Have to swap out with define directive. Also, remove excessive overhead.
-void curse_trigger (curse_id_t cid) {
+void curse_trigger (_Bool defer_action, curse_id_t cid) {
 	struct task_curse_struct *cur_struct;
 	unsigned long spinf;
-	uint64_t mask;
+	int index;
 
 //	printk("Trigger on %lld\n", cid);
-	mask = mask_from_curse_id(cid);
+	index = index_from_curse_id(cid);
+	
 	cur_struct = &(current->curse_data);
 
-	spin_lock_irqsave(&(cur_struct->protection), spinf);
-	cur_struct->triggered &= mask;
-	spin_unlock_irqrestore(&(cur_struct->protection), spinf);
+	if (unlikely(defer_action)) {
+		(curse_list_pointer[index].functions)->fun_inject();
+	} else {
+		spin_lock_irqsave(&(cur_struct->protection), spinf);
+		cur_struct->triggered &= (curse_list_pointer[index].curse_bit);
+		spin_unlock_irqrestore(&(cur_struct->protection), spinf);
+	}
 
  }
 
