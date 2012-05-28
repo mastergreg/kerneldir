@@ -87,8 +87,8 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	}
 	else {
 		ret = -EPERM;
-//		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) || (local_curse_perms & _USR_ACTIVE_PERM))			//TODO: Compiler warning
-//			ret = 1;
+		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))			//TODO: Compiler warning
+			ret = 1;
 	}
 
 	put_cred(local_c);
@@ -320,6 +320,12 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	cur_curse_field = &(target_task->curse_data);
 	
 	//TODO: Check permissions.
+	ret = -EINVAL;
+	if(pid <= 0)
+		goto out;
+	if((ret = check_permissions(curse_no, pid)) == -EPERM) {
+		goto out;
+	}
 
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
