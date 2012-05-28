@@ -59,14 +59,12 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	local_c = get_current_cred();
 	/* am i root or sudo?? */
 	/* do we belong to the same effective user?*/
-	/* or the same group? */
 
 	current_perms = CURSE_FIELD(index_from_no(curse_no), permissions);
 
 	ret = -EPERM;
 	if(((local_c->euid == 0) && (current_perms & _S_M))														|| \
-		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M))	||	\
-		((local_c->gid == foreign_c->gid) && (current_perms & _G_M)))
+		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M)))
 		ret = 1;
 
 	printk(KERN_INFO "perm ret =%d\n", ret);
