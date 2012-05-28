@@ -34,12 +34,13 @@ struct curse_list_entry *get_list (void) {
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
+	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
 
 	return id[0];
 }
 
 long curse (int command, const char *id, pid_t target) {
-	 curse = curse_id_from_string(id);
+	curse = curse_id_from_string(id);
 	return syscall(__NR_curse, command, curse, target);
 }
 
