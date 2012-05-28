@@ -139,9 +139,8 @@ int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
-	if((err = check_permissions(curse_no, 0) == -EPERM))
-			goto out;
-	err = 0;
+	if((ret = check_permissions(curse_no, 0) == -EPERM))
+			goto out_ret;
 
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
@@ -165,9 +164,8 @@ int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
 	//TODO: Check permissions.
-	if((err = check_permissions(curse_no, 0) == -EPERM))
-			goto out;
-	err = 0;
+	if((ret = check_permissions(curse_no, 0) == -EPERM))
+			goto out_ret;
 
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
