@@ -5,6 +5,7 @@
 
 int main (int argc, char **argv) {
 	
+
 	//printf("Blob: %d\n", curse(98, 49, 24));		//Initial stub: outdated.
 	if (argc == 1) {
 		exit(0);

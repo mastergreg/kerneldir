@@ -5,12 +5,9 @@
 * Created By : Greg Liras <gregliras@gmail.com>
 _._._._._._._._._._._._._._._._._._._._._.*/
 
-
 #include <curse/curse.h>
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
-
-
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -22,8 +19,21 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #define __NR_curse 303 
 #endif
 
+/*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by a semaphore), if allocated and initialized, it must not need semaphore access.*/
+struct curse_list_entry *get_list (void) {
+	static struct curse_list_entry *buffered_list=NULL;
+	if ((buffered_list!=NULL) || ((/*sema take*/) && (buffered_list==NULL))) {
+		buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
+		if (buffered_list != NULL) {
+			/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
+			/*Call syscall and get list.*/
+		}
+		/*Release sema.*/
+	}
+	return buffered_list;
+}
 
-curse_id_t curse_id_from_string(const char *id) {
+curse_id_t curse_id_from_string (const char *id) {
 
 	return id[0];
 }
@@ -32,6 +42,4 @@ long curse (int command, const char *id, pid_t target) {
 	int curse = curse_id_from_string(id);
 	return syscall(__NR_curse, command, curse, target);
 }
-
-
 
