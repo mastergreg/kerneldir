@@ -1,5 +1,5 @@
 
-CC=gcc
+CC=gcc-4.4
 LDPATH=../lib
 
 CFLAGS += -I../include/
