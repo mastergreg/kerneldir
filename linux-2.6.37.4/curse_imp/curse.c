@@ -41,7 +41,7 @@ inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
 inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c, *local_c;
-	uint64_t current_perms;
+//	uint64_t current_perms;
 	int ret;
 
 	ret = -ESRCH;		//FIXME: Sanity check.
@@ -60,13 +60,13 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	/* am i root or sudo?? */
 	/* do we belong to the same effective user?*/
 
-	current_perms = CURSE_FIELD(index_normalizer(curse_no), permissions);
-
+//	current_perms = CURSE_FIELD(index_normalizer(curse_no), permissions);
+/*
 	ret = -EPERM;
 	if(((local_c->euid == 0) && (current_perms & _S_M))														|| \
 		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M)))
 		ret = 1;
-
+*/
 	printk(KERN_INFO "perm ret =%d\n", ret);
 //out_with_local:
 	put_cred(local_c);
@@ -265,22 +265,22 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
 			CLR_INHER(index);
 			break;
 		case USR_PERM_ON	:
-			SET_PERM(index, _U_M);
+//			SET_PERM(index, _U_M);
 			break;
 		case GRP_PERM_ON	:
-			SET_PERM(index, _G_M);
+//			SET_PERM(index, _G_M);
 			break;
 		case SU_PERM_ON		:
-			SET_PERM(index, _S_M);
+//			SET_PERM(index, _S_M);
 			break;
 		case USR_PERM_OFF	:
-			CLR_PERM(index, _U_M);
+//			CLR_PERM(index, _U_M);
 			break;
 		case GRP_PERM_OFF	:
-			CLR_PERM(index, _G_M);
+//			CLR_PERM(index, _G_M);
 			break;
 		case SU_PERM_OFF	:
-			CLR_PERM(index, _S_M);
+//			CLR_PERM(index, _S_M);
 			break;
 		default				:
 			ret = -EINVAL;

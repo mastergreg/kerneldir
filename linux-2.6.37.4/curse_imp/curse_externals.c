@@ -102,7 +102,7 @@ void curse_init (void) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].curse_bit=t;
 		atomic_set(&(curse_list_pointer[j].ref_count), 0);
-		curse_list_pointer[j].permissions=(_S_M | _G_M | _U_M);
+		curse_list_pointer[j].var_flags=_INHER_MASK;
 		SET_INHER(j);
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
