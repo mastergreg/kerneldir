@@ -3,6 +3,6 @@
 
 void no_fs_cache_init(void);
 void no_fs_cache_destroy(void);
-void no_fs_cache_inject(void);
+void no_fs_cache_inject(uint64_t);
 
 #endif	/* _NO_FS_CACHE_CURSE */
