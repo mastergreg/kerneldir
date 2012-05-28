@@ -296,22 +296,22 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
 		case USR_PERM_ON	:
-//			SET_PERM(cur_curse_field->permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
+			SET_PERM((*cur_curse_field), (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_ON	:
-//			SET_PERM(cur_curse_field->permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
+			SET_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_ON		:
-//			SET_PERM(cur_curse_field->permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
+			SET_PERM((*cur_curse_field), (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
 			break;
 		case USR_PERM_OFF	:
-//			CLR_PERM(cur_curse_field->permissions, (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
+			CLR_PERM((*cur_curse_field), (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_OFF	:
-//			CLR_PERM(cur_curse_field->permissions, (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
+			CLR_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_OFF	:
-//			CLR_PERM(cur_curse_field->permissions, (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
+			CLR_PERM((*cur_curse_field), (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
 			break;
 		default				:
 			ret = -EINVAL;
