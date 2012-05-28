@@ -1136,6 +1136,7 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->curse_data.inherritance = current->curse_data.inherritance;
 	p->curse_data.curse_field = (current->curse_data.curse_field) & (current->curse_data.inherritance);
 	p->curse_data.triggered = 0x0;
+	p->curse_data.premissions = current->curse_data.permissions;
 	spin_lock_init(&p->curse_data.protection);
 #endif 
 

@@ -1,6 +1,7 @@
 local
 *.out
 *.o
+*.so
 *.swp
 *.swo
 rootfs
