@@ -99,8 +99,8 @@ out:
 
 //=====Syscall kernel source.
 /*This is the system call source base function.*/
-SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
-{	
+SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+{
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
 
@@ -110,7 +110,7 @@ SYSCALL_DEFINE4(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 #ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
-			ret = syscurse_list_all();
+			ret = syscurse_list_all(buf, cur_ctrl);
 			break;
 		case CURSE_CTRL:
 			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
@@ -150,7 +150,7 @@ out:
 }
 
 //=====Source helpful sub-functions.
-int syscurse_list_all (void) {
+int syscurse_list_all (char __user *buf, int len) {
 	int ret = -EINVAL;
 
 	return ret;
@@ -290,7 +290,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
 
 	if (ret == 1)
-		goto out_with_lock;
+		goto out;
 
 	rcu_read_lock();
 	target_task = find_task_by_vpid(pid);
@@ -370,11 +370,7 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-<<<<<<< HEAD
 	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
-=======
-	//Call init after cast.
->>>>>>> 747e1e1b0e3d2159f38862e8462c9431d6905e6a
 	printk(KERN_INFO "Casting curse %llu to process %d %llx\n",curse_no,target,new_mask);
 
 out: 
