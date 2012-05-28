@@ -26,7 +26,7 @@ extern struct curse_list_entry *curse_full_list;
 
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-inline int index_normalizer (curse_id_t a_ c_id) {
+inline int index_normalizer (curse_id_t a_c_id) {
 	int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
 	return i;
 }
