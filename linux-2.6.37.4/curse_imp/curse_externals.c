@@ -95,9 +95,11 @@ void curse_init (void) {
 	int j;
 	curse_id_t t;
 
+	//0. Initialize spinlock for flags
+	spinlock_init(&flag_lock);
 	//1. Initialize curse lookup table.
 	curse_list_pointer=(struct syscurse *)kzalloc((MAX_CURSE_NO+1)*sizeof(struct syscurse), GFP_KERNEL);
-	for (j=1, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {		//ERROR HERE: j starts from 1.	//URGENT: TODO: FIXME: TODO: !!!! :: FIXED:: Check if no_fs_cache works, or revert and check again.
+	for (j=1, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {
 		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].curse_bit=t;
 		atomic_set(&(curse_list_pointer[j].ref_count), 0);

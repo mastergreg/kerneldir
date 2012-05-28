@@ -56,7 +56,7 @@ struct syscurse {
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	atomic_t ref_count;					//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
-	spinlock_t perm_lock;
+	spinlock_t flag_lock;
 	uint8_t var_flags;					//Flags field.
 	enum curse_status status;			//Activation status for this curse.
 	struct curse_fun_element *functions;

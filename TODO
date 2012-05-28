@@ -2,11 +2,14 @@
 * Modify curse_trigger to optional deference of function call, and change injection code of curse implementer to macro definition of {if (!trigger(.., nodefer) return;} --all --2
 * Check how to implement other curses like no-curse --all --3
 * Userspace lib --all --3
-* Add triggerred && check in curse_k_wrapper while condition. --master --3
+* Add no_fs_cache counter --master -5
 * Hash function in userspace lib --all --7
 * Also, remodel proc_read to read partial. --all --8
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
 * Add curse specific init and destroy calls in cast and lift. --ale1ster-nalfemp --3 --FIXED
+* Add permission copy on fork --master --3 --FIXED
+* Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
+* Initialize flag_lock @ curse_init --master --4 --FIXED
 * Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --ale1ster --4 --FIXED
 
 

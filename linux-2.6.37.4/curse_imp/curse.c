@@ -299,7 +299,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 		goto out;
 	} 
 
-	spin_lock_irqsave(&CURSE_FIELD(index, perm_lock), flags);
+	spin_lock_irqsave(&CURSE_FIELD(index, flag_lock), flags);
 	ret=1;
 	switch (ctrl) {		/*Inherritance (on curse_list_ponter array)*/
 		case INH_ON			:
@@ -311,7 +311,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 		default:
 			ret=-1;
 	}
-	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
+	spin_unlock_irqrestore(&CURSE_FIELD(index, flag_lock), flags);
 
 	if (ret == 1)
 		goto out;
