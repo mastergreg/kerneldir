@@ -22,24 +22,24 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by a semaphore), if allocated and initialized, it must not need semaphore access.*/
 struct curse_list_entry *get_list (void) {
 	static struct curse_list_entry *buffered_list=NULL;
-	if ((buffered_list!=NULL) || ((/*sema take*/) && (buffered_list==NULL))) {
+	if ((buffered_list!=NULL) || ((/*sema take*/) && (buffered_list==NULL)) || /*Release sema.*/) {
 		buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
 		if (buffered_list != NULL) {
 			/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
 			/*Call syscall and get list.*/
 		}
-		/*Release sema.*/
 	}
 	return buffered_list;
 }
 
-curse_id_t curse_id_from_string (const char *id) {
+/*Wrapper for returning the index of a curse by searching with a name.*/
+int index_from_name (const char *id) {
 
 	return id[0];
 }
 
 long curse (int command, const char *id, pid_t target) {
-	int curse = curse_id_from_string(id);
+	 curse = curse_id_from_string(id);
 	return syscall(__NR_curse, command, curse, target);
 }
 

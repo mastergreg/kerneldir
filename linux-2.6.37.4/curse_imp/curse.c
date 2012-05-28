@@ -101,7 +101,7 @@ out:
 
 //=====Syscall kernel source.
 /*This is the system call source base function.*/
-SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
