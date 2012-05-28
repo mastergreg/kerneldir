@@ -71,18 +71,18 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 	spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 //	current_perms = CURSE_FIELD(index_normalizer(curse_no), permissions);
-/*
 	ret = -EPERM;
-	if(((local_c->euid == 0) && (current_perms & _S_M))														|| \
-		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) && (current_perms & _U_M)))
+	if(((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))					||	\
+		(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid)) &&\
+		   (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
 		ret = 1;
-*/
-	printk(KERN_INFO "perm ret =%d\n", ret);
+
 //out_with_local:
 	put_cred(local_c);
 out_with_foreign:
 	put_cred(foreign_c);
 out:
+	printk(KERN_INFO "perm ret =%d\n", ret);
 	return ret;
 }
 
@@ -148,7 +148,6 @@ int syscurse_list_all (void) {
 int syscurse_activate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
-	//TODO: Check permissions.
 	if((ret = check_permissions(curse_no, 0) == -EPERM))
 			goto out_ret;
 
@@ -173,7 +172,6 @@ out_ret:
 int syscurse_deactivate (curse_id_t curse_no) {
 	int i, ret = -EPERM;
 
-	//TODO: Check permissions.
 	if((ret = check_permissions(curse_no, 0) == -EPERM))
 			goto out_ret;
 
@@ -233,7 +231,6 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 
-	//TODO: Check permissions.
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
@@ -339,7 +336,6 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 
-	//TODO: Check permissions.
 	err = -EINVAL;
 	if(target <= 0 )
 		goto out;
@@ -387,7 +383,6 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	if (!target_task)
 		goto out;
 	
-	//TODO: Check permissions.
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
