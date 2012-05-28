@@ -4,15 +4,13 @@
 * Userspace lib --all --3
 * Permission checking is still not included in the source code --master --3
 * Add triggerred && check in curse_k_wrapper while condition. --master --3
-* Add curse specific init and destroy calls in cast and lift. --all --3
 * Hash function in userspace lib --all --7
 * If there is time, we have to create a normal list_all function (with copy_to_user) as an alternative to proc entry (case of unmounted) --ale1ster --8
 * Also, remodel proc_read to read partial. --all --8
 
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
+* Add curse specific init and destroy calls in cast and lift. --ale1ster-nalfemp --3 --FIXED
 * Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --ale1ster --4 --FIXED
-* Before ioctl, we have to add a spinlock entry on struct syscurse (for ioctl related issues) --ale1ster --5 --FIXED
-* Create interface ioctl with user --all --6 --FIXED
 
 
 And so the story goes...
@@ -35,6 +33,8 @@ And so the story goes...
 * Check the system initializing action. We have to insert the hook for initial actions there (current practice in bad practice) --all --5 --FIXED
  Initialize task_curse_struct in fork (allocation pending?) --all --5 --FIXED
  Fix curse_list.h inclusion error on include of curse.h from userspace. For now works with comment-out. --ale1ster --5 --FIXED
+ Before ioctl, we have to add a spinlock entry on struct syscurse (for ioctl related issues) --ale1ster --5 --FIXED
+ Create interface ioctl with user --all --6 --FIXED
  Change curse_bit to curse_active_bit in syscurse (and all used points) --ale1ster --6 --REJECTED "Too long name."
  Need to check effective permissions verification mechanism --master --6 --FIXED
  Create permissions in task_curse_struct (3bit field UGS) --ale1ster --6 --FIXED

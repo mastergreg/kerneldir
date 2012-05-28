@@ -405,9 +405,11 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		target_task->curse_data.inherritance &= (~curse_mask);
 		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)		//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
 			CURSE_FIELD(index, status) = ACTIVATED;
+		//FIXME: Number is inconsistent in case of exited!!!!
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
+	CURSE_FIELD(index, functions)->fun_destroy();	//Call destroy after lift.
 	printk(KERN_INFO "Lifting curse %llu from process %d\n",curse_no,target);
 
 out:
