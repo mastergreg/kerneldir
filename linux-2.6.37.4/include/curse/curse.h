@@ -18,7 +18,7 @@
 #include <curse/curse_types.h>
 
 /*Curse system call interface.*/
-enum curse_command	{	LIST_ALL=0, 
+enum curse_command	{	LIST_ALL=0, CURSE_CTRL,
 						ACTIVATE, DEACTIVATE, 
 						CHECK_CURSE_ACTIVITY, 
 						CHECK_TAINTED_PROCESS, 
@@ -26,6 +26,13 @@ enum curse_command	{	LIST_ALL=0,
 						SHOW_RULES, 
 						ADD_RULE, REM_RULE, 
 						ILLEGAL_COMMAND
+					};
+
+/*Curse control commands.*/
+enum curse_control	{	INH_ON=0, INH_OFF,
+						USR_PERM_ON, USR_PERM_OFF,
+						GRP_PERM_ON, GRP_PERM_OFF,
+						SU_PERM_ON, SU_PERM_OFF,
 					};
 
 /*Lists every possible status for a curse (for userspace portability).*/
@@ -49,6 +56,7 @@ struct syscurse {
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	atomic_t ref_count;					//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
+	spinlock_t perm_lock;
 	uint8_t permissions;				//Inheritance - UserGroupSuperuser(Permissions) flag field.
 	enum curse_status status;			//Activation status for this curse.
 };
@@ -65,20 +73,24 @@ int syscurse_show_rules(void);
 int syscurse_add_rule(curse_id_t, char *);
 int syscurse_rem_rule(curse_id_t, char *);
 
+/*Pointer to the implemented curse array (loaded at init of syscall).*/
+extern struct syscurse *curse_list_pointer;
+/*Proc node pointer.*/
+extern struct proc_dir_entry *dir_node, *output_node;
+
 /*Bitmasks to use for setting and checking the permissions field in struct syscurse.*/
 #define _U_M 0x01
 #define _G_M 0x02
 #define _S_M 0x04
 /*Inheritance specific macros (curse-specific inheritance is inserted in permissions field of syscurse struct.*/
 #define _INHER_MASK 0x20
-#define GET_INHER(_) (((_).permissions) & (_INHER_MASK))
-#define SET_INHER(_) (((_).permissions) |= (_INHER_MASK))
-#define CLR_INHER(_) (((_).permissions) &= ~(_INHER_MASK))
-
-/*Pointer to the implemented curse array (loaded at init of syscall).*/
-extern struct syscurse *curse_list_pointer;
-/*Proc node pointer.*/
-extern struct proc_dir_entry *dir_node, *output_node;
+#define GET_INHER(_) (((curse_list_pointer[_]).permissions) & (_INHER_MASK))
+#define SET_INHER(_) (((curse_list_pointer[_]).permissions) |= (_INHER_MASK))
+#define CLR_INHER(_) (((curse_list_pointer[_]).permissions) &= ~(_INHER_MASK))
+/*Permission specific macros.*/
+#define GET_PERM(_, perm_mask) ((curse_list_pointer[_].permissions) & (perm_mask))
+#define SET_PERM(_, perm_mask) ((curse_list_pointer[_].permissions) |= (perm_mask))
+#define CLR_PERM(_, perm_mask) ((curse_list_pointer[_].permissions) &= ~(perm_mask))
 
 /*This macro gives encapsulated access to the curse system general status.*/
 #define CURSE_SYSTEM_Q (atomic_read(&(curse_list_pointer[0].ref_count)))

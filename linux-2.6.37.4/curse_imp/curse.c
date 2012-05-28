@@ -78,7 +78,7 @@ out:
 
 //=====Syscall kernel source.
 /*This is the system call source base function.*/
-SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, target, int, cur_ctrl)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {	
 	long ret = -EINVAL;
 	int cmd_norm=(int)curse_cmd;
@@ -90,6 +90,9 @@ SYSCALL_DEFINE3(curse, unsigned int, curse_cmd, curse_id_t, curse_no, pid_t, tar
 	switch(cmd_norm) {
 		case LIST_ALL:
 			ret = syscurse_list_all();
+			break;
+		case CURSE_CTRL:
+			ret = syscurse_ctrl(curse_no, cur_ctrl);
 			break;
 		case ACTIVATE:
 			ret = syscurse_activate(curse_no);
@@ -234,7 +237,51 @@ out:
 	return err;
 }
 
-int syscurse_cast (curse_id_t curse_no, pid_t target) {
+int syscurse_ctrl (curse_id_t curse_no, int ctrl) {
+	int index, ret = -EINVAL;
+	unsigned long flags=0;
+
+	if (index = index_from_no(curse_no)) {
+		goto out;
+	} 
+
+	spin_lock_irqsave(&CURSE_FIELD(index, perm_lock), flags);
+	ret=1;
+	switch (ctrl) {
+		case INH_ON			:
+			SET_INHER(index);
+			break;
+		case INH_OFF		:
+			CLR_INHER(index);
+			break;
+		case USR_PERM_ON	:
+			SET_PERM(index, _U_M);
+			break;
+		case GRP_PERM_ON	:
+			SET_PERM(index, _G_M);
+			break;
+		case SU_PERM_ON		:
+			SET_PERM(index, _S_M);
+			break;
+		case USR_PERM_OFF	:
+			CLR_PERM(index, _U_M);
+			break;
+		case GRP_PERM_OFF	:
+			CLR_PERM(index, _G_M);
+			break;
+		case SU_PERM_OFF	:
+			CLR_PERM(index, _S_M);
+			break;
+		default				:
+			ret = -EINVAL;
+	} 
+	spin_unlock_irqrestore(&CURSE_FIELD(index, perm_lock), flags);
+
+out:
+	return ret;
+}
+
+int syscurse_cas t (curse_id_t curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;

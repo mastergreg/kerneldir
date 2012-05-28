@@ -103,7 +103,7 @@ void curse_init (void) {
 		curse_list_pointer[j].curse_bit=t;
 		atomic_set(&(curse_list_pointer[j].ref_count), 0);
 		curse_list_pointer[j].permissions=(_S_M | _G_M | _U_M);
-		SET_INHER(curse_list_pointer[j]);
+		SET_INHER(j);
 		curse_list_pointer[j].status=IMPLEMENTED;
 	}
 	curse_list_pointer[0].status=INVALID_CURSE;
