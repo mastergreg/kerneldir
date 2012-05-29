@@ -69,21 +69,20 @@ struct curse_list_entry *get_list (void) {
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
-    int i = 0, found = 0;
+    int i = 0;
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	struct curse_list_entry *list;
 
     list =  getlist();
     if (list != NULL){
-        while ((i < maxCurseNum) && (found = 0)) {
+        for(i = 0; i < maxCurseNum, ++i) {
             if (strcmp(list[i].curse_name, id) == 0) {
-                found = 1;
+                break;
             }
-            ++i;
         }
-	    return list[i-1].curse_id;  //-1 to negate last addition
+	    return (i-1);  //-1 to negate last addition
     }
-    /* else ERROR? */
+    /* else ERROR */
 
 }
 
