@@ -9,15 +9,16 @@
 #ifndef _CURSE_LIST_LIB
 #define _CURSE_LIST_LIB
 
+#ifndef MAX_CURSE_NO
+#define MAX_CURSE_NO 1
+#endif
+
 #ifdef __KERNEL__
 
 #include <linux/types.h>
 #include <curse/curse_types.h>
 
 /*Maximum number of curses (1 is the lower limit).*/
-#ifndef MAX_CURSE_NO
-#define MAX_CURSE_NO 1
-#endif
 
 /*[ADD] The individual curse header includes.*/
 #include <curse/stub_curse.h>
@@ -36,8 +37,6 @@ struct curse_list_entry curse_full_list[] = {
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
-#undef MAX_CURSE_NO
-#define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
 
 /* External linking for number of curses. */
 const int max_curse_no = (((sizeof (curse_full_list))/(sizeof (struct curse_list_entry)))-1);
@@ -54,5 +53,8 @@ struct curse_fun_element fun_array[] = {
 };
 
 #endif	/* __KERNEL__ */
+
+#undef MAX_CURSE_NO
+#define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
 
 #endif /* _CURSE_LIST_LIB */
