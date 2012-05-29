@@ -276,13 +276,7 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 
 	//Check if target has an active curse on it.	::	FIXME: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
-	if (target_task->curse_data.curse_field & check_bit){
-		err=1;
-		printk(KERN_INFO "curse_field is %llu\n",target_task->curse_data.curse_field);
-	} else {
-		err=0;
-		printk(KERN_INFO "no curse_field for you!\n");
-	}
+	if (target_task->curse_data.curse_field & check_bit) err=1; else err=0;
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
 out: 

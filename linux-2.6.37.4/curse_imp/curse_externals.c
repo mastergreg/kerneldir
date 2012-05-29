@@ -74,7 +74,7 @@ int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, v
 	/*We provided the data pointer during creation of read handler for our proc entry.*/
 	struct syscurse *c_list=(struct syscurse *)data;
 
-	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
+//	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
 	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
 		(*eof)=1;
 		goto out;
