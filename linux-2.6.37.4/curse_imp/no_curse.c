@@ -1,21 +1,21 @@
 #include <linux/syscalls.h>
 
 #include <curse/no_curse.h>
+#include <curse/curse.h>
 
 void no_curse_inject (uint64_t mask) {
-/* 
 	struct curse_struct *cur_curse;
 	unsigned long irqflags;
 
 	cur_curse = current->curse_data;
 
 	spin_lock_irqsave(&((cur_curse).protection), irqflags);
-	//We should change return type of inject to _Bool (int), and add defer argument in trigger.
-	//Inject should take an argument ( the mask of the id as an argument ), for such cases.
-	if (cur_curse.triggered & ***MASK GOES HERE***)
-		***RETURN GOES HERE***
+	if (cur_curse.curse_field & mask) {	//The mask is the mask of the current curse.
+		//Making the process unable to cast a curse is done by masking it s active permissions.
+		cur_curse.permissions &= (_USR_ACTIVE_PERM|_GRP_ACTIVE_PERM|_SU_ACTIVE_PERM);
+	}
 	spin_lock_irqrstore(&((cur_curse).protection), irqflags);
-*/
+
 	return;
 }
 
