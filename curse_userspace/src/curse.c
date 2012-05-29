@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : curse.c
 * Creation Date : 28-05-2012
-* Last Modified : %+
+* Last Modified : Wed 30 May 2012 01:05:33 AM EEST
 * Created By : Greg Liras <gregliras@gmail.com>
 _._._._._._._._._._._._._._._._._._._._._.*/
 
@@ -99,9 +99,9 @@ int index_from_name (const char *id) {
     }
 }
 
-long curse (int command, const char *id, pid_t target) {
+long curse (int command, const char *id, pid_t target, int cur_ctrl, char *buf) {
 	int theCurse = index_from_name (id);
-	return syscall(__NR_curse, command, theCurse, target);
+	return syscall(__NR_curse, command, theCurse, target, cur_ctrl, buf);
 }
 
 #endif	/* _LIB_CURSE_NO */
