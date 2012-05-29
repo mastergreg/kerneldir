@@ -29,16 +29,18 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 static sem_t list_sema;
 
 /*Init-Fin handlers.*/
-static void curse_init_handle {
+static void curse_init_handle() {
 	if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
 		//...Error.
+		perror("Error error");
 	}
 	//...Other initializings
 
 }
-static void curse_fin_handle {
+static void curse_fin_handle() {
 	if (!sem_destroy(&list_sema)) {
 		//...Error.
+		perror("Error error");
 	}
 	//...Other
 }
@@ -65,7 +67,9 @@ struct curse_list_entry *get_list (void) {
         }
         return buffered_list;
     }
-
+    /* should not reach this part */
+    perror("Control reached seemingly unreachable point");
+    return NULL;
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
@@ -96,8 +100,8 @@ int index_from_name (const char *id) {
 }
 
 long curse (int command, const char *id, pid_t target) {
-	curse = index_from_name (id);
-	return syscall(__NR_curse, command, curse, target);
+	int theCurse = index_from_name (id);
+	return syscall(__NR_curse, command, theCurse, target);
 }
 
 #endif	/* _LIB_CURSE_NO */
