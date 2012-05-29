@@ -2,9 +2,8 @@
 CC=gcc-4.4
 LDPATH=../lib
 
-CFLAGS += -I../include/
-LDFLAGS += -L$(LDPATH) -lcurse -lrt
-LD_LIBRARY_PATH += $(LDPATH)
+CFLAGS += -I../include/ -Wl,
+LDFLAGS += -L $(LDPATH) -lcurse -lrt -Wl,
 
 SRCFILES=$(wildcard *.c)
 OBJFILES=$(patsubst %.c,%.o,$(SRCFILES))
