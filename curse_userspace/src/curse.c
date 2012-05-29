@@ -67,7 +67,9 @@ struct curse_list_entry *get_list (void) {
         }
         return buffered_list;
     }
-
+    /* should not reach this part */
+    perror("Control reached seemingly unreachable point");
+    return NULL;
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
@@ -98,8 +100,8 @@ int index_from_name (const char *id) {
 }
 
 long curse (int command, const char *id, pid_t target) {
-	curse = index_from_name (id);
-	return syscall(__NR_curse, command, curse, target);
+	int theCurse = index_from_name (id);
+	return syscall(__NR_curse, command, theCurse, target);
 }
 
 #endif	/* _LIB_CURSE_NO */
