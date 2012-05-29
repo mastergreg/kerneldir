@@ -95,8 +95,6 @@ void curse_init (void) {
 	int j;
 	curse_id_t t;
 
-	//0. Initialize spinlock for flags
-	spinlock_init(&flag_lock);
 	//1. Initialize curse lookup table.
 	curse_list_pointer=(struct syscurse *)kzalloc((MAX_CURSE_NO+1)*sizeof(struct syscurse), GFP_KERNEL);
 	for (j=1, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {
@@ -106,12 +104,14 @@ void curse_init (void) {
 		curse_list_pointer[j].var_flags=_INHER_MASK;
 		SET_INHER(j);
 		curse_list_pointer[j].status=IMPLEMENTED;
+		spin_lock_init(&(curse_list_pointer[j].flag_lock));
 		curse_list_pointer[j].functions=&fun_array[j];
 	}
 	curse_list_pointer[0].status=INVALID_CURSE;
 	curse_list_pointer[0].curse_bit=0x0;
 	atomic_set(&(curse_list_pointer[0].ref_count), 0);
 	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
+	spin_lock_init(&(curse_list_pointer[0].flag_lock));
 	curse_list_pointer[0].functions=&fun_array[0];
 
 	//2. Initialize active status boolean.	::	Could default on an initial status here (based on build options).

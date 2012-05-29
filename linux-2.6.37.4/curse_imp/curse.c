@@ -109,7 +109,7 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 	if ((cmd_norm < 0) || (cmd_norm >=max_curse_no))
 		goto out;
 
-	printk(KERN_INFO "Master, you gave me command %d with curse %llu on pid %ld.\n", curse_cmd, curse_no, (long)target);
+	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
 	//Do not even call if curse system is not active.
 #ifdef _CURSES_INSERTED
