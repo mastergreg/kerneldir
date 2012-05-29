@@ -29,15 +29,16 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 static sem_t list_sema;
 
 /*Init-Fin handlers.*/
-static void curse_init_handle() {
+// Removed static for warning
+void curse_init_handle (void) {
 	if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
 		//...Error.
 		perror("Error error");
 	}
 	//...Other initializings
-
 }
-static void curse_fin_handle() {
+
+void curse_fin_handle (void) {
 	if (!sem_destroy(&list_sema)) {
 		//...Error.
 		perror("Error error");
@@ -58,14 +59,11 @@ struct curse_list_entry *get_list (void) {
                 /*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
                 buffered_list = (struct curse_list_entry *)calloc((maxCurseNum + 1), sizeof(struct curse_list_entry));
                 /*Call syscall and get list.*/
-                syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list);
-            } else if (!sem_post(&list_sema)) {	 /*Release sema.*/
+                syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list); } else if (!sem_post(&list_sema)) {	 /*Release sema.*/
                 //...Error out.
             }
         } else {
-            return NULL;
-        }
-        return buffered_list;
+            return NULL; } return buffered_list;
     }
     /* should not reach this part */
     perror("Control reached seemingly unreachable point");
@@ -99,9 +97,31 @@ int index_from_name (const char *id) {
     }
 }
 
-long curse (int command, const char *id, pid_t target) {
-	int theCurse = index_from_name (id);
-	return syscall(__NR_curse, command, theCurse, target);
+long curse(int command, int curse_no, pid_t target, int ctrl, char* userbuf ) {
+	return syscall(__NR_curse, command, curse_no, target, ctrl, userbuf);
 }
 
+long curse_by_name(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
+	int theCurse = index_from_name(name);
+	return curse(command, theCurse, target, ctrl, userbuf);
+}
+
+/* the usual 3-parameter cases, so we dont have to use dummies all the time*/
+long curse3(int command, int curse_no, pid_t target) {
+	if ((command == CURSE_CTRL) || (command == LIST_ALL)){
+		perror("This curse requires more than 3 arguments");
+		return -1;
+	} else {
+		return curse(command, curse_no, target, 0, NULL);
+	}
+}
+
+long curse_by_name3(int command, const char* name, pid_t target) {
+	if ((command == CURSE_CTRL) || (command == LIST_ALL)){
+		perror("This curse requires more than 3 arguments");
+		return -1;
+	} else {
+		return curse_by_name(command, name, target, 0, NULL);
+	}
+}
 #endif	/* _LIB_CURSE_NO */
