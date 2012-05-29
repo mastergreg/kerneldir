@@ -14,6 +14,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <semaphore.h>
 #include <sys/types.h>
 
 #ifdef __i386__
@@ -22,15 +23,25 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #define __NR_curse 303 
 #endif
 
+/*Static shared data.*/
+static sem_t list_sema;
+
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by a semaphore), if allocated and initialized, it must not need semaphore access.*/
 struct curse_list_entry *get_list (void) {
 	static struct curse_list_entry *buffered_list=NULL;
-	if ((buffered_list!=NULL) || ((/*sema take*/) && (buffered_list==NULL)) || /*Release sema.*/) {
-		buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
-		if (buffered_list != NULL) {
-			/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-			/*Call syscall and get list.*/
-		}
+	
+	if (buffered_list!=NULL) {
+		if (!sema_wait(&list_sema)) {	/*Take sema.*/
+			if (buffered_list==NULL) {
+				/*Call to get max_curse_no*/
+				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
+				//buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
+				/*Call syscall and get list.*/
+			} else if (!sema_post(&list_sema)) {	 /*Release sema.*/
+				//...Error out.
+			}
+		} else {
+			return NULL;
 	}
 	return buffered_list;
 }
@@ -47,4 +58,4 @@ long curse (int command, const char *id, pid_t target) {
 	return syscall(__NR_curse, command, curse, target);
 }
 
-#endif
+#endif	/* _LIB_CURSE_NO */
