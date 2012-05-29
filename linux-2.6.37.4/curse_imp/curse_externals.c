@@ -63,6 +63,7 @@ void curse_k_wrapper (void) {
 			c_f >>= 1;
 			i++;
 		}
+		cur->curse_data.triggered = 0x0;
 	}
 
 out:
