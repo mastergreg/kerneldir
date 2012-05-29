@@ -29,16 +29,18 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 static sem_t list_sema;
 
 /*Init-Fin handlers.*/
-static void curse_init_handle {
+static void curse_init_handle() {
 	if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
 		//...Error.
+		perror("Error error");
 	}
 	//...Other initializings
 
 }
-static void curse_fin_handle {
+static void curse_fin_handle() {
 	if (!sem_destroy(&list_sema)) {
 		//...Error.
+		perror("Error error");
 	}
 	//...Other
 }
