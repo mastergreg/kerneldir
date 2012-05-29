@@ -11,6 +11,7 @@ void no_fs_cache_init (void) {
 void no_fs_cache_destroy (void) {
 	return;
 }
+
 void no_fs_cache_inject (uint64_t mask) {
 	/* http://linux.die.net/man/2/fadvise */
 	struct fdtable *fdt;
@@ -33,5 +34,5 @@ void no_fs_cache_inject (uint64_t mask) {
 
 	put_files_struct(open_files);
 	return;
-}
+ }
 
