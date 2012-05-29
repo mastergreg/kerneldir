@@ -30,20 +30,21 @@ static sem_t list_sema;
 struct curse_list_entry *get_list (void) {
 	static struct curse_list_entry *buffered_list = NULL;
 
-	if (buffered_list!=NULL) {
-		if (!sem_wait(&list_sema)) {	/*Take sema.*/
-			if (buffered_list==NULL) {
-				/*Call to get max_curse_no*/
-				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-				//buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
-				/*Call syscall and get list.*/
-			} else if (!sem_post(&list_sema)) {	 /*Release sema.*/
-				//...Error out.
-			}
-		} else {
-			return NULL;
-	}
-	return buffered_list;
+    if (buffered_list!=NULL) {
+        if (!sem_wait(&list_sema)) {	/*Take sema.*/
+            if (buffered_list==NULL) {
+                /*Call to get max_curse_no*/
+                /*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
+                //buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
+                /*Call syscall and get list.*/
+            } else if (!sem_post(&list_sema)) {	 /*Release sema.*/
+                //...Error out.
+            }
+        } else {
+            return NULL;
+        }
+        return buffered_list;
+    }
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
@@ -54,7 +55,7 @@ int index_from_name (const char *id) {
 }
 
 long curse (int command, const char *id, pid_t target) {
-	curse = curse_id_from_string(id);
+	curse = index_from_name (id);
 	return syscall(__NR_curse, command, curse, target);
 }
 
