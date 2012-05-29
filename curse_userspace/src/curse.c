@@ -80,7 +80,7 @@ int index_from_name (const char *id) {
                 break;
             }
         }
-	    return (i-1);  //-1 to negate last addition
+	    return i;  //-1 to negate last addition
     }
     /* else ERROR */
 
