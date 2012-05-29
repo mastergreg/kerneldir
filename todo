@@ -15,6 +15,7 @@
 
 FIXED_STATUS_COLOR="green"
 PENDING_STATUS_COLOR="red"
+OTHER_STATUS_COLOR="magenta"
 ASSIGNEE_COLOR="cyan"
 MESSAGE_COLOR="blue"
 PRIORITY_COLOR="yellow"
@@ -40,8 +41,11 @@ def main():
             except IndexError:
                 priority = "10"
             try:
-                STATUS_COLOR = FIXED_STATUS_COLOR
                 status = task[3].split()[0]
+                if status == "FIXED":
+                    STATUS_COLOR = FIXED_STATUS_COLOR
+                else:
+                    STATUS_COLOR = OTHER_STATUS_COLOR
             except IndexError:
                 STATUS_COLOR = PENDING_STATUS_COLOR
                 status = "PENDING"
