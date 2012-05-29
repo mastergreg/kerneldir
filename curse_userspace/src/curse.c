@@ -12,7 +12,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <semaphore.h>
 #include <sys/types.h>
@@ -28,7 +30,7 @@ static sem_t list_sema;
 
 /*Init-Fin handlers.*/
 static void curse_init_handle {
-	if (!sem_init(&list_sema, 1/*0 is for thread-shared semas*/, 1)) {
+	if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
 		//...Error.
 	}
 	//...Other initializings
@@ -73,9 +75,9 @@ int index_from_name (const char *id) {
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	struct curse_list_entry *list;
 
-    list =  getlist();
-    if (list != NULL){
-        for(i = 0; i < maxCurseNum, ++i) {
+    list = get_list();
+    if (list != NULL) {
+        for(i = 0; i < maxCurseNum; ++i) {
             if (strcmp(list[i].curse_name, id) == 0) {
                 found = 1;
                 break;
