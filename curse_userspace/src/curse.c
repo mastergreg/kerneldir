@@ -32,7 +32,7 @@ static void curse_init_handle {
 		//...Error.
 	}
 	//...Other initializings
-	
+
 }
 static void curse_fin_handle {
 	if (!sem_destroy(&list_sema)) {
@@ -69,7 +69,7 @@ struct curse_list_entry *get_list (void) {
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
-    int i = 0;
+    int i = 0, found = 0;
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	struct curse_list_entry *list;
 
@@ -77,13 +77,20 @@ int index_from_name (const char *id) {
     if (list != NULL){
         for(i = 0; i < maxCurseNum, ++i) {
             if (strcmp(list[i].curse_name, id) == 0) {
+                found = 1;
                 break;
             }
         }
-	    return i;  //-1 to negate last addition
+        if (found == 1) {
+            return i;
+        } else {
+            perror("Curse not found");
+            return -1;  //not found
+        }
+    } else {
+        perror("Curse list is empty");
+        return -2;      //empty
     }
-    /* else ERROR */
-
 }
 
 long curse (int command, const char *id, pid_t target) {
