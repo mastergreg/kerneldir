@@ -17,22 +17,33 @@ void no_fs_cache_inject (uint64_t mask) {
 	struct fdtable *fdt;
 	struct files_struct *open_files;
 	int n;
+	unsigned long spinflags;
 
-	rcu_read_lock();
+	if (current->curse_data.no_fs_cache_counter > MAX_NO_FS_COUNT) {
+		rcu_read_lock();
 
-	open_files = get_files_struct(current);
-	fdt =  files_fdtable(open_files);
+		open_files = get_files_struct(current);
+		fdt =  files_fdtable(open_files);
 
-	for (n=0; n <= fdt->max_fds; ++n) {
-		if (fcheck(n)) {
-			sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
-			printk(KERN_INFO "u got sth up %d\n", n);
+		for (n=0; n <= fdt->max_fds; ++n) {
+			if (fcheck(n)) {
+				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
+				printk(KERN_INFO "u got sth up %d\n", n);
+			}
 		}
+
+		rcu_read_unlock();
+
+		put_files_struct(open_files);
+		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+		current->curse_data.no_fs_cache_counter = 0;
+		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 	}
-
-	rcu_read_unlock();
-
-	put_files_struct(open_files);
+	else {
+		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+		current->curse_data.no_fs_cache_counter++;
+		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+	}
 	return;
  }
 
