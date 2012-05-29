@@ -59,7 +59,7 @@ int index_from_name (const char *id) {
 
     list =  getlist();
     if (list != NULL){
-        while ((i < maxCurseNum) && (found = 0)) {
+        while ((i < maxCurseNum) && (found == 0)) {
             if (strcmp(list[i].curse_name, id) == 0) {
                 found = 1;
             }
