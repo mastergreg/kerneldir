@@ -5,19 +5,19 @@
 #include <curse/curse.h>
 
 void no_curse_inject (uint64_t mask) {
-/*
-	struct curse_struct *cur_curse;
+
+	struct task_curse_struct *cur_curse;
 	unsigned long irqflags;
 
-	cur_curse = &(current.curse_data);
+	cur_curse = &(current->curse_data);
 
-//	spin_lock_irqsave(&((cur_curse)->protection), irqflags);
-	if (cur_curse.curse_field & mask) {	//The mask is the mask of the current curse.
+	spin_lock_irqsave(&((cur_curse)->protection), irqflags);
+	if (cur_curse->curse_field & mask) {	//The mask is the mask of the current curse.
 		//Making the process unable to cast a curse is done by masking it s active permissions.
-		cur_curse.permissions &= (_USR_ACTIVE_PERM|_GRP_ACTIVE_PERM|_SU_ACTIVE_PERM);
+		cur_curse->permissions &= (_USR_ACTIVE_PERM|_GRP_ACTIVE_PERM|_SU_ACTIVE_PERM);
 	}
-	spin_lock_irqrstore(&((cur_curse).protection), irqflags);
-*/
+	spin_unlock_irqrestore(&((cur_curse)->protection), irqflags);
+
 	return;
 }
 
