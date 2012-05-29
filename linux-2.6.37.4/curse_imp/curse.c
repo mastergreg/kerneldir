@@ -138,6 +138,9 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 		case LIFT:
 			ret = syscurse_lift(curse_no, target);
 			break;
+		case GET_CURSE_NO:
+			ret = max_curse_no;
+			break;
 		case SHOW_RULES:
 			//Stub (for now, fall-throughs).
 		case ADD_RULE:
