@@ -1,18 +1,16 @@
 * Check function returns against new return policy --all --2 --STICKY
-* Modify curse_trigger to optional deference of function call, and change injection code of curse implementer to macro definition of {if (!trigger(.., nodefer) return;} --all --2
-* Check how to implement other curses like no-curse --all --3
 * Userspace lib --indoril --3
-* Finish up no_curse RANDOM_OOPS --ale1ster -5
-* Add no_fs_cache counter --master -5
+* Fix destroy call and ref_count update in case of process exit or kill or zap --all --4
+* Finish up no_curse RANDOM_OOPS --ale1ster --5 "no_curse completed"
+* Add no_fs_cache counter --master --5
 * Hash function in userspace lib --all --7 :: change to priority swap array
 * Also, remodel proc_read to read partial. --all --8
 
+* Modify curse_trigger to optional deference of function call, and change injection code of curse implementer to macro definition of {if (!trigger(.., nodefer) return;} --all --2 --REJECTED "Too much freedom (at least for now)"
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
-* Add curse specific init and destroy calls in cast and lift. --ale1ster-nalfemp --3 --FIXED
+* Check how to implement other curses like no-curse --all --3 --PARTIAL "Ask Vaggeli how we can offer that"
 * Add permission copy on fork --master --3 --FIXED
 * Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
-* Initialize flag_lock @ curse_init --master --4 --FIXED
-* Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --ale1ster --4 --FIXED
 
 
 And so the story goes...
@@ -21,6 +19,7 @@ And so the story goes...
  Change kernelspace calls to accept index --aleister-master --1 --FIXED
  Beautify library from userspace inclusion (done from laptop after 12:00) --ale1ster --1 --FIXED
  Check proper use of activation. --ale1ster --2 --FIXED
+ Add curse specific init and destroy calls in cast and lift. --ale1ster-nalfemp --3 --FIXED
  check for race conditions on task_struct and use of its spinlocks --nalfemp --3 --FIXED
  Need to fix activation/deactivation to activate targeted curses (activate general system only if target is unspecified) --ale1ster --3 --FIXED
  Need to create permissions verification mechanism (function?) --master --3 --FIXED
@@ -28,6 +27,8 @@ And so the story goes...
  Make bitmask_from_id proper (for-if-return) --ale1ster --3 --FIXED
  Permission checking is still not included in the source code --master --3 --FIXED
  Fix deactivation (Policy: we act on list_pointer only after we take system_status sema). --ale1ster --4 --FIXED
+ Have to install macro aliases for curse_trigger and curse_k_wrapper, so that when the curse system is not compiled with the kernel, they do not slow down the system. --ale1ster --4 --FIXED
+ Initialize flag_lock @ curse_init --master --4 --FIXED
  Initialize trigger field during field initialization of task_curse_struct. --master --4 --FIXED
  Add curse_trigger --ale1ster-master --4 --FIXED
  Modularize curse_k_wrapper to be called from read, without make errors --ale1ster-master --4 --FIXED "Have to move it elsewhere: after scheduler?"
