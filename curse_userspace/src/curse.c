@@ -41,33 +41,49 @@ static void curse_fin_handle {
 	//...Other
 }
 
-/*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by a semaphore), if allocated and initialized, it must not need semaphore access.*/
+/*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by semaphore), if allocated and initialized, it must not need semaphore access.*/
 struct curse_list_entry *get_list (void) {
 	static struct curse_list_entry *buffered_list = NULL;
-	static size_t curse_no;
+    long maxCurseNum;
 
-	if (buffered_list!=NULL) {
-		if (!sem_wait(&list_sema)) {	/*Take sema.*/
-			if (buffered_list==NULL) {
-				/*Call to get max_curse_no*/
-				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-				//buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
-				/*Call syscall and get list.*/
-			} else if (!sem_post(&list_sema)) {	 /*Release sema.*/
-				//...Error out.
-			}
-		} else {
-			return NULL;
-		}
-		return buffered_list;
-	}
+    if (buffered_list!=NULL) {
+        if (!sem_wait(&list_sema)) {	/*Take sema.*/
+            if (buffered_list==NULL) {
+                /*Call to get max_curse_no*/
+                maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
+                /*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
+                buffered_list = (struct curse_list_entry *)calloc((maxCurseNum + 1), sizeof(struct curse_list_entry));
+                /*Call syscall and get list.*/
+                syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list);
+            } else if (!sem_post(&list_sema)) {	 /*Release sema.*/
+                //...Error out.
+            }
+        } else {
+            return NULL;
+        }
+        return buffered_list;
+    }
+
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
+    int i = 0;
+    long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
+	struct curse_list_entry *list;
 
-	return id[0];
+    list =  getlist();
+    if (list != NULL){
+        for(i = 0; i < maxCurseNum, ++i) {
+            if (strcmp(list[i].curse_name, id) == 0) {
+                break;
+            }
+        }
+	    return i;  //-1 to negate last addition
+    }
+    /* else ERROR */
+
 }
 
 long curse (int command, const char *id, pid_t target) {
