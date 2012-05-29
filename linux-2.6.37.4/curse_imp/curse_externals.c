@@ -43,6 +43,7 @@ out:
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 void curse_k_wrapper (void) {
 	struct task_struct *cur;
+	unsigned long flags;
 
 	if (!CURSE_SYSTEM_Q)
 		goto out;
@@ -55,6 +56,9 @@ void curse_k_wrapper (void) {
 	if (cur->curse_data.curse_field) {
 		int i=1;
 		uint64_t c_m=0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
+
+		spin_lock_irqsave(&(cur->curse_data.protection), flags);
+
 		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
 		
 		//... This is where check and curse take place.
@@ -63,7 +67,9 @@ void curse_k_wrapper (void) {
 			c_f >>= 1;
 			i++;
 		}
-		cur->curse_data.triggered = 0x0;
+		cur->curse_data.triggered = 0x00;
+
+		spin_unlock_irqrestore(&(cur->curse_data.protection), flags);
 	}
 
 out:

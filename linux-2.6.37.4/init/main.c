@@ -689,12 +689,13 @@ asmlinkage void __init start_kernel(void)
 	proc_root_init();
 #endif
 	cgroup_init();
-#ifdef CONFIG_CURSES
-	curse_init();
-#endif 
 	cpuset_init();
 	taskstats_init_early();
 	delayacct_init();
+
+#ifdef CONFIG_CURSES
+	curse_init();
+#endif 
 
 	check_bugs();
 

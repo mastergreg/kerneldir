@@ -12,7 +12,9 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #include <curse/curse_list.h>
 #include <curse/curse_types.h>
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <semaphore.h>
 #include <sys/types.h>
@@ -25,6 +27,21 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 
 /*Static shared data.*/
 static sem_t list_sema;
+
+/*Init-Fin handlers.*/
+static void curse_init_handle {
+	if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
+		//...Error.
+	}
+	//...Other initializings
+
+}
+static void curse_fin_handle {
+	if (!sem_destroy(&list_sema)) {
+		//...Error.
+	}
+	//...Other
+}
 
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by semaphore), if allocated and initialized, it must not need semaphore access.*/
 struct curse_list_entry *get_list (void) {
@@ -48,6 +65,7 @@ struct curse_list_entry *get_list (void) {
         }
         return buffered_list;
     }
+
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
@@ -57,18 +75,24 @@ int index_from_name (const char *id) {
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	struct curse_list_entry *list;
 
-    list =  getlist();
-    if (list != NULL){
-        while ((i < maxCurseNum) && (found = 0)) {
+    list = get_list();
+    if (list != NULL) {
+        for(i = 0; i < maxCurseNum; ++i) {
             if (strcmp(list[i].curse_name, id) == 0) {
                 found = 1;
+                break;
             }
-            ++i;
         }
-	    return list[i-1].curse_id;  //-1 to negate last addition
+        if (found == 1) {
+            return i;
+        } else {
+            perror("Curse not found");
+            return -1;  //not found
+        }
+    } else {
+        perror("Curse list is empty");
+        return -2;      //empty
     }
-    /* else ERROR? */
-
 }
 
 long curse (int command, const char *id, pid_t target) {
