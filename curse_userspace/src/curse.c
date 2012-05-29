@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
 * File Name : curse.c
 * Creation Date : 28-05-2012
-* Last Modified : Tue 29 May 2012 03:58:06 PM EEST
+* Last Modified : %+
 * Created By : Greg Liras <gregliras@gmail.com>
 _._._._._._._._._._._._._._._._._._._._._.*/
 
@@ -20,7 +20,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #ifdef __i386__
 #define __NR_curse 341
 #else
-#define __NR_curse 303 
+#define __NR_curse 303
 #endif
 
 /*Static shared data.*/
@@ -28,22 +28,23 @@ static sem_t list_sema;
 
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by a semaphore), if allocated and initialized, it must not need semaphore access.*/
 struct curse_list_entry *get_list (void) {
-	static struct curse_list_entry *buffered_list=NULL;
-	
-	if (buffered_list!=NULL) {
-		if (!sema_wait(&list_sema)) {	/*Take sema.*/
-			if (buffered_list==NULL) {
-				/*Call to get max_curse_no*/
-				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-				//buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
-				/*Call syscall and get list.*/
-			} else if (!sema_post(&list_sema)) {	 /*Release sema.*/
-				//...Error out.
-			}
-		} else {
-			return NULL;
-	}
-	return buffered_list;
+	static struct curse_list_entry *buffered_list = NULL;
+
+    if (buffered_list!=NULL) {
+        if (!sem_wait(&list_sema)) {	/*Take sema.*/
+            if (buffered_list==NULL) {
+                /*Call to get max_curse_no*/
+                /*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
+                //buffered_list = (struct curse_list_entry *)calloc((MAX_CURSE_NO+1), sizeof(struct curse_list_entry));
+                /*Call syscall and get list.*/
+            } else if (!sem_post(&list_sema)) {	 /*Release sema.*/
+                //...Error out.
+            }
+        } else {
+            return NULL;
+        }
+        return buffered_list;
+    }
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
@@ -54,7 +55,7 @@ int index_from_name (const char *id) {
 }
 
 long curse (int command, const char *id, pid_t target) {
-	curse = curse_id_from_string(id);
+	curse = index_from_name (id);
 	return syscall(__NR_curse, command, curse, target);
 }
 
