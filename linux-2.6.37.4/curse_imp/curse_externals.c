@@ -53,10 +53,12 @@ void curse_k_wrapper (void) {
 	//if is used for opt, might integrate the handler here
 	//ideas?
 //	printk("Curse on scheduler.\n");
-	spin_lock_irqsave(&(cur->curse_data.protection), flags);
 	if (cur->curse_data.curse_field) {
 		int i=1;
 		uint64_t c_m=0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
+
+		spin_lock_irqsave(&(cur->curse_data.protection), flags);
+
 		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
 		
 		//... This is where check and curse take place.
@@ -65,9 +67,10 @@ void curse_k_wrapper (void) {
 			c_f >>= 1;
 			i++;
 		}
-		cur->curse_data.triggered = 0x0;
+		cur->curse_data.triggered = 0x00;
+
+		spin_unlock_irqrestore(&(cur->curse_data.protection), flags);
 	}
-	spin_unlock_irqrestore(&(cur->curse_data.protection), flags);
 
 out:
 	return;
