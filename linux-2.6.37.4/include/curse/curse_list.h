@@ -9,7 +9,6 @@
 #ifndef _CURSE_LIST_LIB
 #define _CURSE_LIST_LIB
 
-
 #ifdef __KERNEL__
 
 #include <linux/types.h>
@@ -38,7 +37,6 @@ struct curse_list_entry curse_full_list[] = {
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
-
 #undef MAX_CURSE_NO
 #define MAX_CURSE_NO (((sizeof curse_full_list)/(sizeof (struct curse_list_entry)))-1)
 
@@ -57,6 +55,5 @@ struct curse_fun_element fun_array[] = {
 };
 
 #endif	/* __KERNEL__ */
-
 
 #endif /* _CURSE_LIST_LIB */
