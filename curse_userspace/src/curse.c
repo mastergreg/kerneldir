@@ -72,10 +72,14 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
 	int i = 0, found = 0;
-	long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
+	static long maxCurseNum = -1;
 	const struct curse_list_entry *list;
 
 	//printf("max number is: %ld\n", maxCurseNum);
+
+	//Get the max number only on first call of this function, save unneeded syscalls
+	if (maxCurseNum == -1)
+		maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	list = get_list(maxCurseNum);
 	if (list != NULL) {
 		for(i = 0; i < maxCurseNum; ++i) {
