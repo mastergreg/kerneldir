@@ -53,7 +53,7 @@ void curse_k_wrapper (void) {
 	//if is used for opt, might integrate the handler here
 	//ideas?
 //	printk("Curse on scheduler.\n");
-	if (cur->curse_dat a.curse_field) {
+	if (cur->curse_data.curse_field) {
 		int i=1;
 		uint64_t c_m=0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
 
