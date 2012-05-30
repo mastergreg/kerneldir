@@ -5,7 +5,7 @@ OPT = 2
 INCLUDEDIR = ../include
 
 
-LDFLAGS += 
+#LDFLAGS += 
 
 CCFLAGS += -I$(INCLUDEDIR)
 CCFLAGS += -O$(OPT) -Wextra -Wall -fPIC

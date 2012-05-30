@@ -1,5 +1,6 @@
 * Check function returns against new return policy --all --2 --STICKY
-* Userspace lib --indoril --3
+* Userspace lib --indoril --3 --MOSTLY-DONE
+* Link the test properly with the userspace lib so we can see if it's functional --2 --all
 * Hash function in userspace lib --all --7 :: change to priority swap array
 * Also, remodel proc_read to read partial. --all --8
 * Perform init on fork and destroy on do_exit for all curses --nalfemp --9
