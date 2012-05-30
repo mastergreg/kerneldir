@@ -47,7 +47,7 @@ void curse_fin_handle (void) {
 }
 
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by semaphore), if allocated and initialized, it must not need semaphore access.*/
-struct curse_list_entry *get_list (void) {
+const struct curse_list_entry *get_list (void) {
 	static struct curse_list_entry *buffered_list = NULL;
     long maxCurseNum;
 
@@ -68,14 +68,14 @@ struct curse_list_entry *get_list (void) {
     /* should not reach this part */
     perror("Control reached seemingly unreachable point");
     return NULL;
-}
+} 
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
     int i = 0, found = 0;
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
-	struct curse_list_entry *list;
+	const struct curse_list_entry *list;
 
     list = get_list();
     if (list != NULL) {
