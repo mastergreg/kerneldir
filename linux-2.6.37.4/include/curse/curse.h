@@ -63,7 +63,7 @@ struct syscurse {
 };
 
 /*Function prototypes (although forwards are ugly:)).*/
-int syscurse_list_all(char __user *buf, int len);
+int syscurse_list_all(char __user *buf);
 int syscurse_activate(int);
 int syscurse_deactivate(int);
 int syscurse_check_curse_activity(int);

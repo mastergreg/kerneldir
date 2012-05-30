@@ -159,8 +159,8 @@ int syscurse_list_all (char __user *buf) {
 	size_t length;
 //	static size_t offset=0;
 
-	if (len <= 0)
-		goto out;
+//	if (len <= 0)
+//		goto out;
 
 	length = sizeof(curse_full_list);
 //	ret = ((length - offset) >= len) ? len : (length - offset);
