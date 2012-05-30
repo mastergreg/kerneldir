@@ -29,7 +29,7 @@
 sem_t list_sema;
 
 /*Init-Fin handlers.*/
-void __attribute__((costructor)) curse_init_handle() {
+void __attribute__((constructor)) curse_init_handle() {
     if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
         //...Error.
         perror("Sema init error");
