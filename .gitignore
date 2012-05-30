@@ -5,3 +5,4 @@ local
 *.swp
 *.swo
 rootfs
+gotta_pull_em_all.sh
