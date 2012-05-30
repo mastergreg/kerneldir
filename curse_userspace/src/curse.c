@@ -79,9 +79,11 @@ int index_from_name (const char *id) {
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	const struct curse_list_entry *list;
 
+	printf("max number is: %ld\n", maxCurseNum);
     list = get_list();
     if (list != NULL) {
         for(i = 0; i < maxCurseNum; ++i) {
+			printf("List name: %s - ID: %s\n", list[i].curse_name, id);
             if (strcmp(list[i].curse_name, id) == 0) {
                 found = 1;
                 break;
