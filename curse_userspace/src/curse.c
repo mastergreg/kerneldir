@@ -47,7 +47,7 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 				/*Call to get max_curse_no*/
 				//maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-				if ((buffered_list = (struct curse_list_entry *)calloc((maxCurseNum), sizeof(struct curse_list_entry))) = 0) {
+				if ((buffered_list = (struct curse_list_entry *)calloc((maxCurseNum), sizeof(struct curse_list_entry))) == 0) {
 					perror("Allocation failed");
 					return NULL;
 				}
