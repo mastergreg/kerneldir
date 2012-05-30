@@ -66,7 +66,7 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
-int index_from_name(const char *id) {
+int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
 	int i = 0, found = 0;
 	long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
