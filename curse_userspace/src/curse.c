@@ -81,7 +81,7 @@ int index_from_name(const char *id) {
 	list = get_list();
 	if (list != NULL) {
 		for(i = 0; i < maxCurseNum; ++i) {
-			printf("List name: %s - CID: %llu ID: %s\n", list[i].curse_name, (uint64_t) list[i].curse_id,id);
+			printf("List name: %s - CID: %llu ID: %s\n", list[i].curse_name, ( uint64_t ) list[i].curse_id,id);
 			if (strcmp(list[i].curse_name, id) == 0) {
 				found = 1;
 				break;
