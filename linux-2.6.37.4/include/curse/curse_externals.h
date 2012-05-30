@@ -16,4 +16,8 @@ void curse_trigger (_Bool defer, curse_id_t cid);
 /* fs/read_write.c */
 void curse_k_wrapper (void);
 
+/* curse init-destroy wrappers */
+void curse_init_actions (void);
+void curse_destroy_actions (void);
+
 #endif	/* _CURSE_FORWARD_DECLARATIONS */
