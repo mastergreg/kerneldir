@@ -45,9 +45,12 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 		if (!sem_wait(&list_sema)) {	/*Take sema.*/
 			if (buffered_list == NULL) {
 				/*Call to get max_curse_no*/
-				maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
+				//maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-				buffered_list = (struct curse_list_entry *)calloc((maxCurseNum + 1), sizeof(struct curse_list_entry));
+				buffered_list = (struct curse_list_entry *)calloc((maxCurseNum), sizeof(struct curse_list_entry));
+				printf("size %lu\n", sizeof(buffered_list[0]));
+				printf("size %s\n", buffered_list[0].curse_name);
+				printf("size %lu\n", sizeof (struct curse_list_entry));
 				/*Call syscall and get list.*/
 				syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list);
 			}
@@ -71,11 +74,9 @@ int index_from_name(const char *id) {
 
 	//printf("max number is: %ld\n", maxCurseNum);
 	list = get_list(maxCurseNum);
-	printf("size %u\n", sizeof list);
-	printf("size %u\n", sizeof (struct curse_list_entry));
 	if (list != NULL) {
 		for(i = 0; i < maxCurseNum; ++i) {
-			printf("List name: %s - CID: %lu\n", list[i].curse_name, list[i].curse_id);
+			printf("List name: %s - CID: %llu\n", list[i].curse_name, (long long int)list[i].curse_id);
 			if (strcmp(list[i].curse_name, id) == 0) {
 				found = 1;
 				break;
