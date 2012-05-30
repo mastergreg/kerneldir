@@ -8,7 +8,6 @@ int main (int argc, char **argv) {
 
 /* Scenario 1: After casting no_curse, no other curse should be cast by either parent or child */	
 	parent_pid = getpid();
-	curse_init_handle();
 
 	printf("\nActivate : %d\n",		 curse_by_name3(ACTIVATE, "no_curse", parent_pid));
 	printf("\nCast no_curse: %d\n",  curse_by_name3(CAST, "no_curse", parent_pid));
@@ -27,6 +26,5 @@ int main (int argc, char **argv) {
 
 	printf("\nDeactivate: %d\n", 	 curse_by_name3(DEACTIVATE, "no_curse", parent_pid));
 
-	curse_fin_handle();
 	return 0;
 }
