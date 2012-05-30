@@ -104,11 +104,12 @@ out:
 SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {
 	long ret = -EINVAL;
-	int cmd_norm=(int)curse_cmd;
-	cmd_norm=index_normalizer(curse_no);		//Sanity check.
-	if ((cmd_norm < 0) || (cmd_norm >=max_curse_no))
-		goto out;
+	int cmd_norm = (int) curse_cmd;
+	curse_no = index_normalizer(curse_no);		//Sanity check.
+	//if ((cmd_norm < 0) || (cmd_norm >=max_curse_no))
+	//	goto out;
 
+	printk(KERN_INFO "Master,  max_curse no = %d.\n", max_curse_no);
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
 	//Do not even call if curse system is not active.
