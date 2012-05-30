@@ -1,8 +1,8 @@
 * Check function returns against new return policy --all --2 --STICKY
 * Userspace lib --indoril --3
-* Hash function in userspace lib --all --7 :: change to priority swap array
+* Priority swap array in userspace lib --indoril --7
 * Also, remodel proc_read to read partial. --all --8
-* Perform init on fork and destroy on do_exit for all curses --nalfemp --9
+* Perform init on fork and destroy on do_exit for all curses --nalfemp-ale1ster --9
 * Modify curse_trigger to optional deference of function call, and change injection code of curse implementer to macro definition of {if (!trigger(.., nodefer) return;} --all --2 --REJECTED "Too much freedom (at least for now)"
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
 * Check how to implement other curses like no-curse --all --3 --PARTIAL "Ask Vaggeli how we can offer that"
@@ -43,5 +43,6 @@ And so the story goes...
  Create permissions in task_curse_struct (3bit field UGS) --ale1ster --6 --FIXED
  Maybe change todo.py to ignore everything after an empty line or a ============ delimiter, so we can keep history? --master --6 --FIXED
  When we are a little bit more loose, I need to remodularize the whole code. --ale1ster-master --6 --FIXED
+ Hash function in userspace lib --all --7 :: change to priority swap array
  If there is time, we have to create a normal list_all function (with copy_to_user) as an alternative to proc entry (case of unmounted) --ale1ster --8 --FIXED
  Check ptrace mechanism for hijacking the syscall table at runtime --ale1ster --9 --REJECTED
