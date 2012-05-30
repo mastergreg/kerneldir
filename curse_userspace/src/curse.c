@@ -51,9 +51,9 @@ const struct curse_list_entry *get_list (void) {
 	static struct curse_list_entry *buffered_list = NULL;
     long maxCurseNum;
 
-    if (buffered_list!=NULL) {
+    if (buffered_list == NULL) {
         if (!sem_wait(&list_sema)) {	/*Take sema.*/
-            if (buffered_list==NULL) {
+            if (buffered_list == NULL) {
                 /*Call to get max_curse_no*/
                 maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
                 /*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
