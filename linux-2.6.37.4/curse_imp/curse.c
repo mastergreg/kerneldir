@@ -460,3 +460,4 @@ int syscurse_add_rule (curse_id_t curse, char *path) {
 int syscurse_rem_rule (curse_id_t curse, char *path) {
 	return 0;
 }
+
