@@ -1,9 +1,9 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
-* File Name : curse.c
-* Creation Date : 28-05-2012
-* Last Modified : %+
-* Created By : Greg Liras <gregliras@gmail.com>
-_._._._._._._._._._._._._._._._._._._._._.*/
+ * File Name : curse.c
+ * Creation Date : 28-05-2012
+ * Last Modified : Wed 30 May 2012 12:14:07 PM EEST
+ * Created By : Greg Liras <gregliras@gmail.com>
+ * _._._._._._._._._._._._._._._._._._._._.*/
 
 #ifndef _LIB_CURSE_USER
 #define _LIB_CURSE_USER
@@ -30,24 +30,23 @@ static sem_t list_sema;
 
 /*Init-Fin handlers.*/
 static void curse_init_handle() {
-	if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
-		//...Error.
-		perror("Error error");
-	}
-	//...Other initializings
-
+    if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
+        //...Error.
+        perror("Sema init error");
+    }
+    //...Other initializations
 }
 static void curse_fin_handle() {
-	if (!sem_destroy(&list_sema)) {
-		//...Error.
-		perror("Error error");
-	}
-	//...Other
+    if (!sem_destroy(&list_sema)) {
+        //...Error.
+        perror("Sema destroy error");
+    }
+    //...Other
 }
 
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by semaphore), if allocated and initialized, it must not need semaphore access.*/
 struct curse_list_entry *get_list (void) {
-	static struct curse_list_entry *buffered_list = NULL;
+    static struct curse_list_entry *buffered_list = NULL;
     long maxCurseNum;
 
     if (buffered_list!=NULL) {
@@ -74,10 +73,10 @@ struct curse_list_entry *get_list (void) {
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
-	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
+    /*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
     int i = 0, found = 0;
     long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
-	struct curse_list_entry *list;
+    struct curse_list_entry *list;
 
     list = get_list();
     if (list != NULL) {
@@ -100,8 +99,8 @@ int index_from_name (const char *id) {
 }
 
 long curse (int command, const char *id, pid_t target) {
-	int theCurse = index_from_name (id);
-	return syscall(__NR_curse, command, theCurse, target);
+    int theCurse = index_from_name (id);
+    return syscall(__NR_curse, command, theCurse, target);
 }
 
 #endif	/* _LIB_CURSE_NO */
