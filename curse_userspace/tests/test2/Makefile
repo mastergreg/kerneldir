@@ -1,13 +1,13 @@
 
 CC=gcc-4.4
-LDPATH=../lib
+LDPATH=../../lib
 
-CFLAGS += -I../include/ -Wl,
-LDFLAGS += -L $(LDPATH) -lcurse -lrt -Wl,
+CFLAGS += -I../../include/ 
+LDFLAGS += -L $(LDPATH) -lcurse -lrt 
 
 SRCFILES=$(wildcard *.c)
 OBJFILES=$(patsubst %.c,%.o,$(SRCFILES))
-TARGET=test1.out
+TARGET=test.out
 all:	$(TARGET)
 
 $(TARGET):	$(OBJFILES)

@@ -1,5 +1,5 @@
 TARGET = libcurse.so
-CC = gcc
+CC = gcc-4.4
 LD = ld
 OPT = 2
 INCLUDEDIR = ../include

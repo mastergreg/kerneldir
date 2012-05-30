@@ -26,21 +26,22 @@ extern struct curse_list_entry *curse_full_list;
 
 //=====Various wrapper functions.
 /*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-inline int index_normalizer (curse_id_t a_c_id) {
-	int i = ((a_c_id < max_curse_no) ? a_c_id : max_curse_no);
-	return i;
-}
+//This is unused
+//inline int index_normalizer (int a_c_id) {
+//	int i = ((a_c_id < max_curse_no) ? a_c_id : -1);
+//	return i;
+//}
 
-/*This function returns the bitmask for the specified curse id.*/
-inline uint64_t bitmask_from_no (curse_id_t a_c_id) {
-	return curse_list_pointer[index_normalizer(a_c_id)].curse_bit;
+/*This function returns the bitmask for the specified normalized curse index.*/
+inline uint64_t bitmask_from_no (int  a_c_id) {
+	return curse_list_pointer[a_c_id].curse_bit;
 }
 
 /*This macro expands to the requested field of the requested element of curse_list_pointer array.*/
 #define CURSE_FIELD(el, field) (curse_list_pointer[(el)].field)
 
 /*This function checks if current is allowed to change the state of the target proc.*/
-inline int check_permissions (curse_id_t curse_no, pid_t target) {
+inline int check_permissions (pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c=NULL, *local_c=NULL;
 	uint8_t local_curse_perms;
@@ -68,13 +69,6 @@ inline int check_permissions (curse_id_t curse_no, pid_t target) {
 		/* am i root or sudo?? */
 		/* do we belong to the same effective user?*/
 
-/*
-		this is handled a few lines above regardless of target (above if)
-
-		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-		local_curse_perms = current->curse_data.permissions;
-		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
-*/
 		spin_lock_irqsave(&((foreign_task->curse_data).protection), spinflags);
 		foreign_curse_perms = foreign_task->curse_data.permissions;
 		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
@@ -104,18 +98,19 @@ out:
 SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {
 	long ret = -EINVAL;
-	int cmd_norm=(int)curse_cmd;
-	cmd_norm=index_normalizer(curse_no);		//Sanity check.
-	if ((cmd_norm < 0) || (cmd_norm >=max_curse_no))
+	int cmd_norm = (int) curse_cmd;
+	//curse_no = index_normalizer(curse_no);		//Sanity check.
+	if ((curse_no < 0) || (curse_no >=max_curse_no))
 		goto out;
 
+	printk(KERN_INFO "Master,  max_curse no = %d.\n", max_curse_no);
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
 	//Do not even call if curse system is not active.
 #ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
-			ret = syscurse_list_all(buf, cur_ctrl);
+			ret = syscurse_list_all(buf);
 			break;
 		case CURSE_CTRL:
 			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
@@ -158,20 +153,24 @@ out:
 }
 
 //=====Source helpful sub-functions.
-int syscurse_list_all (char __user *buf, int len) {
+//int syscurse_list_all (char __user *buf, int len) {
+int syscurse_list_all (char __user *buf) {
 	int ret = -EINVAL;
 	size_t length;
 //	static size_t offset=0;
 
-	if (len <= 0)
-		goto out;
+//	if (len <= 0)
+//		goto out;
 
-	length = sizeof(curse_full_list);
+	//length = sizeof(curse_full_list);
+	length = sizeof(struct curse_list_entry)*max_curse_no;
 //	ret = ((length - offset) >= len) ? len : (length - offset);
-	ret=length;
 	
-	if (copy_to_user(buf, curse_full_list/*+offset*/, (unsigned long)ret)) {
+	ret = 0;
+	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
+	if (copy_to_user((void *) buf, (const void *) curse_full_list/*+offset*/, length)) {
 		ret=-EFAULT;
+		printk(KERN_INFO "My master you ask me to copy %u bytes, i have failed you master...\n", (unsigned int) ret);
 		goto out;
 	}
 /*
@@ -183,16 +182,17 @@ out:
 	return ret;
 }
 
-int syscurse_activate (curse_id_t curse_no) {
+int syscurse_activate (int curse_no) {
 	int i, ret = -EPERM;
 
-	if((ret = check_permissions(curse_no, 0) == -EPERM))
+	if((ret = check_permissions(0) == -EPERM))
 		goto out_ret;
+
+	i = curse_no;
 
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
-		i=index_normalizer(curse_no);
 		if (!(CURSE_FIELD(i, status) & (ACTIVATED | CASTED))) {
 			CURSE_FIELD(i, status) = ACTIVATED;
 			ret=1;
@@ -207,15 +207,15 @@ out_ret:
 	return ret;
 }
 
-int syscurse_deactivate (curse_id_t curse_no) {
+int syscurse_deactivate (int curse_no) {
 	int i, ret = -EPERM;
 
-	if((ret = check_permissions(curse_no, 0) == -EPERM))
+	if((ret = check_permissions(0) == -EPERM))
 		goto out_ret;
+	i = curse_no;
 
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
-		i=index_normalizer(curse_no);
 		if (CURSE_FIELD(i, status) & (ACTIVATED | CASTED)) {
 			CURSE_FIELD(i, status) = IMPLEMENTED;
 			ret=1;
@@ -231,13 +231,13 @@ out_ret:
 	return ret;
 }
 
-int syscurse_check_curse_activity (curse_id_t curse_no) {
+int syscurse_check_curse_activity (int curse_no) {
 	int i, ret = -EINTR;
 
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
-	i=index_normalizer(curse_no);
+	i = curse_no;
 	if (CURSE_FIELD(i, entry)->curse_id == 0xABADDE5C) {
 		ret = -EINVAL;
 		goto out;
@@ -251,7 +251,7 @@ out:
 	return ret;
 }
 
-int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
+int syscurse_check_tainted_process (int curse_no, pid_t target) {
 	int err = -EINVAL;
 	uint64_t check_bit;
 	unsigned long spinflags;
@@ -272,7 +272,7 @@ int syscurse_check_tainted_process (curse_id_t curse_no, pid_t target) {
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
-	if((err = check_permissions(curse_no, target) == -EPERM))
+	if((err = check_permissions(target) == -EPERM))
 		goto out;
 	err = 0;
 
@@ -286,15 +286,14 @@ out:
 	return err;
 }
 
-int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
+int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 	int index, ret = -EINVAL;
 	struct task_struct *target_task;
 	struct task_curse_struct *cur_curse_field;
 	unsigned long flags=0;
 
-	if ((index = index_normalizer(curse_no))) {
-		goto out;
-	} 
+	index = curse_no;
+
 
 	spin_lock_irqsave(&CURSE_FIELD(index, flag_lock), flags);
 	ret=1;
@@ -324,7 +323,7 @@ int syscurse_ctrl (curse_id_t curse_no, int ctrl, pid_t pid) {
 	ret = -EINVAL;
 	if(pid <= 0)
 		goto out;
-	if((ret = check_permissions(curse_no, pid)) == -EPERM) {
+	if((ret = check_permissions(pid)) == -EPERM) {
 		goto out;
 	}
 
@@ -357,7 +356,7 @@ out:
 	return ret;
 }
 
-int syscurse_cast (curse_id_t curse_no, pid_t target) {
+int syscurse_cast (int curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -377,12 +376,12 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	err = -EINVAL;
 	if(target <= 0 )
 		goto out;
-	if((err = check_permissions(curse_no, target) == -EPERM))
+	if((err = check_permissions(target) == -EPERM))
 		goto out;
 	err = 0;
 
 	err = -EINVAL;
-	new_index = index_normalizer(curse_no);
+	new_index = curse_no;
 	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
 		goto out;
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -398,13 +397,13 @@ int syscurse_cast (curse_id_t curse_no, pid_t target) {
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
-	printk(KERN_INFO "Casting curse %llu to process %d %llx\n",curse_no,target,new_mask);
+	printk(KERN_INFO "Casting curse %d to process %d %llx\n",curse_no,target,new_mask);
 
 out: 
 	return err;
 }
 
-int syscurse_lift (curse_id_t curse_no, pid_t target) {
+int syscurse_lift (int curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -414,6 +413,7 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
+	index = curse_no;
 	err = -ESRCH;
 	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
@@ -424,13 +424,13 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 	err = -EINVAL;
 	if(target <= 0)
 		goto out;
-	if((err = check_permissions(curse_no, target) == -EPERM))
+	if((err = check_permissions(target) == -EPERM))
 		goto out;
 
 	err = -EINVAL;
-	index = index_normalizer(curse_no);
 	if (!(curse_mask = CURSE_FIELD(index, curse_bit)))
 		goto out;
+
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (target_task->curse_data.curse_field & curse_mask) {
 		target_task->curse_data.curse_field &= (~curse_mask);		//Just to be safe (^= toggles, not clears).
@@ -442,8 +442,9 @@ int syscurse_lift (curse_id_t curse_no, pid_t target) {
 		err=1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
+
 	CURSE_FIELD(index, functions)->fun_destroy();	//Call destroy after lift.
-	printk(KERN_INFO "Lifting curse %llu from process %d\n",curse_no,target);
+	printk(KERN_INFO "Lifting curse %d from process %d\n",curse_no,target);
 
 out:
 	return err;
@@ -453,11 +454,11 @@ int syscurse_show_rules (void) {
 	return 0;
 }
 
-int syscurse_add_rule (curse_id_t curse, char *path) {
+int syscurse_add_rule (int curse, char *path) {
 	return 0;
 }
 
-int syscurse_rem_rule (curse_id_t curse, char *path) {
+int syscurse_rem_rule (int curse, char *path) {
 	return 0;
 }
 
