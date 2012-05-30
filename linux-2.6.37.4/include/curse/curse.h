@@ -1,10 +1,10 @@
 /*
  * This library is the main library for the curse system call.
- * 
+ *
  * It is to be included by both userspace and kernel programs, so we take care to define the public interface properly.
- * 
- * Since we want it to be located in the same directory with the curse source file, 
- *  it will be included by it in double quotes, 
+ *
+ * Since we want it to be located in the same directory with the curse source file,
+ *  it will be included by it in double quotes,
  *  but the userspace inclusion is to be done in the normal fashion.
  *
  */
@@ -19,12 +19,12 @@
 
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, CURSE_CTRL,
-						ACTIVATE, DEACTIVATE, 
-						CHECK_CURSE_ACTIVITY, 
-						CHECK_TAINTED_PROCESS, 
+						ACTIVATE, DEACTIVATE,
+						CHECK_CURSE_ACTIVITY,
+						CHECK_TAINTED_PROCESS,
 						CAST, LIFT, GET_CURSE_NO,
-						SHOW_RULES, 
-						ADD_RULE, REM_RULE, 
+						SHOW_RULES,
+						ADD_RULE, REM_RULE,
 						ILLEGAL_COMMAND
 					};
 
@@ -52,7 +52,7 @@ enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, CASTED=0x02, INVALID_CURSE=
 #include <asm/atomic.h>
 
 /*Structure describing a curse (and its status).*/
-struct syscurse { 
+struct syscurse {
 	struct curse_list_entry *entry;		//Not sure if it should be just struct or pointer, because problems may arise during copy to userspace.
 	atomic_t ref_count;					//Count of how many active deployments exist for this curse.
 	uint64_t curse_bit;					//Corresponding bitfield for the current curse.
@@ -63,17 +63,17 @@ struct syscurse {
 };
 
 /*Function prototypes (although forwards are ugly:)).*/
-int syscurse_list_all(char __user *buf);
-int syscurse_activate(int);
-int syscurse_deactivate(int);
-int syscurse_check_curse_activity(int);
-int syscurse_check_tainted_process(int, pid_t);
-int syscurse_ctrl(int, int, pid_t);
-int syscurse_cast(int, pid_t);
-int syscurse_lift(int, pid_t);
-int syscurse_show_rules(void);
-int syscurse_add_rule(int, char *);
-int syscurse_rem_rule(int, char *);
+int syscurse_list_all (char __user *buf);
+int syscurse_activate (int);
+int syscurse_deactivate (int);
+int syscurse_check_curse_activity (int);
+int syscurse_check_tainted_process (int, pid_t);
+int syscurse_ctrl (int, int, pid_t);
+int syscurse_cast (int, pid_t);
+int syscurse_lift (int, pid_t);
+int syscurse_show_rules (void);
+int syscurse_add_rule (int, char *);
+int syscurse_rem_rule (int, char *);
 
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 extern struct syscurse *curse_list_pointer;

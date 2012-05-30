@@ -25,14 +25,14 @@ sem_t list_sema;
 void __attribute__((constructor)) curse_init_handle() {
 	if (sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1) != 0) {
 		//...Error.
-		perror("Sema init error");
+		perror("Semaphore initialization error");
 	}
 	//...Other initializations
 }
 void __attribute__((destructor)) curse_fin_handle() {
 	if (sem_destroy(&list_sema)) {
 		//...Error.
-		perror("Sema destroy error");
+		perror("Semaphore destroy error");
 	}
 	//...Other
 }
@@ -66,7 +66,7 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 		}
 	}
 	return buffered_list;
-} 
+}
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name(const char *id) {

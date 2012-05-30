@@ -12,17 +12,17 @@ void random_oops_destroy (void) {
 }
 
 void random_oops_inject (uint64_t mask) {
-	static int r=0;
+	static int r = 0;
 
 	r = get_random_int(); // trully random?
 
 	if (r == 0) {
-		*(int *)NULL=0;		//If 0 page is not mapped, then we oops.
+		*(int *)NULL = 0;		//If 0 page is not mapped, then we oops.
 		goto not_oopsed;
 	} else {
 		goto out;
 	}
-	
+
 not_oopsed:
 	/*Here we try harder to create a kernel oops.*/
 	BUG();
