@@ -47,7 +47,10 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 				/*Call to get max_curse_no*/
 				//maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
-				buffered_list = (struct curse_list_entry *)calloc((maxCurseNum), sizeof(struct curse_list_entry));
+				if ((buffered_list = (struct curse_list_entry *)calloc((maxCurseNum), sizeof(struct curse_list_entry))) == 0) {
+					perror("Allocation failed");
+					return NULL;
+				}
 				printf("size %lu\n", sizeof(buffered_list[0]));
 				printf("size %s\n", buffered_list[0].curse_name);
 				printf("size %lu\n", sizeof (struct curse_list_entry));

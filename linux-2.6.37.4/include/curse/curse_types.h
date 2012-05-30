@@ -46,7 +46,7 @@ typedef uint64_t curse_id_t;
 #define CURSE_MAX_NAME_SIZE 24
 
 /*Curse entry structure for logistic purposes.*/
-struct curse_list_entry {
+struct __attribute__((packed)) curse_list_entry {
 	char curse_name[CURSE_MAX_NAME_SIZE];
 	curse_id_t curse_id;
 };

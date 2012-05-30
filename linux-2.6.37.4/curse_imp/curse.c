@@ -168,11 +168,26 @@ int syscurse_list_all (char __user *buf) {
 
 	ret = 0;
 	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
-	if (copy_to_user((void *) buf, (const void *) curse_full_list/*+offset*/, length)) {
-		ret = -EFAULT;
+	if (copy_to_user(buf, (const char *)&curse_full_list/*+offset*/, length)) {
+		ret=-EFAULT;
 		printk(KERN_INFO "My master you ask me to copy %u bytes, i have failed you master...\n", (unsigned int) ret);
 		goto out;
 	}
+/*		//Alternative copy of only names at userspace.
+
+	ret=0;
+	char *names=NULL;
+	names=(char *)kmalloc((CURSE_MAX_NAME_SIZE+1)*max_curse_no, GFP_KERNEL);
+	for (i=0; i < max_curse_no; i++) {
+		ret += scnprintf(&(names[ret]), CURSE_MAX_NAME_SIZE+1, "%s\n", CURSE_FIELD(i, entry)->curse_name);
+	}
+	return ret;
+
+//ALTERNATIVELY:
+//http://gcc.gnu.org/onlinedocs/gcc/Type-Attributes.html
+//http://stackoverflow.com/questions/8457574/copy-to-user-and-copy-from-user-with-structs
+*/
+
 /*
 	offset += ret;
 	if (offset == length)
