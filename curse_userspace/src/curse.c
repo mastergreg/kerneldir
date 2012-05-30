@@ -37,7 +37,7 @@ void __attribute__((constructor)) curse_init_handle() {
 	//...Other initializations
 }
 void __attribute__((destructor)) curse_fin_handle() {
-	if (!sem_destroy(&list_sema)) {
+	if (sem_destroy(&list_sema)) {
 		//...Error.
 		perror("Sema destroy error");
 	}

@@ -162,7 +162,8 @@ int syscurse_list_all (char __user *buf) {
 //	if (len <= 0)
 //		goto out;
 
-	length = sizeof(curse_full_list);
+	//length = sizeof(curse_full_list);
+	length = sizeof(struct curse_list_entry)*max_curse_no;
 //	ret = ((length - offset) >= len) ? len : (length - offset);
 	ret=length;
 	
