@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
  * File Name : curse.c
  * Creation Date : 28-05-2012
- * Last Modified : Wed 30 May 2012 12:19:53 PM EEST
+ * Last Modified : Wed 30 May 2012 03:51:12 PM EEST
  * Created By : Greg Liras <gregliras@gmail.com>
  * _._._._._._._._._._._._._._._._._._._._.*/
 
@@ -29,14 +29,14 @@
 sem_t list_sema;
 
 /*Init-Fin handlers.*/
-static void curse_init_handle() {
+void __attribute__((costructor)) curse_init_handle() {
     if (!sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1)) {
         //...Error.
         perror("Sema init error");
     }
     //...Other initializations
 }
-static void curse_fin_handle() {
+void __attribute__((destructor)) curse_fin_handle() {
     if (!sem_destroy(&list_sema)) {
         //...Error.
         perror("Sema destroy error");
