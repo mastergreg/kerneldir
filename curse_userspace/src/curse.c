@@ -26,7 +26,7 @@ _._._._._._._._._._._._._._._._._._._._._.*/
 #endif
 
 /*Static shared data.*/
-static sem_t list_sema;
+sem_t list_sema;
 
 /*Init-Fin handlers.*/
 // Removed static for warning
