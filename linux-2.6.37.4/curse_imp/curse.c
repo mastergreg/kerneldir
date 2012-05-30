@@ -110,7 +110,7 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 #ifdef _CURSES_INSERTED
 	switch(cmd_norm) {
 		case LIST_ALL:
-			ret = syscurse_list_all(buf, cur_ctrl);
+			ret = syscurse_list_all(buf);
 			break;
 		case CURSE_CTRL:
 			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
@@ -153,7 +153,8 @@ out:
 }
 
 //=====Source helpful sub-functions.
-int syscurse_list_all (char __user *buf, int len) {
+//int syscurse_list_all (char __user *buf, int len) {
+int syscurse_list_all (char __user *buf) {
 	int ret = -EINVAL;
 	size_t length;
 //	static size_t offset=0;
