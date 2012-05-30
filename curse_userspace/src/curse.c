@@ -1,10 +1,3 @@
-/* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
- * File Name : curse.c
- * Creation Date : 28-05-2012
- * Last Modified : Wed 30 May 2012 03:51:12 PM EEST
- * Created By : Greg Liras <gregliras@gmail.com>
- * _._._._._._._._._._._._._._._._._._._._.*/
-
 #ifndef _LIB_CURSE_USER
 #define _LIB_CURSE_USER
 
@@ -45,9 +38,8 @@ void __attribute__((destructor)) curse_fin_handle() {
 }
 
 /*Wrapper for encapsulated access to the list. Static and NULL for the first time (protected by semaphore), if allocated and initialized, it must not need semaphore access.*/
-struct curse_list_entry *get_list (void) {
+struct curse_list_entry *get_list (long maxCurseNum) {
 	static struct curse_list_entry *buffered_list = NULL;
-	long maxCurseNum;
 
 	if (buffered_list == NULL) {
 		if (!sem_wait(&list_sema)) {	/*Take sema.*/
@@ -75,13 +67,15 @@ int index_from_name(const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
 	int i = 0, found = 0;
 	long maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
-	const struct  curse_list_entry *list;
+	const struct curse_list_entry *list;
 
-	printf("max number is: %ld\n", maxCurseNum);
-	list = get_list();
+	//printf("max number is: %ld\n", maxCurseNum);
+	list = get_list(maxCurseNum);
+	printf("size %u\n", sizeof list);
+	printf("size %u\n", sizeof (struct curse_list_entry));
 	if (list != NULL) {
 		for(i = 0; i < maxCurseNum; ++i) {
-			printf("List name: %s - CID: %llu ID: %s\n", list[i].curse_name, ( uint64_t ) list[i].curse_id,id);
+			printf("List name: %s - CID: %lu\n", list[i].curse_name, list[i].curse_id);
 			if (strcmp(list[i].curse_name, id) == 0) {
 				found = 1;
 				break;
@@ -99,34 +93,13 @@ int index_from_name(const char *id) {
 	}
 }
 
-long curse(int command, int curse_no, pid_t target, int ctrl, char* userbuf ) {
-	return syscall(__NR_curse, command, curse_no, target, ctrl, userbuf);
-}
 
-long curse_by_name(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
+long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
 	int theCurse = index_from_name(name);
 	if (theCurse < 0) {
 		return -1;
 	}
-	return curse(command, theCurse, target, ctrl, userbuf);
+	return syscall(__NR_curse, command, theCurse, target, ctrl, userbuf);
 }
 
-/* the usual 3-parameter cases, so we dont have to use dummies all the time*/
-long curse3(int command, int curse_no, pid_t target) {
-	if ((command == CURSE_CTRL) || (command == LIST_ALL)){
-		perror("This curse requires more than 3 arguments");
-		return -1;
-	} else {
-		return curse(command, curse_no, target, 0, NULL);
-	}
-}
-
-long curse_by_name3(int command, const char* name, pid_t target) {
-	if ((command == CURSE_CTRL) || (command == LIST_ALL)) {
-		perror("This curse requires more than 3 arguments");
-		return -1;
-	} else {
-		return curse_by_name(command, name, target, 0, NULL);
-	}
-}
 #endif	/* _LIB_CURSE_NO */

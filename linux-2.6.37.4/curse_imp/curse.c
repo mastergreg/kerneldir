@@ -167,6 +167,7 @@ int syscurse_list_all (char __user *buf) {
 //	ret = ((length - offset) >= len) ? len : (length - offset);
 	ret=length;
 	
+	printk(KERN_INFO "My master you ask me to copy %u bytes, i shal do my best...\n", (unsigned int) length);
 	if (copy_to_user(buf, curse_full_list/*+offset*/, (unsigned long)ret)) {
 		ret=-EFAULT;
 		goto out;
