@@ -53,14 +53,14 @@ void curse_k_wrapper (void) {
 	//if is used for opt, might integrate the handler here
 	//ideas?
 //	printk("Curse on scheduler.\n");
-	if (cur->curse_data.curse_field) {
+	if (cur->curse_dat a.curse_field) {
 		int i=1;
 		uint64_t c_m=0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
 
 		spin_lock_irqsave(&(cur->curse_data.protection), flags);
 
 		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
-		
+
 		//... This is where check and curse take place.
 		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
 			fun_array[i].fun_inject(curse_list_pointer[i].curse_bit);
@@ -163,6 +163,28 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
  }
 
+void curse_init_actions (void) {
+	int i=0;
+	uint64_t c_m=0x0001, c_f=current->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
+		fun_array[i].fun_init();
+		c_f >>= 1;
+		i++;
+	}
+	//...
+}
+
+void curse_destroy_actions (void) {
+	int i=0;
+	uint64_t c_m=0x0001, c_f=current->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
+		fun_array[i].fun_destroy();
+		c_f >>= 1;
+		i++;
+	}
+	//...
+}
+
 #else	/*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
 
 void curse_k_wrapper (void) {
@@ -176,6 +198,14 @@ void curse_init (void) {
 void curse_trigger (curse_id_t _) {
 	return;
 } 
+
+void curse_init_actions (void) {
+	return;
+}
+
+void curse_destroy_actions (void) {
+	return;
+}
 
 #endif	/* _CURSES_INSERTED */
 
