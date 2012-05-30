@@ -83,11 +83,12 @@ inline int check_permissions (pid_t target) {
 		ret = -EPERM;
 		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))			//TODO: Compiler warning
 			ret = 1;
+		goto out_with_local;
 	}
 
-	put_cred(local_c);
-out_with_foreign:
 	put_cred(foreign_c);
+out_with_local:
+	put_cred(local_c);
 out:
 	printk(KERN_INFO "perm ret =%d\n", ret);
 	return ret;
@@ -103,7 +104,6 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 	if ((curse_no < 0) || (curse_no >=max_curse_no))
 		goto out;
 
-	printk(KERN_INFO "Master,  max_curse no = %d.\n", max_curse_no);
 	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
 	//Do not even call if curse system is not active.
@@ -170,7 +170,6 @@ int syscurse_list_all (char __user *buf) {
 	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
 	if (copy_to_user(buf, (const char *)&curse_full_list/*+offset*/, length)) {
 		ret=-EFAULT;
-		printk(KERN_INFO "My master you ask me to copy %u bytes, i have failed you master...\n", (unsigned int) ret);
 		goto out;
 	}
 /*		//Alternative copy of only names at userspace.
@@ -200,10 +199,10 @@ out:
 int syscurse_activate (int curse_no) {
 	int i, ret = -EPERM;
 
+	i = curse_no;
 	if((ret = check_permissions(0) == -EPERM))
 		goto out_ret;
 
-	i = curse_no;
 
 	ret = -EINVAL;
 	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
