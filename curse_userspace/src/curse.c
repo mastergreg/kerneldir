@@ -1,7 +1,7 @@
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
  * File Name : curse.c
  * Creation Date : 28-05-2012
- * Last Modified : Wed 30 May 2012 12:18:44 PM EEST
+ * Last Modified : Wed 30 May 2012 12:19:53 PM EEST
  * Created By : Greg Liras <gregliras@gmail.com>
  * _._._._._._._._._._._._._._._._._._._._.*/
 
@@ -114,7 +114,7 @@ long curse3(int command, int curse_no, pid_t target) {
 	}
 }
 
-long curse_by_name3 (int command, const char* name, pid_t target) {
+long curse_by_name3(int command, const char* name, pid_t target) {
 	if ((command == CURSE_CTRL) || (command == LIST_ALL)) {
 		perror("This curse requires more than 3 arguments");
 		return -1;
