@@ -61,10 +61,11 @@ const struct curse_list_entry *get_list (void) {
                 /*Call syscall and get list.*/
                 syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list);
 			}
-			if (!sem_post(&list_sema)) {	 /*Release sema.*/
+			if (sem_post(&list_sema)) {	 /*Release sema.*/
                 perror("Semaphore release failed");
             }
         } else {
+			perror("Semaphore acquisition failed");
             return NULL;
 		}
     }
