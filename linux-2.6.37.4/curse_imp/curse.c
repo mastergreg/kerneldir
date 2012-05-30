@@ -168,7 +168,7 @@ int syscurse_list_all (char __user *buf) {
 	
 	ret = 0;
 	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
-	if (copy_to_user((void *) buf, (const void *) curse_full_list/*+offset*/, length)) {
+	if (copy_to_user(buf, (const char *)&curse_full_list/*+offset*/, length)) {
 		ret=-EFAULT;
 		printk(KERN_INFO "My master you ask me to copy %u bytes, i have failed you master...\n", (unsigned int) ret);
 		goto out;
