@@ -59,15 +59,16 @@ const struct curse_list_entry *get_list (void) {
                 /*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
                 buffered_list = (struct curse_list_entry *)calloc((maxCurseNum + 1), sizeof(struct curse_list_entry));
                 /*Call syscall and get list.*/
-                syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list); } else if (!sem_post(&list_sema)) {	 /*Release sema.*/
-                //...Error out.
+                syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list);
+			}
+			if (!sem_post(&list_sema)) {	 /*Release sema.*/
+                perror("Semaphore release failed");
             }
         } else {
-            return NULL; } return buffered_list;
+            return NULL;
+		}
     }
-    /* should not reach this part */
-    perror("Control reached seemingly unreachable point");
-    return NULL;
+    return buffered_list;
 } 
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
