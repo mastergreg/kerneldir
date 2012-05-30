@@ -64,7 +64,7 @@ inline int check_permissions (pid_t target) {
 		ret = -EINVAL;		//FIXME: Sanity check.
 		foreign_c = get_task_cred(foreign_task);
 		if (!foreign_c)
-			goto out_with_foreign;
+			goto out_with_local;
 
 		/* am i root or sudo?? */
 		/* do we belong to the same effective user?*/
