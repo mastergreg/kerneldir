@@ -105,6 +105,9 @@ long curse(int command, int curse_no, pid_t target, int ctrl, char* userbuf ) {
 
 long curse_by_name(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
 	int theCurse = index_from_name(name);
+	if (theCurse < 0) {
+		return -1;
+	}
 	return curse(command, theCurse, target, ctrl, userbuf);
 }
 
