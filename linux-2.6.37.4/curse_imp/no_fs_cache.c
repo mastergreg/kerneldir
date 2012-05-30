@@ -23,9 +23,9 @@ void no_fs_cache_inject (uint64_t mask) {
 		rcu_read_lock();
 
 		open_files = get_files_struct(current);
-		fdt =  files_fdtable(open_files);
+		fdt = files_fdtable(open_files);
 
-		for (n=0; n <= fdt->max_fds; ++n) {
+		for (n = 0; n <= fdt->max_fds; ++n) {
 			if (fcheck(n)) {
 				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
 				printk(KERN_INFO "u got sth up %d\n", n);
@@ -38,12 +38,10 @@ void no_fs_cache_inject (uint64_t mask) {
 		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
 		current->curse_data.no_fs_cache_counter = 0;
 		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
-	}
-	else {
+	} else {
 		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
 		current->curse_data.no_fs_cache_counter++;
 		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 	}
 	return;
  }
-

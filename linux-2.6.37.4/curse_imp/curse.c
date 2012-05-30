@@ -1,6 +1,6 @@
 /*
  * This file contains the source code for the curse system call.
- * 
+ *
  * [The functions used by the system call are sourced below it.]
  *
  */
@@ -43,7 +43,7 @@ inline uint64_t bitmask_from_no (int  a_c_id) {
 /*This function checks if current is allowed to change the state of the target proc.*/
 inline int check_permissions (pid_t target) {
 	struct task_struct *foreign_task;
-	const struct cred *foreign_c=NULL, *local_c=NULL;
+	const struct cred *foreign_c = NULL, *local_c = NULL;
 	uint8_t local_curse_perms;
 	uint8_t foreign_curse_perms;
 	int ret;
@@ -165,11 +165,11 @@ int syscurse_list_all (char __user *buf) {
 	//length = sizeof(curse_full_list);
 	length = sizeof(struct curse_list_entry)*max_curse_no;
 //	ret = ((length - offset) >= len) ? len : (length - offset);
-	
+
 	ret = 0;
 	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
 	if (copy_to_user((void *) buf, (const void *) curse_full_list/*+offset*/, length)) {
-		ret=-EFAULT;
+		ret = -EFAULT;
 		printk(KERN_INFO "My master you ask me to copy %u bytes, i have failed you master...\n", (unsigned int) ret);
 		goto out;
 	}
@@ -195,7 +195,7 @@ int syscurse_activate (int curse_no) {
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
 		if (!(CURSE_FIELD(i, status) & (ACTIVATED | CASTED))) {
 			CURSE_FIELD(i, status) = ACTIVATED;
-			ret=1;
+			ret = 1;
 		} else {
 			goto out_ret;
 		}
@@ -218,7 +218,7 @@ int syscurse_deactivate (int curse_no) {
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
 		if (CURSE_FIELD(i, status) & (ACTIVATED | CASTED)) {
 			CURSE_FIELD(i, status) = IMPLEMENTED;
-			ret=1;
+			ret = 1;
 		} else {
 			goto out_ret;
 		}
@@ -243,9 +243,9 @@ int syscurse_check_curse_activity (int curse_no) {
 		goto out;
 	}
 	if (CURSE_FIELD(i, status) & CASTED)
-		ret=1;
+		ret = 1;
 	else
-		ret=0;
+		ret = 0;
 
 out:
 	return ret;
@@ -279,10 +279,13 @@ int syscurse_check_tainted_process (int curse_no, pid_t target) {
 
 	//Check if target has an active curse on it.	::	FIXME: Move it to one-liner? Is it better?
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
-	if (target_task->curse_data.curse_field & check_bit) err=1; else err=0;
+	if (target_task->curse_data.curse_field & check_bit)
+		err = 1;
+	else
+		err = 0;
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
-out: 
+out:
 	return err;
 }
 
@@ -290,22 +293,22 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 	int index, ret = -EINVAL;
 	struct task_struct *target_task;
 	struct task_curse_struct *cur_curse_field;
-	unsigned long flags=0;
+	unsigned long flags = 0;
 
 	index = curse_no;
 
 
 	spin_lock_irqsave(&CURSE_FIELD(index, flag_lock), flags);
-	ret=1;
+	ret = 1;
 	switch (ctrl) {		/*Inherritance (on curse_list_ponter array)*/
-		case INH_ON			:
+		case INH_ON		:
 			SET_INHER(index);
 			break;
-		case INH_OFF		:
+		case INH_OFF	:
 			CLR_INHER(index);
 			break;
 		default:
-			ret=-1;
+			ret = -1;
 	}
 	spin_unlock_irqrestore(&CURSE_FIELD(index, flag_lock), flags);
 
@@ -318,7 +321,7 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 	if (!target_task)
 		goto out;
 	cur_curse_field = &(target_task->curse_data);
-	
+
 	//TODO: Check permissions.
 	ret = -EINVAL;
 	if(pid <= 0)
@@ -393,13 +396,13 @@ int syscurse_cast (int curse_no, pid_t target) {
 		else
 			target_task->curse_data.inherritance &= (~new_mask);
 		CURSE_FIELD(new_index, status) = CASTED;
-		err=1;
+		err = 1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
 	printk(KERN_INFO "Casting curse %d to process %d %llx\n",curse_no,target,new_mask);
 
-out: 
+out:
 	return err;
 }
 
@@ -439,7 +442,7 @@ int syscurse_lift (int curse_no, pid_t target) {
 		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)		//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
 			CURSE_FIELD(index, status) = ACTIVATED;
 		//FIXME: Number is inconsistent in case of exited!!!!
-		err=1;
+		err = 1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
@@ -461,4 +464,3 @@ int syscurse_add_rule (int curse, char *path) {
 int syscurse_rem_rule (int curse, char *path) {
 	return 0;
 }
-

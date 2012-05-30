@@ -25,11 +25,11 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 //=====Helpful functions (locally needed).		//TODO: We shouldn't add symbols we don't need to be external.
 //FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation. ::Possible conflicts with curse_init, that creates the masks.
 inline int index_from_curse_id (curse_id_t _) {
-	int i=0;
+	int i = 0;
 
 	if (_ == 0x00)
 		goto out;
-	for (i=1; i<MAX_CURSE_NO; i++)
+	for (i = 1; i < MAX_CURSE_NO; ++i)
 		if ((curse_list_pointer[i].entry->curse_id) == _)
 			goto out;
 
@@ -54,8 +54,8 @@ void curse_k_wrapper (void) {
 	//ideas?
 //	printk("Curse on scheduler.\n");
 	if (cur->curse_data.curse_field) {
-		int i=1;
-		uint64_t c_m=0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
+		int i = 1;
+		uint64_t c_m = 0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
 
 		spin_lock_irqsave(&(cur->curse_data.protection), flags);
 
@@ -65,7 +65,7 @@ void curse_k_wrapper (void) {
 		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
 			fun_array[i].fun_inject(curse_list_pointer[i].curse_bit);
 			c_f >>= 1;
-			i++;
+			++i;
 		}
 		cur->curse_data.triggered = 0x00;
 
@@ -74,24 +74,24 @@ void curse_k_wrapper (void) {
 
 out:
 	return;
-} 
+}
 
 int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data) {
-	int i, line_len, ret=0;
+	int i, line_len, ret = 0;
 	/*We provided the data pointer during creation of read handler for our proc entry.*/
-	struct syscurse *c_list=(struct syscurse *)data;
+	struct syscurse *c_list = (struct syscurse *) data;
 
 //	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
-	if ((off>0) || (data==NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
-		(*eof)=1;
+	if ((off > 0) || (data == NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
+		(*eof) = 1;
 		goto out;
 	}
 
 	//FIXME: Fix exaggeration: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
-	line_len=sizeof(c_list[i].entry->curse_name)+sizeof(c_list[i].entry->curse_id);
-	for (i=0; ((i<max_curse_no) && ((ret+line_len) < count)); i++)
-		ret+=scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
-	(*start)=page;
+	line_len = sizeof(c_list[i].entry->curse_name) + sizeof(c_list[i].entry->curse_id);
+	for (i = 0; ((i < max_curse_no) && ((ret + line_len) < count)); ++i)
+		ret += scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
+	(*start) = page;
 
 out:
 	return ret;
@@ -103,23 +103,23 @@ void curse_init (void) {
 	curse_id_t t;
 
 	//1. Initialize curse lookup table.
-	curse_list_pointer=(struct syscurse *)kzalloc((MAX_CURSE_NO+1)*sizeof(struct syscurse), GFP_KERNEL);
-	for (j=1, t=0x01; j<MAX_CURSE_NO; j++, t<<=1) {
-		curse_list_pointer[j].entry=(struct curse_list_entry *)&curse_full_list[j];
-		curse_list_pointer[j].curse_bit=t;
+	curse_list_pointer = (struct syscurse *)kzalloc((MAX_CURSE_NO + 1) * sizeof(struct syscurse), GFP_KERNEL);
+	for (j = 1, t = 0x01; j < MAX_CURSE_NO; ++j, t <<= 1) {
+		curse_list_pointer[j].entry = (struct curse_list_entry *)&curse_full_list[j];
+		curse_list_pointer[j].curse_bit = t;
 		atomic_set(&(curse_list_pointer[j].ref_count), 0);
-		curse_list_pointer[j].var_flags=_INHER_MASK;
+		curse_list_pointer[j].var_flags = _INHER_MASK;
 		SET_INHER(j);
-		curse_list_pointer[j].status=IMPLEMENTED;
+		curse_list_pointer[j].status = IMPLEMENTED;
 		spin_lock_init(&(curse_list_pointer[j].flag_lock));
-		curse_list_pointer[j].functions=&fun_array[j];
+		curse_list_pointer[j].functions = &fun_array[j];
 	}
-	curse_list_pointer[0].status=INVALID_CURSE;
-	curse_list_pointer[0].curse_bit=0x0;
+	curse_list_pointer[0].status = INVALID_CURSE;
+	curse_list_pointer[0].curse_bit = 0x0;
 	atomic_set(&(curse_list_pointer[0].ref_count), 0);
-	curse_list_pointer[0].entry=(struct curse_list_entry *)&curse_full_list[0];
+	curse_list_pointer[0].entry = (struct curse_list_entry *)&curse_full_list[0];
 	spin_lock_init(&(curse_list_pointer[0].flag_lock));
-	curse_list_pointer[0].functions=&fun_array[0];
+	curse_list_pointer[0].functions = &fun_array[0];
 
 	//2. Initialize active status boolean.	::	Could default on an initial status here (based on build options).
 	CURSE_SYSTEM_DOWN;
@@ -164,23 +164,23 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
  }
 
 void curse_init_actions (void) {
-	int i=0;
-	uint64_t c_m=0x0001, c_f=current->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	int i = 0;
+	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
 	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
 		fun_array[i].fun_init();
 		c_f >>= 1;
-		i++;
+		++i;
 	}
 	//...
 }
 
 void curse_destroy_actions (void) {
-	int i=0;
-	uint64_t c_m=0x0001, c_f=current->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	int i = 0;
+	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
 	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
 		fun_array[i].fun_destroy();
 		c_f >>= 1;
-		i++;
+		++i;
 	}
 	//...
 }
@@ -197,7 +197,7 @@ void curse_init (void) {
 
 void curse_trigger (curse_id_t _) {
 	return;
-} 
+}
 
 void curse_init_actions (void) {
 	return;

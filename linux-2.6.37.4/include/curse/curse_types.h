@@ -1,5 +1,5 @@
 /*
- * This library is to be included in the sched/fs/exec/fork sources, 
+ * This library is to be included in the sched/fs/exec/fork sources,
  * so as not to include unnecessary definitions and libraries.
  */
 
@@ -33,9 +33,9 @@ struct task_curse_struct {
 
 /*System call function pointer structure.*/
 struct curse_fun_element {
-	void (*fun_init)(void /*List of arguments*/);
-	void (*fun_destroy)(void /*List of arguments*/);
-	void (*fun_inject)(uint64_t /*List of arguments*/);
+	void (*fun_init) (void /*List of arguments*/);
+	void (*fun_destroy) (void /*List of arguments*/);
+	void (*fun_inject) (uint64_t /*List of arguments*/);
 };
 
 #endif	/* __KERNEL__ */
@@ -52,4 +52,3 @@ struct curse_list_entry {
 };
 
 #endif	/* _CURSE_TYPES_LIB */
-
