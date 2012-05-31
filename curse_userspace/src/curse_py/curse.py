@@ -32,6 +32,7 @@ def main():
 		r = showhelp()
 	else:
 		r = showhelp()
+	print "Return status {0}".format(r)
 	exit(r)
 
 if __name__=="__main__":

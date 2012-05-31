@@ -4,5 +4,6 @@ local
 *.so
 *.swp
 *.swo
+*.pyc
 rootfs
 gotta_pull_em_all.sh
