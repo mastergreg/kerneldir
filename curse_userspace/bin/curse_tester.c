@@ -6,7 +6,7 @@
 int main (int argc, char **argv) {
 	
 
-	if( argv == 1 ) {
+	if( argc == 1 ) {
 		exit(1);	
 	}
 	pid_t pid;

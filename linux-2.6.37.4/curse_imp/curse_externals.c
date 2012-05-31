@@ -24,13 +24,13 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 
 //=====Helpful functions (locally needed).		//TODO: We shouldn't add symbols we don't need to be external.
 //FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation. ::Possible conflicts with curse_init, that creates the masks.
-inline int index_from_curse_id (curse_id_t _) {
+inline int index_from_curse_id (curse_id_t a_c_id) {
 	int i = 0;
 
-	if (_ == 0x00)
+	if (a_c_id == 0x00)
 		goto out;
 	for (i = 1; i < MAX_CURSE_NO; ++i)
-		if ((curse_list_pointer[i].entry->curse_id) == _)
+		if ((curse_list_pointer[i].entry->curse_id) == a_c_id)
 			goto out;
 
 out:
@@ -55,11 +55,16 @@ void curse_k_wrapper (void) {
 //	printk("Curse on scheduler.\n");
 	if (cur->curse_data.curse_field) {
 		int i = 1;
-		uint64_t c_m = 0x0001, c_f = (cur->curse_data.curse_field & cur->curse_data.triggered);
+		uint64_t c_m = 0x0001;
+		uint64_t c_f = cur->curse_data.curse_field;
+		uint64_t c_t = cur->curse_data.triggered;
+
+		//printk(KERN_INFO "Gotta do sth now, whaaat?\n");
+		//printk(KERN_INFO "c_f = 0x%016LX c_t = 0x%016LX\n", c_f, c_t);
+
+		c_f &= c_t;
 
 		spin_lock_irqsave(&(cur->curse_data.protection), flags);
-
-		printk(KERN_INFO "Gotta do sth now, whaaat?\n");
 
 		//... This is where check and curse take place.
 		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
@@ -154,11 +159,14 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 	cur_struct = &(current->curse_data);
 
 	if (!unlikely(defer_action)) {
+		//printk(KERN_INFO "index = %d has to run now!\n", index);
 		(curse_list_pointer[index].functions)->fun_inject(curse_list_pointer[index].curse_bit);
 	} else {
+		//printk(KERN_INFO "index = %d has to run on when scheduled!\n", index);
 		spin_lock_irqsave(&(cur_struct->protection), spinf);
-		cur_struct->triggered &= (curse_list_pointer[index].curse_bit);
+		cur_struct->triggered |= (curse_list_pointer[index].curse_bit);
 		spin_unlock_irqrestore(&(cur_struct->protection), spinf);
+		//printk(KERN_INFO "trigger cur_struct->triggered 0x%016LX!\n", cur_struct->triggered);
 	}
 
  }
