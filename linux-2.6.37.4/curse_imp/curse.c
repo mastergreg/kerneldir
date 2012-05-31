@@ -169,7 +169,7 @@ int syscurse_list_all (char __user *buf) {
 	length = sizeof(struct curse_list_entry)*max_curse_no;
 //	ret = ((length - offset) >= len) ? len : (length - offset);
 
-	ret = 0;
+	ret = 1;
 	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
 	if (copy_to_user(buf, (const char *)&curse_full_list/*+offset*/, length)) {
 		ret=-EFAULT;
