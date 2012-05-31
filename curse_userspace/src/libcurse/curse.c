@@ -22,14 +22,16 @@
 sem_t list_sema;
 
 /*Init-Fin handlers.*/
-void __attribute__((constructor)) curse_init_handle() {
+__attribute__((constructor))
+void  curse_init_handle() {
 	if (sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1) != 0) {
 		//...Error.
 		perror("Semaphore initialization error");
 	}
 	//...Other initializations
 }
-void __attribute__((destructor)) curse_fin_handle() {
+__attribute__((destructor))
+void  curse_fin_handle() {
 	if (sem_destroy(&list_sema)) {
 		//...Error.
 		perror("Semaphore destroy error");
