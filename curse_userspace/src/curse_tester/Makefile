@@ -1,6 +1,6 @@
 
 CC=gcc-4.4
-LDPATH=../lib
+LDPATH=../../lib
 
 CFLAGS += -I../../include/
 LDFLAGS += -L$(LDPATH) -lcurse -lrt
