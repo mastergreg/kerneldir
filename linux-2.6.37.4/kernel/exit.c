@@ -927,6 +927,10 @@ NORET_TYPE void do_exit(long code)
 
 	validate_creds_for_do_exit(tsk);
 
+#ifdef _CURSES_INSERTED
+	curse_destroy_actions(current);
+#endif
+
 	/*
 	 * We're taking recursive faults here in do_exit. Safest is to just
 	 * leave this task alone and wait for reboot.

@@ -17,7 +17,7 @@ void curse_trigger (_Bool defer, curse_id_t cid);
 void curse_k_wrapper (void);
 
 /* curse init-destroy wrappers */
-void curse_init_actions (void);
-void curse_destroy_actions (void);
+void curse_init_actions (struct task_struct *);
+void curse_destroy_actions (struct task_struct *);
 
 #endif	/* _CURSE_FORWARD_DECLARATIONS */
