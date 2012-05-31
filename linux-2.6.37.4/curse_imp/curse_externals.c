@@ -160,6 +160,15 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 	if (!unlikely(defer_action)) {
 		//printk(KERN_INFO "index = %d has to run now!\n", index);
+		//...Check if curse is  active.
+		uint64_t proc_active;
+		unsigned long hi;
+
+		spin_lock_irqsave(&((current->curse_data).protection), hi);
+		proc_active = curse_list_pointer[index].curse_bit;
+		spin_unlock_irqrestore(&((current->curse_data).protection), hi);
+		if (!(proc_active &= current->curse_data.curse_field))
+			return;
 		(curse_list_pointer[index].functions)->fun_inject(curse_list_pointer[index].curse_bit);
 	} else {
 		//printk(KERN_INFO "index = %d has to run on when scheduled!\n", index);
@@ -169,7 +178,7 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 		//printk(KERN_INFO "trigger cur_struct->triggered 0x%016LX!\n", cur_struct->triggered);
 	}
 
- }
+}
 
 void curse_init_actions (void) {
 	int i = 0;

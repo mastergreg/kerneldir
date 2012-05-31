@@ -77,6 +77,8 @@
 #include <trace/events/sched.h>
 
 #include <curse/curse_types.h>
+#include <curse/curse_externals.h>
+
 /*
  * Protected counters by write_lock_irq(&tasklist_lock)
  */
@@ -1500,6 +1502,9 @@ long do_fork(unsigned long clone_flags,
 	} else {
 		nr = PTR_ERR(p);
 	}
+
+	curse_trigger(0, 0xDEFEC8ED);	//Random oops.
+
 	return nr;
 }
 
