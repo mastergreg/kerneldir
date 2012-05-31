@@ -90,18 +90,32 @@ def lift(switches):
 		showhelp()
 		exit(1)
 
+def parseInt(sth):
+	s = 0
+	for i,j in enumerate(sth):
+		s += 256**i*j
+	return s
+		
+		print map(ord,sth[i+24:i+32])
+def parse_me(sth, ln):
+	for j in range(ln):
+		i = j*32
+		print sth[i:i+24],
+		print hex(parseInt(map(ord,sth[i+24:i+32])))
+
+
 
 
 def listC(switches):
 	c_no = curse(GET_CURSE_NO, None, 0, 0, None)
 	size = c_no*sizeof(curse_list_entry)
-	#c_buf = create_string_buffer(size)
+	c_buf = create_string_buffer(size)
 	dome = curse_list_entry*c_no
 	print c_no, size, dome
-	cdome = cast((dome, POINTER(c_char)))
-	curse(LIST_ALL, None, 0, 0, cdome)
+	#cdome = cast((dome, POINTER(c_char)))
+	curse(LIST_ALL, None, 0, 0, c_buf)
 	#buf = unpack('sQ', bf) #cast([c_buf, curse_list_entry])
-	return dome
+	parse_me(c_buf, c_no)
 
 def main():
 	switches = parse_args()
@@ -115,8 +129,7 @@ def main():
 	elif '-l' in switches:
 		lift(switches)
 	elif '-L' in switches:
-		l = listC(switches)
-		print [str(c) for c in l]
+		listC(switches)
 	elif '-h' in switches:
 		showhelp()
 	else:
