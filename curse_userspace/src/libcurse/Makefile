@@ -2,7 +2,7 @@ TARGET = libcurse.so
 CC = gcc-4.4
 LD = ld
 OPT = 2
-INCLUDEDIR = ../include
+INCLUDEDIR = ../../include
 
 
 #LDFLAGS += 

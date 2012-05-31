@@ -63,7 +63,7 @@ class curse_list_entry(Structure):
 		self.curse_id = self.parseInt(st[self._buf_size_:])
 	def __repr__(self):
 		return "{0}: {1:#08x}".format(self.curse_name,self.curse_id)
-	def parseInt(sth):
+	def parseInt(self,sth):
 		sth = map(ord, sth)
 		s = 0
 		for i,j in enumerate(sth):

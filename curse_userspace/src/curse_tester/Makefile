@@ -2,7 +2,7 @@
 CC=gcc-4.4
 LDPATH=../lib
 
-CFLAGS += -I../include/
+CFLAGS += -I../../include/
 LDFLAGS += -L$(LDPATH) -lcurse -lrt
 
 SRCFILES=$(wildcard *.c)
