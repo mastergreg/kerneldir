@@ -49,7 +49,7 @@ void no_curse_destroy (void) {
 
 	spin_lock_irqsave(&((cur_curse)->protection), irqflags);
 	// FIXME: security exploit, process may gain permissions
-	cur_curse->permissions &= (_USR_ACTIVE_PERM | _SU_ACTIVE_PERM);
+	cur_curse->permissions |= (_USR_ACTIVE_PERM | _SU_ACTIVE_PERM);
 	printk(KERN_INFO "no_curse: destroyed with permissions %d", cur_curse->permissions);
 	spin_unlock_irqrestore(&((cur_curse)->protection), irqflags);
 	return;
