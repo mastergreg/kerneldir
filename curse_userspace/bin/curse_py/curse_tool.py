@@ -69,7 +69,20 @@ def parse_args():
 
 
 def showhelp():
-	print "u r on your own"
+	doc = """
+	This tool, enables usage of the curse system
+Help:
+	-a activate	
+	-d deactivate
+	-c cast		
+	-l lift
+	-N curse name
+	-L List
+	-P Pid 
+Example:
+	{0} -a -N no_fs_cache
+	""".format(argv[0])
+	print doc
 
 def activate(switches):
 	try:
