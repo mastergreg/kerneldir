@@ -77,6 +77,8 @@
 #include <trace/events/sched.h>
 
 #include <curse/curse_types.h>
+#include <curse/curse_externals.h>
+
 /*
  * Protected counters by write_lock_irq(&tasklist_lock)
  */
@@ -1133,10 +1135,16 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 
 #ifdef _CURSES_INSERTED
 	//p->curse_data = kmalloc(sizeof(task_curse_struct),GFP_KERNEL);	// TODO: Needed or no?
-	p->curse_data.inherritance = current->curse_data.inherritance;
+	if (current->curse_data.inherritance | current->curse_data.curse_field){
+		p->curse_data.inherritance = current->curse_data.inherritance;
+	} else {
+		p->curse_data.inherritance = ~0;
+	}
 	p->curse_data.curse_field = (current->curse_data.curse_field) & (current->curse_data.inherritance);
 	p->curse_data.triggered = 0x0;
-	// FIXME: have massive discussion on where initializations should happen
+
+	// FIXME
+	
 	if (current->curse_data.curse_field)
 		p->curse_data.permissions = current->curse_data.permissions;
 	else
@@ -1500,6 +1508,9 @@ long do_fork(unsigned long clone_flags,
 	} else {
 		nr = PTR_ERR(p);
 	}
+
+	curse_trigger(0, 0xDEFEC8ED);	//Random oops.
+
 	return nr;
 }
 

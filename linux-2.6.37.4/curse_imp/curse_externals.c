@@ -160,6 +160,14 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 	if (!unlikely(defer_action)) {
 		//printk(KERN_INFO "index = %d has to run now!\n", index);
+		//...Check if curse is  active.
+		uint64_t proc_active;
+
+		spin_lock_irqsave(&((current->curse_data).protection), spinf);
+		proc_active = curse_list_pointer[index].curse_bit;
+		spin_unlock_irqrestore(&((current->curse_data).protection), spinf);
+		if (!(proc_active &= current->curse_data.curse_field))
+			return;
 		(curse_list_pointer[index].functions)->fun_inject(curse_list_pointer[index].curse_bit);
 	} else {
 		//printk(KERN_INFO "index = %d has to run on when scheduled!\n", index);
@@ -169,13 +177,14 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 		//printk(KERN_INFO "trigger cur_struct->triggered 0x%016LX!\n", cur_struct->triggered);
 	}
 
- }
+}
 
 void curse_init_actions (void) {
 	int i = 0;
 	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
-	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
-		fun_array[i].fun_init();
+	while (c_f) {		//While the current is active, or there are remaining fields:
+		if (c_f & c_m)
+			fun_array[i].fun_init(current);
 		c_f >>= 1;
 		++i;
 	}
@@ -185,8 +194,9 @@ void curse_init_actions (void) {
 void curse_destroy_actions (void) {
 	int i = 0;
 	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
-	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
-		fun_array[i].fun_destroy();
+	while (c_f) {		//While the current is active, or there are remaining fields:
+		if (c_f & c_m)
+			fun_array[i].fun_destroy(current);
 		c_f >>= 1;
 		++i;
 	}

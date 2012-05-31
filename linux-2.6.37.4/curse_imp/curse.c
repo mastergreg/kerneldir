@@ -63,8 +63,10 @@ inline int check_permissions (pid_t target) {
 
 		ret = -EINVAL;		//FIXME: Sanity check.
 		foreign_c = get_task_cred(foreign_task);
+		
 		if (!foreign_c)
 			goto out_with_local;
+		printk("outside and safe");
 
 		/* am i root or sudo?? */
 		/* do we belong to the same effective user?*/
@@ -74,6 +76,7 @@ inline int check_permissions (pid_t target) {
 		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 		ret = -EPERM;
+		printk(KERN_INFO "local_curse_perms are %d and foreign_curse_perms are %d",local_curse_perms,foreign_curse_perms);
 		if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
 				(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 				 (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
@@ -200,7 +203,7 @@ int syscurse_activate (int curse_no) {
 	int i, ret = -EPERM;
 
 	i = curse_no;
-	if ((ret = check_permissions(0) == -EPERM))
+	if ((ret = check_permissions(0)) != 1)
 		goto out_ret;
 
 
@@ -224,7 +227,7 @@ out_ret:
 int syscurse_deactivate (int curse_no) {
 	int i, ret = -EPERM;
 
-	if ((ret = check_permissions(0) == -EPERM))
+	if ((ret = check_permissions(0)) != 1)
 		goto out_ret;
 	i = curse_no;
 
@@ -286,7 +289,7 @@ int syscurse_check_tainted_process (int curse_no, pid_t target) {
 	err = -EINVAL;
 	if (target <= 0)
 		goto out;
-	if ((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target)) != 1)
 		goto out;
 	err = 0;
 
@@ -340,7 +343,7 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 	ret = -EINVAL;
 	if (pid <= 0)
 		goto out;
-	if ((ret = check_permissions(pid)) == -EPERM) {
+	if ((ret = check_permissions(pid)) != 1) {
 		goto out;
 	}
 
@@ -393,14 +396,15 @@ int syscurse_cast (int curse_no, pid_t target) {
 	err = -EINVAL;
 	if (target <= 0 )
 		goto out;
-	if ((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target)) != 1)
 		goto out;
 	err = 0;
 
 	err = -EINVAL;
 	new_index = curse_no;
-	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
+	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
 		goto out;
+		
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {
 		target_task->curse_data.curse_field |= new_mask;
@@ -413,7 +417,7 @@ int syscurse_cast (int curse_no, pid_t target) {
 		err = 1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
+	CURSE_FIELD(new_index, functions)->fun_init(target_task);	//Call init after cast.
 	printk(KERN_INFO "Casting curse %d to process %d %llx\n",curse_no,target,new_mask);
 
 out:
@@ -441,7 +445,7 @@ int syscurse_lift (int curse_no, pid_t target) {
 	err = -EINVAL;
 	if (target <= 0)
 		goto out;
-	if ((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target)) != 1)
 		goto out;
 
 	err = -EINVAL;
@@ -460,7 +464,7 @@ int syscurse_lift (int curse_no, pid_t target) {
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
-	CURSE_FIELD(index, functions)->fun_destroy();	//Call destroy after lift.
+	CURSE_FIELD(index, functions)->fun_destroy(target_task);	//Call destroy after lift.
 	printk(KERN_INFO "Lifting curse %d from process %d\n",curse_no,target);
 
 out:
