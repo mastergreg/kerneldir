@@ -63,8 +63,10 @@ inline int check_permissions (pid_t target) {
 
 		ret = -EINVAL;		//FIXME: Sanity check.
 		foreign_c = get_task_cred(foreign_task);
+		
 		if (!foreign_c)
 			goto out_with_local;
+		printk("outside and safe");
 
 		/* am i root or sudo?? */
 		/* do we belong to the same effective user?*/
@@ -74,6 +76,7 @@ inline int check_permissions (pid_t target) {
 		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 		ret = -EPERM;
+		printk(KERN_INFO "local_curse_perms are %d and foreign_curse_perms are %d",local_curse_perms,foreign_curse_perms);
 		if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
 				(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 				 (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))

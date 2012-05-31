@@ -14,15 +14,16 @@ void random_oops_destroy (void) {
 void random_oops_inject (uint64_t mask) {
 	static int r = 0;
 
-	if (r==0)
-		r = get_random_int(); // trully random?
-	else
+	if (r==0) {
+		r = (int) (get_random_int() % 381); // trully random?
+		r = (r > 0) ? r : -r;
+	} else
 		r--;
 
 	printk(KERN_INFO "Random is %d\n", r);
 
 	if (r == 0) {
-		*(int *)NULL = 0;		//If 0 page is not mapped, then we oops.
+//		*(int *)NULL = 0;		//If 0 page is not mapped, then we oops.
 		goto not_oopsed;
 	} else {
 		goto out;
