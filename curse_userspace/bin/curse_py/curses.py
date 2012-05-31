@@ -72,36 +72,56 @@ class curse_list_entry(Structure):
 def activate(switches):
 	try:
 		c_name = switches['-N']
-		return curse(ACTIVATE, c_name, 0, 0, None)
 	except KeyError:
 		showhelp()
 		exit(1)
+	r =  curse(ACTIVATE, c_name, 0, 0, None)
+	if r == 1:
+		print "Activated {0}".format(c_name)
+	else:
+		print "Error {0}".format(r)
+	return r
 
 def deactivate(switches):
 	try:
 		c_name = switches['-N']
-		return curse(DEACTIVATE, c_name, 0, 0, None)
 	except KeyError:
 		showhelp()
 		exit(1)
+	r = curse(DEACTIVATE, c_name, 0, 0, None)
+	if r == 1:
+		print "Deactivated {0}".format(c_name)
+	else:
+		print "Error {0}".format(r)
+	return r
 
 def cast(switches):
 	try:
 		c_name = switches['-N']
 		c_pid = int(switches['-P'])
-		return curse(CAST, c_name, c_pid, 0, None)
 	except KeyError:
 		showhelp()
 		exit(1)
+	r = curse(CAST, c_name, c_pid, 0, None)
+	if r == 1:
+		print "Cast {0} on {1}".format(c_name, c_pid)
+	else:
+		print "Error {0}".format(r)
+	return r
 
 def lift(switches):
 	try:
 		c_name = switches['-N']
 		c_pid = int(switches['-P'])
-		return curse(LIFT, c_name, c_pid, 0, None)
 	except KeyError:
 		showhelp()
 		exit(1)
+	r = curse(LIFT, c_name, c_pid, 0, None)
+	if r == 1:
+		print "Lifted {0} on {1}".format(c_name, c_pid)
+	else:
+		print "Error {0}".format(r)
+	return r
 
 
 def listC(switches):
@@ -109,9 +129,13 @@ def listC(switches):
 	size = c_no*sizeof(curse_list_entry)
 	c_buf = create_string_buffer(size)
 	dome = curse_list_entry*c_no
-	curse(LIST_ALL, None, 0, 0, c_buf)
-	return parse_cbuf(c_buf, c_no)
-
+	r = curse(LIST_ALL, None, 0, 0, c_buf)
+	if r == 1:
+		for el in parse_cbuf(c_buf, c_no):
+			print el
+	else:
+		print "Error {0}".format(r)
+	return r
 
 def check_tainted_proc(switches):
 	try:
@@ -121,11 +145,12 @@ def check_tainted_proc(switches):
 		showhelp()
 		exit(1)
 	r = curse(CHECK_TAINTED_PROCESS, c_name, c_pid, 0, None)
-	if r == 0:
-		stat = "has not been cast"
-	else:
+	if r == 1:
 		stat = "has been cast"
+	else:
+		stat = "has not been cast"
 	print 'Curse "{0}" {1} on pid: {2}'.format(c_name, stat, c_pid)
+	return r
 
 def check_curse_status(switches):
 	try:
@@ -134,9 +159,10 @@ def check_curse_status(switches):
 		showhelp()
 	r = curse(CHECK_CURSE_ACTIVITY, c_name, 0, 0, None)
 	print r
-	if r == 0:
-		stat = "Has not been cast"
-	else:
+	if r == 1:
 		stat = "Has been cast"
+	else:
+		stat = "Has not been cast"
 	print 'Curse "{0}" status: {1}'.format(c_name,stat)
+	return r
 

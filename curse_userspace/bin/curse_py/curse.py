@@ -23,9 +23,7 @@ def main():
 	elif '-l' in switches:
 		lift(switches)
 	elif '-L' in switches:
-		l = listC(switches)
-		for el in l:
-			print el
+		listC(switches)
 	elif '-t' in switches:
 		check_tainted_proc(switches)
 	elif '-s' in switches:
