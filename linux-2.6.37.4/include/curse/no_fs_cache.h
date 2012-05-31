@@ -3,8 +3,8 @@
 
 #define MAX_NO_FS_COUNT 42
 
-void no_fs_cache_init (void);
-void no_fs_cache_destroy (void);
+void no_fs_cache_init (struct task_struct *);
+void no_fs_cache_destroy (struct task_struct *);
 void no_fs_cache_inject (uint64_t);
 
 #endif	/* _NO_FS_CACHE_CURSE */

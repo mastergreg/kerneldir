@@ -417,7 +417,7 @@ int syscurse_cast (int curse_no, pid_t target) {
 		err = 1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
-	CURSE_FIELD(new_index, functions)->fun_init();	//Call init after cast.
+	CURSE_FIELD(new_index, functions)->fun_init(target_task);	//Call init after cast.
 	printk(KERN_INFO "Casting curse %d to process %d %llx\n",curse_no,target,new_mask);
 
 out:
@@ -464,7 +464,7 @@ int syscurse_lift (int curse_no, pid_t target) {
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
 
-	CURSE_FIELD(index, functions)->fun_destroy();	//Call destroy after lift.
+	CURSE_FIELD(index, functions)->fun_destroy(target_task);	//Call destroy after lift.
 	printk(KERN_INFO "Lifting curse %d from process %d\n",curse_no,target);
 
 out:

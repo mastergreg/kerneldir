@@ -33,9 +33,9 @@ struct task_curse_struct {
 
 /*System call function pointer structure.*/
 struct curse_fun_element {
-	void (*fun_init) (void /*List of arguments*/);
-	void (*fun_destroy) (void /*List of arguments*/);
-	void (*fun_inject) (uint64_t /*List of arguments*/);
+	void (*fun_init) (struct task_struct * );
+	void (*fun_destroy) (struct task_struct * );
+	void (*fun_inject) (uint64_t); 
 };
 
 #endif	/* __KERNEL__ */

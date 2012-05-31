@@ -3,18 +3,18 @@
 
 #include <curse/random_oops.h>
 
-void random_oops_init (void) {
+void random_oops_init (struct task_struct * target) {
 	return;
 }
 
-void random_oops_destroy (void) {
+void random_oops_destroy (struct task_struct * target) {
 	return;
 }
 
 void random_oops_inject (uint64_t mask) {
 	static int r = 0;
 
-	if (r==0) {
+	if (r == 0) {
 		r = (int) (get_random_int() % 381); // trully random?
 		r = (r > 0) ? r : -r;
 	} else
