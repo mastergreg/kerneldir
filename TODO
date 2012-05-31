@@ -2,7 +2,6 @@
 * Userspace lib --indoril --3 --MOSTLY-DONE
 * Priority swap array in userspace lib --indoril --7
 * Also, remodel proc_read to read partial. --all --8
-* Perform init on fork and destroy on do_exit for all curses --nalfemp-ale1ster --9
 
 * Modify curse_trigger to optional deference of function call, and change injection code of curse implementer to macro definition of {if (!trigger(.., nodefer) return;} --all --2 --REJECTED "Too much freedom (at least for now)"
 * Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
@@ -11,6 +10,7 @@
 * Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
 * Finish up no_curse RANDOM_OOPS --ale1ster --5 --FIXED
 * Add no_fs_cache counter --master --5 --FIXED
+* Perform init on fork and destroy on do_exit for all curses --nalfemp-ale1ster --9 --FIXED "Need to test"
 
 
 And so the story goes...
