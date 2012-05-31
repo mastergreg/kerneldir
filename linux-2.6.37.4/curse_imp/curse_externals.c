@@ -179,24 +179,24 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 }
 
-void curse_init_actions (void) {
+void curse_init_actions (struct task_struct *p) {
 	int i = 0;
-	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;	//FIXME: Is current legal in this context?
 	while (c_f) {		//While the current is active, or there are remaining fields:
 		if (c_f & c_m)
-			fun_array[i].fun_init(current);
+			fun_array[i].fun_init(p);
 		c_f >>= 1;
 		++i;
 	}
 	//...
 }
 
-void curse_destroy_actions (void) {
+void curse_destroy_actions (struct task_struct *p) {
 	int i = 0;
-	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;	//FIXME: Is current legal in this context?
 	while (c_f) {		//While the current is active, or there are remaining fields:
 		if (c_f & c_m)
-			fun_array[i].fun_destroy(current);
+			fun_array[i].fun_destroy(p);
 		c_f >>= 1;
 		++i;
 	}
@@ -217,11 +217,11 @@ void curse_trigger (curse_id_t _) {
 	return;
 }
 
-void curse_init_actions (void) {
+void curse_init_actions (struct task_struct *p) {
 	return;
-}
+} 
 
-void curse_destroy_actions (void) {
+void curse_destroy_actions (struct task_struct *p)  {
 	return;
 }
 

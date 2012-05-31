@@ -57,6 +57,8 @@
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
 
+#include <curse/curse_externals.h>
+
 static void exit_mm(struct task_struct * tsk);
 
 static void __unhash_process(struct task_struct *p, bool group_dead)
@@ -926,6 +928,10 @@ NORET_TYPE void do_exit(long code)
 	tracehook_report_exit(&code);
 
 	validate_creds_for_do_exit(tsk);
+
+#ifdef _CURSES_INSERTED
+	curse_destroy_actions(current);
+#endif
 
 	/*
 	 * We're taking recursive faults here in do_exit. Safest is to just

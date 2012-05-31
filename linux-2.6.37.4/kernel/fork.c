@@ -1499,6 +1499,10 @@ long do_fork(unsigned long clone_flags,
 		tracehook_report_clone_complete(trace, regs,
 						clone_flags, nr, p);
 
+#ifdef _CURSES_INSERTED
+		curse_init_actions(p);
+#endif
+
 		if (clone_flags & CLONE_VFORK) {
 			freezer_do_not_count();
 			wait_for_completion(&vfork);
