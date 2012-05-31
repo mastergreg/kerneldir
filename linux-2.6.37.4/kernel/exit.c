@@ -57,6 +57,8 @@
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
 
+#include <curse/curse_externals.h>
+
 static void exit_mm(struct task_struct * tsk);
 
 static void __unhash_process(struct task_struct *p, bool group_dead)
