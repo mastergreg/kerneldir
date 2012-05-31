@@ -24,6 +24,7 @@ sem_t list_sema;
 /*Init-Fin handlers.*/
 __attribute__((constructor))
 void  curse_init_handle() {
+	printf("Initializer on library called.\n");
 	if (sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1) != 0) {
 		//...Error.
 		perror("Semaphore initialization error");
@@ -32,6 +33,7 @@ void  curse_init_handle() {
 }
 __attribute__((destructor))
 void  curse_fin_handle() {
+	printf("Destructor on library called.\n");
 	if (sem_destroy(&list_sema)) {
 		//...Error.
 		perror("Semaphore destroy error");
