@@ -5,6 +5,14 @@
 #include <curse/no_fs_cache.h>
 
 void no_fs_cache_init (void) {
+	/*
+	 * we don't need to, if its greater than MAX_NO_FS_COUNT
+	 * it will be re initialized automagically
+	 */
+	//unsigned long spinflags;
+	//spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+	//current->curse_data.no_fs_cache_counter = 0;
+	//spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 	return;
 }
 
