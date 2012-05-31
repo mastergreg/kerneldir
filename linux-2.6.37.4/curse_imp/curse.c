@@ -74,14 +74,14 @@ inline int check_permissions (pid_t target) {
 		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 		ret = -EPERM;
-		if(((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
+		if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
 				(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 				 (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
 			ret = 1;
 	}
 	else {
 		ret = -EPERM;
-		if((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))			//TODO: Compiler warning
+		if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))			//TODO: Compiler warning
 			ret = 1;
 		goto out_with_local;
 	}
@@ -108,7 +108,7 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 
 	//Do not even call if curse system is not active.
 #ifdef _CURSES_INSERTED
-	switch(cmd_norm) {
+	switch (cmd_norm) {
 		case LIST_ALL:
 			ret = syscurse_list_all(buf);
 			break;
@@ -200,7 +200,7 @@ int syscurse_activate (int curse_no) {
 	int i, ret = -EPERM;
 
 	i = curse_no;
-	if((ret = check_permissions(0) == -EPERM))
+	if ((ret = check_permissions(0) == -EPERM))
 		goto out_ret;
 
 
@@ -224,7 +224,7 @@ out_ret:
 int syscurse_deactivate (int curse_no) {
 	int i, ret = -EPERM;
 
-	if((ret = check_permissions(0) == -EPERM))
+	if ((ret = check_permissions(0) == -EPERM))
 		goto out_ret;
 	i = curse_no;
 
@@ -284,9 +284,9 @@ int syscurse_check_tainted_process (int curse_no, pid_t target) {
 		goto out;
 
 	err = -EINVAL;
-	if(target <= 0)
+	if (target <= 0)
 		goto out;
-	if((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target) == -EPERM))
 		goto out;
 	err = 0;
 
@@ -338,31 +338,31 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 
 	//TODO: Check permissions.
 	ret = -EINVAL;
-	if(pid <= 0)
+	if (pid <= 0)
 		goto out;
-	if((ret = check_permissions(pid)) == -EPERM) {
+	if ((ret = check_permissions(pid)) == -EPERM) {
 		goto out;
 	}
 
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
 		case USR_PERM_ON	:
-			SET_PERM((*cur_curse_field), (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
+			SET_PERM((*cur_curse_field), (_USR_ACTIVE_PERM | _USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_ON	:
-			SET_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
+			SET_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM | _GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_ON		:
-			SET_PERM((*cur_curse_field), (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
+			SET_PERM((*cur_curse_field), (_SU_ACTIVE_PERM | _SU_PASSIVE_PERM));
 			break;
 		case USR_PERM_OFF	:
-			CLR_PERM((*cur_curse_field), (_USR_ACTIVE_PERM|_USR_PASSIVE_PERM));
+			CLR_PERM((*cur_curse_field), (_USR_ACTIVE_PERM | _USR_PASSIVE_PERM));
 			break;
 		case GRP_PERM_OFF	:
-			CLR_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM|_GRP_PASSIVE_PERM));
+			CLR_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM | _GRP_PASSIVE_PERM));
 			break;
 		case SU_PERM_OFF	:
-			CLR_PERM((*cur_curse_field), (_SU_ACTIVE_PERM|_SU_PASSIVE_PERM));
+			CLR_PERM((*cur_curse_field), (_SU_ACTIVE_PERM | _SU_PASSIVE_PERM));
 			break;
 		default				:
 			ret = -EINVAL;
@@ -391,9 +391,9 @@ int syscurse_cast (int curse_no, pid_t target) {
 		goto out;
 
 	err = -EINVAL;
-	if(target <= 0 )
+	if (target <= 0 )
 		goto out;
-	if((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target) == -EPERM))
 		goto out;
 	err = 0;
 
@@ -439,9 +439,9 @@ int syscurse_lift (int curse_no, pid_t target) {
 		goto out;
 
 	err = -EINVAL;
-	if(target <= 0)
+	if (target <= 0)
 		goto out;
-	if((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target) == -EPERM))
 		goto out;
 
 	err = -EINVAL;

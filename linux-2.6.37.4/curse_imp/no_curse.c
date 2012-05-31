@@ -13,7 +13,7 @@ void no_curse_init (void) {
 	spin_lock_irqsave(&((cur_curse)->protection), irqflags);
 	// No need to check if curse is active
 	//Making the process unable to cast a curse is done by masking it s active permissions.
-	cur_curse->permissions &= (_USR_ACTIVE_PERM|_GRP_ACTIVE_PERM|_SU_ACTIVE_PERM);
+	cur_curse->permissions &= (_USR_ACTIVE_PERM | _GRP_ACTIVE_PERM | _SU_ACTIVE_PERM);
 	spin_unlock_irqrestore(&((cur_curse)->protection), irqflags);
 	return;
 }
@@ -44,7 +44,7 @@ void no_curse_destroy (void) {
 	cur_curse = &(current->curse_data);
 
 	spin_lock_irqsave(&((cur_curse)->protection), irqflags);
-	cur_curse->permissions &= (~(_USR_ACTIVE_PERM|_GRP_ACTIVE_PERM|_SU_ACTIVE_PERM));
+	cur_curse->permissions &= (~(_USR_ACTIVE_PERM | _GRP_ACTIVE_PERM | _SU_ACTIVE_PERM));
 	spin_unlock_irqrestore(&((cur_curse)->protection), irqflags);
 	return;
 }

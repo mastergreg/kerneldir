@@ -52,4 +52,4 @@ void no_fs_cache_inject (uint64_t mask) {
 		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 	}
 	return;
- }
+}
