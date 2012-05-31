@@ -1136,7 +1136,12 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->curse_data.inherritance = current->curse_data.inherritance;
 	p->curse_data.curse_field = (current->curse_data.curse_field) & (current->curse_data.inherritance);
 	p->curse_data.triggered = 0x0;
-	p->curse_data.permissions = current->curse_data.permissions;
+	// FIXME: have massive discussion on where initializations should happen
+	if (current->curse_data.curse_field)
+		p->curse_data.permissions = current->curse_data.permissions;
+	else
+		p->curse_data.permissions = ( 0x01 | 0x04 | 0x10 | 0x40 );
+		
 	spin_lock_init(&p->curse_data.protection);
 #endif 
 
