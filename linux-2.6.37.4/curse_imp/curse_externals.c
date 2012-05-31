@@ -183,8 +183,9 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 void curse_init_actions (void) {
 	int i = 0;
 	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
-	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
-		fun_array[i].fun_init();
+	while (c_f) {		//While the current is active, or there are remaining fields:
+		if (c_f & c_m)
+			fun_array[i].fun_init(current);
 		c_f >>= 1;
 		++i;
 	}
@@ -194,8 +195,9 @@ void curse_init_actions (void) {
 void curse_destroy_actions (void) {
 	int i = 0;
 	uint64_t c_m = 0x0001, c_f = current->curse_data.curse_field;	//FIXME: Is current legal in this context?
-	while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
-		fun_array[i].fun_destroy();
+	while (c_f) {		//While the current is active, or there are remaining fields:
+		if (c_f & c_m)
+			fun_array[i].fun_destroy(current);
 		c_f >>= 1;
 		++i;
 	}
