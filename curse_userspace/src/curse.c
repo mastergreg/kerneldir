@@ -82,7 +82,7 @@ int index_from_name (const char *id) {
 		maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 	list = get_list(maxCurseNum);
 	if (list != NULL) {
-		for(i = 0; i < maxCurseNum; ++i) {
+		for (i = 0; i < maxCurseNum; ++i) {
 			printf("List name: %s - CID: %llu\n", list[i].curse_name, (long long int)list[i].curse_id);
 			if (strcmp(list[i].curse_name, id) == 0) {
 				found = 1;

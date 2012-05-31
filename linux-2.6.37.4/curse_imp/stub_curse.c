@@ -18,4 +18,3 @@ void stub_inject (uint64_t mask) {
     printk("Run of curse initiated\n");
     return;
 }
-

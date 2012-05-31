@@ -47,7 +47,7 @@ const int max_curse_no = (((sizeof (curse_full_list))/(sizeof (struct curse_list
 struct curse_fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_inject	}, /* Maybe a stub maybe not, depends on how we handle 0 :: It is a stub handling curse system activation */
 
-	{	stub_init, stub_destroy, no_curse_inject	},
+	{	no_curse_init, no_curse_destroy, no_curse_inject	},
 	{	no_fs_cache_init, no_fs_cache_destroy, no_fs_cache_inject	},
 	{	random_oops_init, random_oops_destroy, random_oops_inject	},
 

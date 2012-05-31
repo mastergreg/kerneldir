@@ -132,7 +132,7 @@ void curse_init (void) {
 	//3. Populate entries in /proc filesystem.
 	if (!(dir_node = proc_mkdir(PROC_DIR_NAME, NULL)))
 		goto out;
-	if (!(output_node = create_proc_read_entry(PROC_OUT_NODE_NAME, (S_IRUSR|S_IRGRP|S_IROTH), dir_node, proc_curse_read, curse_list_pointer)))
+	if (!(output_node = create_proc_read_entry(PROC_OUT_NODE_NAME, (S_IRUSR | S_IRGRP | S_IROTH), dir_node, proc_curse_read, curse_list_pointer)))
 		goto out_dirred;
 
 	//FIXME: Is there anything else to be done here?
