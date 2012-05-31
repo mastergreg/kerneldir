@@ -11,8 +11,8 @@ void no_fs_cache_init (struct task_struct * target) {
 	 */
 	unsigned long spinflags;
 	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-	current->curse_data.no_fs_cache_counter = 0;
-	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+	target->curse_data.no_fs_cache_counter = 0;
+	spin_unlock_irqrestore(&((target->curse_data).protection), spinflags);
 	return;
 }
 
