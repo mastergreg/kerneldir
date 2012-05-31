@@ -41,6 +41,8 @@ Example:
 	{0} -a -N no_fs_cache
 	""".format(argv[0])
 	print doc
+	return 1
+
 def parse_cbuf(sth, ln):
 	a = []
 	for j in range(ln):
