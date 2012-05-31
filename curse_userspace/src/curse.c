@@ -103,7 +103,21 @@ int index_from_name (const char *id) {
 
 
 long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
-	int theCurse = index_from_name(name);
+	int theCurse;
+
+	switch(command) {
+		case LIST_ALL:
+		case GET_CURSE_NO:
+		case SHOW_RULES:
+		case ADD_RULE:
+		case REM_RULE:
+			theCurse = 0;
+			break;
+		default:
+			theCurse = index_from_name(name);
+			break;
+	}
+
 	if (theCurse < 0) {
 		return -1;
 	}
