@@ -1,21 +1,9 @@
-#!/usr/bin/env python
-# -*- coding: utf-8
-
-
-from getopt import gnu_getopt
-from struct import *
-import os
-
 from ctypes import *
 
+import os
 from sys import argv
 lib=CDLL("libcurse.so")
 
-
-
-def curse(command, name, target, ctrl, userbuf):
-	lib.curse.argtypes = [c_int, c_char_p, c_int, c_int, c_char_p]
-	return lib.curse(command, name, target, ctrl, userbuf)
 
 LIST_ALL, CURSE_CTRL,		\
 ACTIVATE, DEACTIVATE,		\
@@ -35,38 +23,6 @@ GRP_PERM_OFF,				\
 SU_PERM_ON,					\
 SU_PERM_OFF   = range(8)
 
-def parseInt(sth):
-	sth = map(ord, sth)
-	s = 0
-	for i,j in enumerate(sth):
-		s += 256**i*j
-	return s
-
-class curse_list_entry(Structure):
-	_buf_size_ = 24
-	_pack_ = 1
-	_fields_ = [('curse_name',c_char*24), ('curse_id', c_ulonglong)]
-	def __init__(self,st):
-		self.curse_name = st[:self._buf_size_]
-		self.curse_id = parseInt(st[self._buf_size_:])
-
-	def __repr__(self):
-		return "{0}: {1:#08x}".format(self.curse_name,self.curse_id)
-
-		
-
-
-
-
-def parse_args():
-	#	_a_ctivate	/	_d_eactivate
-	#	_c_ast		/	_l_ift
-	#	_N_ame
-	#	_L_ist
-	#	_P_id
-	switches, args = gnu_getopt(argv[1:],'adclN:P:Lh?')
-	return dict(switches)
-
 
 def showhelp():
 	doc = """
@@ -76,6 +32,8 @@ Help:
 	-d deactivate
 	-c cast		
 	-l lift
+	-t check tainted process
+	-s check curse status (global)
 	-N curse name
 	-L List
 	-P Pid 
@@ -83,6 +41,33 @@ Example:
 	{0} -a -N no_fs_cache
 	""".format(argv[0])
 	print doc
+def parse_cbuf(sth, ln):
+	a = []
+	for j in range(ln):
+		i = j*32
+		a.append(curse_list_entry(sth[i:i+32]))
+	return a
+
+def curse(command, name, target, ctrl, userbuf):
+	lib.curse.argtypes = [c_int, c_char_p, c_int, c_int, c_char_p]
+	return lib.curse(command, name, target, ctrl, userbuf)
+
+class curse_list_entry(Structure):
+	_buf_size_ = 24
+	_pack_ = 1
+	_fields_ = [('curse_name',c_char*24), ('curse_id', c_ulonglong)]
+	def __init__(self,st):
+		self.curse_name = st[:self._buf_size_]
+		self.curse_id = self.parseInt(st[self._buf_size_:])
+	def __repr__(self):
+		return "{0}: {1:#08x}".format(self.curse_name,self.curse_id)
+	def parseInt(sth):
+		sth = map(ord, sth)
+		s = 0
+		for i,j in enumerate(sth):
+			s += 256**i*j
+		return s
+
 
 def activate(switches):
 	try:
@@ -119,15 +104,6 @@ def lift(switches):
 		exit(1)
 
 
-def parse_cbuf(sth, ln):
-	a = []
-	for j in range(ln):
-		i = j*32
-		a.append(curse_list_entry(sth[i:i+32]))
-	return a
-
-
-
 def listC(switches):
 	c_no = curse(GET_CURSE_NO, None, 0, 0, None)
 	size = c_no*sizeof(curse_list_entry)
@@ -136,25 +112,31 @@ def listC(switches):
 	curse(LIST_ALL, None, 0, 0, c_buf)
 	return parse_cbuf(c_buf, c_no)
 
-def main():
-	switches = parse_args()
-	keys = switches.keys()
-	if '-a' in switches:
-		activate(switches)
-	elif '-d' in switches:
-		deactivate(switches)
-	elif '-c' in switches:
-		cast(switches)
-	elif '-l' in switches:
-		lift(switches)
-	elif '-L' in switches:
-		l = listC(switches)
-		for el in l:
-			print el
-	elif '-h' in switches:
-		showhelp()
-	else:
-		showhelp()
 
-if __name__=="__main__":
-	main()
+def check_tainted_proc(switches):
+	try:
+		c_name = switches['-N']
+		c_pid = int(switches['-P'])
+	except KeyError:
+		showhelp()
+		exit(1)
+	r = curse(CHECK_TAINTED_PROCESS, c_name, c_pid, 0, None)
+	if r == 0:
+		stat = "has not been cast"
+	else:
+		stat = "has been cast"
+	print 'Curse "{0}" {1} on pid: {2}'.format(c_name, stat, c_pid)
+
+def check_curse_status(switches):
+	try:
+		c_name = switches['-N']
+	except KeyError:
+		showhelp()
+	r = curse(CHECK_CURSE_ACTIVITY, c_name, 0, 0, None)
+	print r
+	if r == 0:
+		stat = "Has not been cast"
+	else:
+		stat = "Has been cast"
+	print 'Curse "{0}" status: {1}'.format(c_name,stat)
+
