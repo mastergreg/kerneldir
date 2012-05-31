@@ -15,23 +15,24 @@ def main():
 	switches = parse_args()
 	keys = switches.keys()
 	if '-a' in switches:
-		activate(switches)
+		r = activate(switches)
 	elif '-d' in switches:
-		deactivate(switches)
+		r = deactivate(switches)
 	elif '-c' in switches:
-		cast(switches)
+		r = cast(switches)
 	elif '-l' in switches:
-		lift(switches)
+		r = lift(switches)
 	elif '-L' in switches:
-		listC(switches)
+		r = listC(switches)
 	elif '-t' in switches:
-		check_tainted_proc(switches)
+		r = check_tainted_proc(switches)
 	elif '-s' in switches:
-		check_curse_status(switches)
+		r = check_curse_status(switches)
 	elif '-h' in switches:
-		showhelp()
+		r = showhelp()
 	else:
-		showhelp()
+		r = showhelp()
+	exit(r)
 
 if __name__=="__main__":
 	main()
