@@ -200,7 +200,7 @@ int syscurse_activate (int curse_no) {
 	int i, ret = -EPERM;
 
 	i = curse_no;
-	if ((ret = check_permissions(0) == -EPERM))
+	if ((ret = check_permissions(0)) != 1)
 		goto out_ret;
 
 
@@ -224,7 +224,7 @@ out_ret:
 int syscurse_deactivate (int curse_no) {
 	int i, ret = -EPERM;
 
-	if ((ret = check_permissions(0) == -EPERM))
+	if ((ret = check_permissions(0)) != 1)
 		goto out_ret;
 	i = curse_no;
 
@@ -286,7 +286,7 @@ int syscurse_check_tainted_process (int curse_no, pid_t target) {
 	err = -EINVAL;
 	if (target <= 0)
 		goto out;
-	if ((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target)) != 1)
 		goto out;
 	err = 0;
 
@@ -340,7 +340,7 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 	ret = -EINVAL;
 	if (pid <= 0)
 		goto out;
-	if ((ret = check_permissions(pid)) == -EPERM) {
+	if ((ret = check_permissions(pid)) != 1) {
 		goto out;
 	}
 
@@ -393,7 +393,7 @@ int syscurse_cast (int curse_no, pid_t target) {
 	err = -EINVAL;
 	if (target <= 0 )
 		goto out;
-	if ((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target)) != 1)
 		goto out;
 	err = 0;
 
@@ -441,7 +441,7 @@ int syscurse_lift (int curse_no, pid_t target) {
 	err = -EINVAL;
 	if (target <= 0)
 		goto out;
-	if ((err = check_permissions(target) == -EPERM))
+	if ((err = check_permissions(target)) != 1)
 		goto out;
 
 	err = -EINVAL;
