@@ -399,8 +399,9 @@ int syscurse_cast (int curse_no, pid_t target) {
 
 	err = -EINVAL;
 	new_index = curse_no;
-	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) && !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
+	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
 		goto out;
+		
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {
 		target_task->curse_data.curse_field |= new_mask;
