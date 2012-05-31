@@ -35,11 +35,26 @@ GRP_PERM_OFF,				\
 SU_PERM_ON,					\
 SU_PERM_OFF   = range(8)
 
+def parseInt(sth):
+	sth = map(ord, sth)
+	s = 0
+	for i,j in enumerate(sth):
+		s += 256**i*j
+	return s
 
 class curse_list_entry(Structure):
-	pass
+	_buf_size_ = 24
 	_pack_ = 1
 	_fields_ = [('curse_name',c_char*24), ('curse_id', c_ulonglong)]
+	def __init__(self,st):
+		self.curse_name = st[:self._buf_size_]
+		self.curse_id = parseInt(st[self._buf_size_:])
+
+	def __repr__(self):
+		return "{0}: {1:#08x}".format(self.curse_name,self.curse_id)
+
+		
+
 
 
 
@@ -90,19 +105,13 @@ def lift(switches):
 		showhelp()
 		exit(1)
 
-def parseInt(sth):
-	s = 0
-	for i,j in enumerate(sth):
-		s += 256**i*j
-	return s
-		
-		print map(ord,sth[i+24:i+32])
-def parse_me(sth, ln):
+
+def parse_cbuf(sth, ln):
+	a = []
 	for j in range(ln):
 		i = j*32
-		print sth[i:i+24],
-		print hex(parseInt(map(ord,sth[i+24:i+32])))
-
+		a.append(curse_list_entry(sth[i:i+32]))
+	return a
 
 
 
@@ -111,11 +120,8 @@ def listC(switches):
 	size = c_no*sizeof(curse_list_entry)
 	c_buf = create_string_buffer(size)
 	dome = curse_list_entry*c_no
-	print c_no, size, dome
-	#cdome = cast((dome, POINTER(c_char)))
 	curse(LIST_ALL, None, 0, 0, c_buf)
-	#buf = unpack('sQ', bf) #cast([c_buf, curse_list_entry])
-	parse_me(c_buf, c_no)
+	return parse_cbuf(c_buf, c_no)
 
 def main():
 	switches = parse_args()
@@ -129,7 +135,9 @@ def main():
 	elif '-l' in switches:
 		lift(switches)
 	elif '-L' in switches:
-		listC(switches)
+		l = listC(switches)
+		for el in l:
+			print el
 	elif '-h' in switches:
 		showhelp()
 	else:
