@@ -2,6 +2,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+
+#define __NR_curse 303
 
 int main (int argc, char **argv) {
 	int i;
