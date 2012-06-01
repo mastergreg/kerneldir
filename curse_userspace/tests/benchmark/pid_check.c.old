@@ -1,0 +1,29 @@
+#include <curse/curse.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+
+#define __NR_getpid 39
+
+int main (int argc, char **argv) {
+	int i;
+	clock_t diff;
+
+	printf("Sys getpid: 1.000.000 list calls (comparison of library buffering vs. immediate syscall).\n");
+	clock();
+	for (i=0; i<1000000; i++) {
+		getpid();
+	}
+	diff = clock();
+	printf("Library calls wasted %lld clock ticks.\n", diff);
+
+	diff = clock();
+	for (i=0; i<1000000; i++) {
+		syscall(__NR_getpid);
+	 }
+	diff = (clock() - diff);
+	printf("Immediate syscall calls wasted %lld clock ticks.\n", (long long)diff);
+	
+	return 0;
+}
