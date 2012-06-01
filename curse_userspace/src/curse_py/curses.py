@@ -37,8 +37,10 @@ Help:
 	-N curse name
 	-L List
 	-P Pid 
+	-i + / -
+	-p uUgGsS
 Example:
-	{0} -a -N no_fs_cache
+	cursepie -a -N no_fs_cache
 	""".format(argv[0])
 	print doc
 	return 1
