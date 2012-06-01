@@ -30,9 +30,11 @@ enum curse_command	{	LIST_ALL=0, CURSE_CTRL,
 
 /*Curse control commands.*/
 enum curse_control	{	INH_ON=0, INH_OFF,
-						USR_PERM_ON, USR_PERM_OFF,
-						GRP_PERM_ON, GRP_PERM_OFF,
-						SU_PERM_ON, SU_PERM_OFF,
+						USR_ACTIVE_PERM_ON, USR_ACTIVE_PERM_OFF,
+						USR_PASSIVE_PERM_ON, USR_PASSIVE_PERM_OFF,
+						//GRP_PERM_ON, GRP_PERM_OFF,
+						SU_ACTIVE_PERM_ON, SU_ACTIVE_PERM_OFF,
+						SU_PASSIVE_PERM_ON, SU_PASSIVE_PERM_OFF,
 					};
 
 /*Lists every possible status for a curse (for userspace portability).*/
@@ -88,10 +90,10 @@ extern struct proc_dir_entry *dir_node, *output_node;
 
 /*Bitmasks to use for setting and checking the permissions field in struct tast_curse_struct.*/
 #define _USR_ACTIVE_PERM	0x01		/*Active permissions denote a capability to cast/lift.*/
-#define _GRP_ACTIVE_PERM	0x02
+//#define _GRP_ACTIVE_PERM	0x02
 #define _SU_ACTIVE_PERM		0x04
 #define _USR_PASSIVE_PERM	0x10		/*Passive permissions denote a capability to have a curse cast upon us.*/
-#define _GRP_PASSIVE_PERM	0x20
+//#define _GRP_PASSIVE_PERM	0x20
 #define _SU_PASSIVE_PERM	0x40
 /*Permission specific macros (first argument is a task_curse_struct variable, and the second a permission mask).*/
 #define GET_PERM(el, perm_mask) (((el).permissions) & (perm_mask))
