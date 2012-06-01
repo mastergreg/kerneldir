@@ -40,18 +40,21 @@ Help:
 	-L List
 	-P Pid 
 	-i + / -
-	-p uUgGsS
+	-p u/s+/-a/p
 
-	|   0    |      1       |      2      |   3  |
+
+Example:
+	cursepie -a -N no_fs_cache
+	"""
+	more_permissions = """
+    |   0    |      1       |      2      |   3  |
 ----+--------+--------------+-------------+------+
 1st | no SU  | SU_PASSIVE   | SU_ACTIVE   | BOTH |
 ----+--------+--------------+-------------+------+
 2nd | no USR | USR_PASSIVE  | USR_ACTIVE  | BOTH |
 ----+--------+--------------+-------------+------+
-
-Example:
-	cursepie -a -N no_fs_cache
 	"""
+
 	print doc
 	magic()
 	return 1
