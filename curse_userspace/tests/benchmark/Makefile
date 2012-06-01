@@ -7,7 +7,7 @@ LDFLAGS += -L $(LDPATH) -lcurse -lrt
 
 SRCFILES=$(wildcard *.c)
 OBJFILES=$(patsubst %.c,%.o,$(SRCFILES))
-TARGET=test1.out
+TARGET=bench.out
 all:	$(TARGET)
 
 $(TARGET):	$(OBJFILES)
