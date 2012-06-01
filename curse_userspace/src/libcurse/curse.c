@@ -61,16 +61,21 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 	return buffered_list;
 }
 
+inline long get_maxCurseNum() {
+	static long maxCurseNum = -1;
+	if (maxCurseNum == -1)
+		maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
+	return maxCurseNum;
+}
+
 /*Wrapper for returning the index of a curse by searching with a name.*/
 int index_from_name (const char *id) {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
 	int i = 0, found = 0;
-	static long maxCurseNum = -1;
 	const struct curse_list_entry *list;
 
 	//Get the max number only on first call of this function, save unneeded syscalls.
-	if (maxCurseNum == -1)
-		maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
+	long maxCurseNum = get_maxCurseNum();
 	list = get_list(maxCurseNum);
 	if (list != NULL) {
 		for (i = 0; i < maxCurseNum; ++i) {
@@ -94,10 +99,17 @@ int index_from_name (const char *id) {
 
 long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
 	int theCurse;
+	struct curse_list_entry *list;
+	long maxCurseNum;
 
 	switch(command) {
 		case LIST_ALL:
+			maxCurseNum = get_maxCurseNum();
+			list = get_list(maxCurseNum);
+			userbuf = memcpy(userbuf, list, maxCurseNum*sizeof(struct curse_list_entry));
+			return 1;
 		case GET_CURSE_NO:
+			return get_maxCurseNum();
 		case SHOW_RULES:
 		case ADD_RULE:
 		case REM_RULE:
