@@ -75,8 +75,7 @@ def activate(switches):
 	try:
 		c_name = switches['-N']
 	except KeyError:
-		showhelp()
-		exit(1)
+		c_name = 'stub'
 	r =  curse(ACTIVATE, c_name, 0, 0, None)
 	if r == 1:
 		print "Activated {0}".format(c_name)
@@ -88,8 +87,7 @@ def deactivate(switches):
 	try:
 		c_name = switches['-N']
 	except KeyError:
-		showhelp()
-		exit(1)
+		c_name = 'stub'
 	r = curse(DEACTIVATE, c_name, 0, 0, None)
 	if r == 1:
 		print "Deactivated {0}".format(c_name)
