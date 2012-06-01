@@ -183,8 +183,8 @@ int syscurse_activate (int curse_no) {
 	ret = -EINVAL;
 	//Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
-		if (!(CURSE_FIELD(i, status) & (ACTIVATED | CASTED))) {
-			CURSE_FIELD(i, status) = ACTIVATED;
+		if (!(CURSE_FIELD(i, status) & ACTIVATED)) {
+			CURSE_FIELD(i, status) |= ACTIVATED;
 			ret = 1;
 		} else {
 			goto out_ret;
@@ -206,8 +206,8 @@ int syscurse_deactivate (int curse_no) {
 
 	ret = -EINVAL;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
-		if (CURSE_FIELD(i, status) & (ACTIVATED | CASTED)) {
-			CURSE_FIELD(i, status) = IMPLEMENTED;
+		if (CURSE_FIELD(i, status) & ACTIVATED) {
+			CURSE_FIELD(i, status) &= ~ACTIVATED;
 			ret = 1;
 		} else {
 			goto out_ret;
@@ -372,7 +372,7 @@ int syscurse_cast (int curse_no, pid_t target) {
 
 	err = -EINVAL;
 	new_index = curse_no;
-	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || !(CURSE_FIELD(new_index, status) & (ACTIVATED | CASTED)))
+	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || !(CURSE_FIELD(new_index, status) & ACTIVATED))
 		goto out;
 		
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
@@ -383,7 +383,7 @@ int syscurse_cast (int curse_no, pid_t target) {
 			target_task->curse_data.inherritance |= new_mask;
 		else
 			target_task->curse_data.inherritance &= (~new_mask);
-		CURSE_FIELD(new_index, status) = CASTED;
+		CURSE_FIELD(new_index, status) |= CASTED;
 		err = 1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
@@ -427,7 +427,7 @@ int syscurse_lift (int curse_no, pid_t target) {
 		atomic_dec(&CURSE_FIELD(index, ref_count));
 		target_task->curse_data.inherritance &= (~curse_mask);
 		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)		//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
-			CURSE_FIELD(index, status) = ACTIVATED;
+			CURSE_FIELD(index, status) &= ~ACTIVATED;
 		//FIXME: Number is inconsistent in case of exited!!!!
 		err = 1;
 	}
