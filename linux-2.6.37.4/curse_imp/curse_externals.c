@@ -172,7 +172,7 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 }
 
 void curse_init_actions (struct task_struct *p) {
-	int i = 0;
+	int i = 1;
 	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;
 
 	//Have to check if system is active before acting. Active bits don't get toggled when system inactive.
@@ -196,7 +196,7 @@ void curse_init_actions (struct task_struct *p) {
 }
 
 void curse_destroy_actions (struct task_struct *p) {
-	int i = 0;
+	int i = 1;
 	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;
 
 	if (!CURSE_SYSTEM_Q)
