@@ -10,6 +10,7 @@ int main (int argc, char **argv) {
 /*  Fork, and check cross-process permission changes */
 	parent_pid = getpid();
 	printf("\nActivate random_oops: %d\n",		 curse(ACTIVATE, "random_oops", parent_pid,0,NULL ));
+	printf("\nActivate no_fs_cache: %d\n",		 curse(ACTIVATE, "random_oops", parent_pid,0,NULL ));
 	printf("\nCheck if self is tainted by random_oops: %d\n",		 curse(CHECK_TAINTED_PROCESS, "random_oops", parent_pid,0,NULL ));
 
 	printf("\n\n\n...Forking...\n\n");
@@ -37,7 +38,8 @@ int main (int argc, char **argv) {
 			printf("\nParent: Lift random_oops from child: %d\n", curse(LIFT, "random_oops", fpid, 0, NULL));
 			printf("\nParent: Cast random_oops on child: %d\n", curse(CAST, "random_oops", fpid, 0, NULL));
 			printf("\nParent: Lift random_oops from child: %d\n", curse(LIFT, "random_oops", fpid, 0, NULL));
+			wait(fpid);
+			printf("\nDeactivate random_oops: %d\n",		 curse(DEACTIVATE, "random_oops", parent_pid,0,NULL ));
 		}
-	printf("\nDeactivate random_oops: %d\n",		 curse(DEACTIVATE, "random_oops", parent_pid,0,NULL ));
 	return 0;
 }
