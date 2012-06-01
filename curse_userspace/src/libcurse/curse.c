@@ -48,16 +48,14 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 	if (buffered_list == NULL) {
 		if (!sem_wait(&list_sema)) {	/*Take sema.*/
 			if (buffered_list == NULL) {
-				/*Call to get max_curse_no*/
-				//maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
 				/*Allocate (MAX_CURSE_NO+1)*sizeof(struct curse_list_entry)*/
 				if ((buffered_list = (struct curse_list_entry *)calloc((maxCurseNum), sizeof(struct curse_list_entry))) == 0) {
 					perror("Allocation failed");
 					return NULL;
 				}
-				printf("size %lu\n", sizeof(buffered_list[0]));
-				printf("size %s\n", buffered_list[0].curse_name);
-				printf("size %lu\n", sizeof (struct curse_list_entry));
+//				printf("size %lu\n", sizeof(buffered_list[0]));
+//				printf("size %s\n", buffered_list[0].curse_name);
+//				printf("size %lu\n", sizeof (struct curse_list_entry));
 				/*Call syscall and get list.*/
 				syscall(__NR_curse, LIST_ALL, 0, 0, 0, buffered_list);
 			}
@@ -78,8 +76,6 @@ int index_from_name (const char *id) {
 	int i = 0, found = 0;
 	static long maxCurseNum = -1;
 	const struct curse_list_entry *list;
-
-	//printf("max number is: %ld\n", maxCurseNum);
 
 	//Get the max number only on first call of this function, save unneeded syscalls
 	if (maxCurseNum == -1)

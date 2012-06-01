@@ -52,7 +52,7 @@ void curse_k_wrapper (void) {
 	//call the curse handler if there is a curse
 	//if is used for opt, might integrate the handler here
 	//ideas?
-//	printk("Curse on scheduler.\n");
+
 	if (cur->curse_data.curse_field) {
 		int i = 1;
 		uint64_t c_m = 0x0001;
@@ -147,7 +147,7 @@ out:
 }
 
 /*This function is inserted in the places of the kernel source code that act as triggers for each curse, and inserts a trigger indicator in task struct of each task.*/
-//FIXME: Have to swap out with define directive. Also, remove excessive overhead.
+//FIXME: May have to swap out with define directive. Also, remove excessive overhead.
 void curse_trigger (_Bool defer_action, curse_id_t cid) {
 	struct task_curse_struct *cur_struct;
 	unsigned long spinf;
@@ -160,10 +160,9 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 	if (!unlikely(defer_action)) {
 		//printk(KERN_INFO "index = %d has to run now!\n", index);
-		//...Check if curse is  active.
 		uint64_t proc_active;
 
-		spin_lock_irqsave(&((current->curse_data).protection), spinf);
+		spin_lock_irqsave(&((current->curse_data).protection), spinf);	//Check if curse is  active.
 		proc_active = curse_list_pointer[index].curse_bit;
 		spin_unlock_irqrestore(&((current->curse_data).protection), spinf);
 		if (!(proc_active &= current->curse_data.curse_field))

@@ -25,13 +25,6 @@ extern int max_curse_no;
 extern struct curse_list_entry *curse_full_list;
 
 //=====Various wrapper functions.
-/*This function returns the index of the element with the specified curse id (or to the sentinel if invalid).*/
-//This is unused
-//inline int index_normalizer (int a_c_id) {
-//	int i = ((a_c_id < max_curse_no) ? a_c_id : -1);
-//	return i;
-//}
-
 /*This function returns the bitmask for the specified normalized curse index.*/
 inline uint64_t bitmask_from_no (int  a_c_id) {
 	return curse_list_pointer[a_c_id].curse_bit;
@@ -103,7 +96,6 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 {
 	long ret = -EINVAL;
 	int cmd_norm = (int) curse_cmd;
-	//curse_no = index_normalizer(curse_no);		//Sanity check.
 	if ((curse_no < 0) || (curse_no >=max_curse_no))
 		goto out;
 
@@ -156,15 +148,15 @@ out:
 }
 
 //=====Source helpful sub-functions.
-//int syscurse_list_all (char __user *buf, int len) {
 int syscurse_list_all (char __user *buf) {
 	int ret = -EINVAL;
 	size_t length;
-//	static size_t offset=0;
+/*
+	static size_t offset=0;
 
-//	if (len <= 0)
-//		goto out;
-
+	if (len <= 0)
+		goto out;
+*/
 	//length = sizeof(curse_full_list);
 	length = sizeof(struct curse_list_entry)*max_curse_no;
 //	ret = ((length - offset) >= len) ? len : (length - offset);
@@ -175,21 +167,6 @@ int syscurse_list_all (char __user *buf) {
 		ret=-EFAULT;
 		goto out;
 	}
-/*		//Alternative copy of only names at userspace.
-
-	ret=0;
-	char *names=NULL;
-	names=(char *)kmalloc((CURSE_MAX_NAME_SIZE+1)*max_curse_no, GFP_KERNEL);
-	for (i=0; i < max_curse_no; i++) {
-		ret += scnprintf(&(names[ret]), CURSE_MAX_NAME_SIZE+1, "%s\n", CURSE_FIELD(i, entry)->curse_name);
-	}
-	return ret;
-
-//ALTERNATIVELY:
-//http://gcc.gnu.org/onlinedocs/gcc/Type-Attributes.html
-//http://stackoverflow.com/questions/8457574/copy-to-user-and-copy-from-user-with-structs
-*/
-
 /*
 	offset += ret;
 	if (offset == length)
@@ -208,7 +185,7 @@ int syscurse_activate (int curse_no) {
 
 
 	ret = -EINVAL;
-	//TODO: Found a use for stub curse 0: activates the general curse system without activating any curse.
+	//Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
 		if (!(CURSE_FIELD(i, status) & (ACTIVATED | CASTED))) {
 			CURSE_FIELD(i, status) = ACTIVATED;
@@ -339,7 +316,6 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 		goto out;
 	cur_curse_field = &(target_task->curse_data);
 
-	//TODO: Check permissions.
 	ret = -EINVAL;
 	if (pid <= 0)
 		goto out;

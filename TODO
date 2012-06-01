@@ -1,5 +1,7 @@
 * Check function returns against new return policy --all --2 --STICKY
 * Userspace lib --indoril --3 --MOSTLY-DONE
+* Modify do_exit and fork to update the number of curses processes. --ale1ster --3
+* Modify curse_{init, destroy}_actions to check if system is active before doing any action. --nalfemp --3
 * Priority swap array in userspace lib --indoril --7
 * Also, remodel proc_read to read partial. --all --8
 
