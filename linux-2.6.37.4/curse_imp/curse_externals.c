@@ -180,9 +180,12 @@ void curse_init_actions (struct task_struct *p) {
 		return;
 
 	while (c_f) {		//While the current is active, or there are remaining fields:
+		printk(KERN_INFO "INIT ON FORK: This process has curses %llX.\n", c_f);
 		if ((c_f & c_m) && (curse_list_pointer[i].status & (ACTIVATED | CASTED))) {
 			fun_array[i].fun_init(p);
+			printk(KERN_INFO "The before ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			atomic_inc(&(curse_list_pointer[i].ref_count));
+			printk(KERN_INFO "The after ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			if (curse_list_pointer[i].status == ACTIVATED)
 				curse_list_pointer[i].status = CASTED;
 		}
@@ -200,9 +203,12 @@ void curse_destroy_actions (struct task_struct *p) {
 		return;
 
 	while (c_f) {		//While the current is active, or there are remaining fields:
+		printk(KERN_INFO "DESTROY ON EXIT: This process has curses %llX.\n", c_f);
 		if ((c_f & c_m) && (curse_list_pointer[i].status & (ACTIVATED | CASTED))) {
 			fun_array[i].fun_destroy(p);
+			printk(KERN_INFO "The before ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			atomic_dec(&(curse_list_pointer[i].ref_count));
+			printk(KERN_INFO "The after ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			if (atomic_read(&(curse_list_pointer[i].ref_count)) == 0)
 				curse_list_pointer[i].status = ACTIVATED;
 		}
