@@ -15,6 +15,7 @@
 #include <linux/stat.h>
 #include <linux/proc_fs.h>
 #include <linux/rcupdate.h>
+#include <linux/namei.h>
 
 #include <curse/curse.h>
 #include <curse/curse_types.h>
@@ -443,9 +444,27 @@ int syscurse_show_rules (void) {
 }
 
 int syscurse_add_rule (int curse, char *path) {
-	return 0;
+	int ret = -EINVAL;
+	
+
+	//Find inode
+	
+	printk(KERN_INFO "inode number is ");//%d", );
+	//Check if executable
+	//Check permissions
+	//Check if it is already in saved
+	//Else do it
+
+	goto out;
+	
+out:
+	return ret;
 }
 
 int syscurse_rem_rule (int curse, char *path) {
+	//Find inode
+	//Check if it is in saved
+	//Check permissions
+	//Else do it
 	return 0;
 }
