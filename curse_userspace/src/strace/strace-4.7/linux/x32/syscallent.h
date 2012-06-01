@@ -311,7 +311,9 @@
 	{ },							   /* 310 */
 	{ },							   /* 311 */
 
-	[312 ... 511] = {},
+	[312 ... 340] = {},
+	{ 5,	TP,	sys_curse,	"curse"	},	/* 341 */
+	[342 ... 511] = {},
 
 	{ 4,	TS,	sys_rt_sigaction,	"rt_sigaction"	},  /* 512 */
 	{ 0,	TS,	sys_rt_sigreturn,	"rt_sigreturn"	},  /* 513 */
