@@ -59,9 +59,6 @@ void curse_k_wrapper (void) {
 		uint64_t c_f = cur->curse_data.curse_field;
 		uint64_t c_t = cur->curse_data.triggered;
 
-		//printk(KERN_INFO "Gotta do sth now, whaaat?\n");
-		//printk(KERN_INFO "c_f = 0x%016LX c_t = 0x%016LX\n", c_f, c_t);
-
 		c_f &= c_t;
 
 		spin_lock_irqsave(&(cur->curse_data.protection), flags);
@@ -86,7 +83,6 @@ int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, v
 	/*We provided the data pointer during creation of read handler for our proc entry.*/
 	struct syscurse *c_list = (struct syscurse *) data;
 
-//	printk(KERN_INFO "You called read with offset: %ld for count: %d , data: %p - %p and start: %p\n", (long)off, count, data, curse_list_pointer, start);
 	if ((off > 0) || (data == NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
 		(*eof) = 1;
 		goto out;
@@ -159,7 +155,6 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 	cur_struct = &(current->curse_data);
 
 	if (!unlikely(defer_action)) {
-		//printk(KERN_INFO "index = %d has to run now!\n", index);
 		uint64_t proc_active;
 
 		spin_lock_irqsave(&((current->curse_data).protection), spinf);	//Check if curse is  active.
@@ -169,11 +164,9 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 			return;
 		(curse_list_pointer[index].functions)->fun_inject(curse_list_pointer[index].curse_bit);
 	} else {
-		//printk(KERN_INFO "index = %d has to run on when scheduled!\n", index);
 		spin_lock_irqsave(&(cur_struct->protection), spinf);
 		cur_struct->triggered |= (curse_list_pointer[index].curse_bit);
 		spin_unlock_irqrestore(&(cur_struct->protection), spinf);
-		//printk(KERN_INFO "trigger cur_struct->triggered 0x%016LX!\n", cur_struct->triggered);
 	}
 
 }
