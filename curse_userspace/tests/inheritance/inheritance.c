@@ -24,7 +24,7 @@ int main (int argc, char **argv) {
 	if (fpid < 0) {
 		perror("Could not fork");
 		exit(1);
-	} 
+	}
 	if (fpid == 0) {
 		printf("\n\n\n...Forking...\n\n");
 		fpid2 = fork();
@@ -34,13 +34,13 @@ int main (int argc, char **argv) {
 		}
 		if (fpid2 == 0) {
 			/* Second Child */
-			printf("\nChild2: Check if self is tainted by random_oops: %d\n",		 curse(CHECK_TAINTED_PROCESS, "random_oops", parent_pid,0,NULL ));
-			printf("\nChild2: Check if self is tainted by no_fs_cache: %d\n",		 curse(CHECK_TAINTED_PROCESS, "no_fs_cache", parent_pid,0,NULL ));
+			printf("\nChild2: Check if self is tainted by random_oops: %d\n",		 curse(CHECK_TAINTED_PROCESS, "random_oops", getpid(),0,NULL ));
+			printf("\nChild2: Check if self is tainted by no_fs_cache: %d\n",		 curse(CHECK_TAINTED_PROCESS, "no_fs_cache", getpid(),0,NULL ));
 			exit(0);
 		} else {
 			/* First Child */
-			printf("\nChild: Check if self is tainted by random_oops: %d\n",		 curse(CHECK_TAINTED_PROCESS, "random_oops", parent_pid,0,NULL ));
-			printf("\nChild: Check if self is tainted by no_fs_cache: %d\n",		 curse(CHECK_TAINTED_PROCESS, "no_fs_cache", parent_pid,0,NULL ));
+			printf("\nChild: Check if self is tainted by random_oops: %d\n",		 curse(CHECK_TAINTED_PROCESS, "random_oops", getpid(),0,NULL ));
+			printf("\nChild: Check if self is tainted by no_fs_cache: %d\n",		 curse(CHECK_TAINTED_PROCESS, "no_fs_cache", getpid(),0,NULL ));
 			wait(fpid2);
 			exit(0);
 		}
