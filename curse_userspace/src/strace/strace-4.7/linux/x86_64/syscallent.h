@@ -302,7 +302,7 @@
 	{ 5,	TD|TF,	sys_fanotify_mark,	"fanotify_mark"	}, /* 301 */
 	{ 4,	0,	sys_prlimit64,		"prlimit64"	}, /* 302 */
 	//{ 5,	TD|TF,	sys_name_to_handle_at,	"name_to_handle_at"}, /* 303 */
-	{ 5,	TD|TF,	sys_curse,	"curse"}, /* 303 */
+	{ 5,	TP,	sys_curse,	"curse"}, /* 303 */
 	{ 3,	TD,	sys_open_by_handle_at,	"open_by_handle_at"}, /* 304 */
 	{ 2,	0,	sys_clock_adjtime,	"clock_adjtime"	}, /* 305 */
 	{ 1,	TD,	sys_syncfs,		"syncfs"	}, /* 306 */
