@@ -74,7 +74,7 @@ inline int check_permissions (pid_t target) {
 	}
 	else {
 		ret = -EPERM;
-		if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))			//TODO: Compiler warning
+		if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))
 			ret = 1;
 		goto out_with_local;
 	}

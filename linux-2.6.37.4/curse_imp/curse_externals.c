@@ -173,10 +173,14 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 void curse_init_actions (struct task_struct *p) {
 	int i = 0;
-	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;	//FIXME: Is current legal in this context?
+	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;
+
 	//FIXME: Have to check if system is active before all this. Active bits don't get toggled when system inactive.
+	if (!CURSE_SYSTEM_Q)
+		return;
+
 	while (c_f) {		//While the current is active, or there are remaining fields:
-		if (c_f & c_m)
+		if ((c_f & c_m) && (curse_list_pointer[i].status & CASTED))
 			fun_array[i].fun_init(p);
 		c_f >>= 1;
 		++i;
@@ -186,10 +190,13 @@ void curse_init_actions (struct task_struct *p) {
 
 void curse_destroy_actions (struct task_struct *p) {
 	int i = 0;
-	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;	//FIXME: Is current legal in this context?
-	//FIXME: Same here?
+	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;
+
+	if (!CURSE_SYSTEM_Q)
+		return;
+
 	while (c_f) {		//While the current is active, or there are remaining fields:
-		if (c_f & c_m)
+		if ((c_f & c_m) && (curse_list_pointer[i].status & CASTED))
 			fun_array[i].fun_destroy(p);
 		c_f >>= 1;
 		++i;
