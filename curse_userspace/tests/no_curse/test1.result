@@ -1,0 +1,160 @@
+gcc-4.4 -c -I../include -O2 -Wextra -Wall -fPIC curse.c -o curse.o
+ld -G  curse.o -o libcurse.so
+rm curse.o
+gcc-4.4 -I../../include/  test1.c -c
+gcc-4.4	-I../../include/  -L ../../lib -lcurse -lrt  test1.o -o test1.out
+size 32
+size 
+size 32
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Activate no_curse: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Cast random_oops on self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Activate random_oops: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Cast random_oops on self: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Lift random_oops from self: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Cast random_oops on self: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Lift random_oops from self: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Cast no_curse on self: 1
+
+
+
+...Forking...
+
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Parent: Cast no_curse on child: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Parent: Cast random_oops on self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Parent: Lift random_oops from self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Parent: Cast random_oops on self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Parent: Lift random_oops from self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Parent: Lift no_curse from child: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Parent: Deactivate no_curse: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Parent: Deactivate random_oops: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+All: Cast no_curse on self: -1
+2
+List name: random_oops - CID: 3741239533
+
+Lift random_oops from self: 1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Cast no_curse on self: 1
+
+
+
+...Forking...
+
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Child: Cast random_oops on self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Child: Lift random_oops from self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Child: Cast random_oops on self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Child: Lift random_oops from self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+Child: Deactivate no_curse: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Child: Cast random_oops on self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+List name: no_fs_cache - CID: 2
+List name: random_oops - CID: 3741239533
+
+Child: Lift random_oops from self: -1
+List name: stub - CID: 0
+List name: no_curse - CID: 3198668380
+
+All: Cast no_curse on self: -1
