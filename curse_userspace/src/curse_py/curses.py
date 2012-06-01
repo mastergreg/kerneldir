@@ -101,7 +101,7 @@ def cast(switches):
 		c_pid = int(switches['-P'])
 	except KeyError:
 		showhelp()
-		exit(1)
+		return 1
 	r = curse(CAST, c_name, c_pid, 0, None)
 	if r == 1:
 		print "Cast {0} on {1}".format(c_name, c_pid)
@@ -115,7 +115,7 @@ def lift(switches):
 		c_pid = int(switches['-P'])
 	except KeyError:
 		showhelp()
-		exit(1)
+		return 1
 	r = curse(LIFT, c_name, c_pid, 0, None)
 	if r == 1:
 		print "Lifted {0} on {1}".format(c_name, c_pid)
@@ -143,7 +143,7 @@ def check_tainted_proc(switches):
 		c_pid = int(switches['-P'])
 	except KeyError:
 		showhelp()
-		exit(1)
+		return 1
 	r = curse(CHECK_TAINTED_PROCESS, c_name, c_pid, 0, None)
 	if r == 1:
 		stat = "has been cast"
@@ -157,8 +157,8 @@ def check_curse_status(switches):
 		c_name = switches['-N']
 	except KeyError:
 		showhelp()
+		return 1
 	r = curse(CHECK_CURSE_ACTIVITY, c_name, 0, 0, None)
-	print r
 	if r == 1:
 		stat = "Has been cast"
 	else:
@@ -166,3 +166,43 @@ def check_curse_status(switches):
 	print 'Curse "{0}" status: {1}'.format(c_name,stat)
 	return r
 
+def permissions(switches):
+	perms = {'u'	: USR_PERM_OFF, 
+			'U'		: USR_PERM_ON,
+			'g'		: GRP_PERM_OFF,
+			'G'		: GRP_PERM_ON,
+			's'		: SU_PERM_OFF,
+			'S'		: SU_PERM_ON}
+	try:
+		c_control = perms[switches['-p']]
+		c_pid = int(switches['-P'])
+	except KeyError:
+		showhelp()
+		return 1
+	r = curse(CURSE_CTRL, 'stub', c_pid, c_control, None)
+	if r == 1:
+		stat = "Perms have been set"
+	else:
+		stat = "Perms have not been set"
+	print 'Status: {0}'.format(stat)
+	return r
+
+
+def inheritance(switches):
+	inhs = {'+'	: INH_ON,
+			'-' : INH_OFF}
+	try:
+		inh = switches['-i']
+		c_inherit = inhs[inh]
+		c_name = switches['-N']
+	except KeyError:
+		showhelp()
+		return 1
+	r = curse(CURSE_CTRL, c_name, 0, c_inherit, None)
+	if r == 1:
+		stat = "Inheritance has been set to {0}".format(inh)
+	else:
+		stat = "Inheritance has not been set"
+	print 'Status: {0}'.format(stat)
+	return r
+		

@@ -3,10 +3,14 @@
 
 
 from curses import *
-from getopt import gnu_getopt
+from getopt import gnu_getopt, GetoptError
 
 def parse_args():
-	switches, args = gnu_getopt(argv[1:],'adclN:P:Ltsh?')
+	try:
+		switches, args = gnu_getopt(argv[1:],'adcli:p:N:P:Ltsh?')
+	except GetoptError:
+		showhelp()
+		exit(1)
 	return dict(switches)
 
 
@@ -28,6 +32,10 @@ def main():
 		r = check_tainted_proc(switches)
 	elif '-s' in switches:
 		r = check_curse_status(switches)
+	elif '-i' in switches:
+		r = inheritance(switches)
+	elif '-p' in switches:
+		r = permissions(switches)
 	elif '-h' in switches:
 		r = showhelp()
 	else:
