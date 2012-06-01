@@ -7,7 +7,7 @@
 int main (int argc, char **argv) {
 	pid_t parent_pid, fpid, fpid2;
 
-/* Scenario 2: After casting no_curse, no other curse should be cast by either parent or child */	
+/* Scenario : Cast random_oops and no_fs_cache on self, fork two levels, and check if tainted*/
 	parent_pid = getpid();
 	printf("\nActivate random_oops: %d\n",		 curse(ACTIVATE, "random_oops", parent_pid,0,NULL ));
 	printf("\nActivate no_fs_cache: %d\n",		 curse(ACTIVATE, "no_fs_cache", parent_pid,0,NULL ));

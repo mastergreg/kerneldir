@@ -44,7 +44,7 @@
 
 /* Define to 1 if you have the declaration of `LO_FLAGS_PARTSCAN', and to 0 if
    you don't. */
-#define HAVE_DECL_LO_FLAGS_PARTSCAN 0
+#define HAVE_DECL_LO_FLAGS_PARTSCAN 1
 
 /* Define to 1 if you have the declaration of `PTRACE_EVENT_CLONE', and to 0
    if you don't. */
