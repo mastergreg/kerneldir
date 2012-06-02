@@ -60,6 +60,7 @@ int main (int argc, char **argv) {
 		waitpid(-1, NULL, WUNTRACED);
 		printf("\n-------------------------------------\n");
 		printf("\nParent: Remove SU PASSIVE permissions from child : %d\n", curse(CURSE_CTRL, "no_fs_cache", fpid, SU_PASSIVE_PERM_OFF,NULL));
+		printf("\nParent: Remove USR PASSIVE permissions from child : %d\n", curse(CURSE_CTRL, "no_fs_cache", fpid, USR_PASSIVE_PERM_OFF,NULL));
 		printf("\nParent: Cast random_oops on child: %d\n", curse(CAST, "random_oops", fpid, 0, NULL));
 		printf("\nParent: Lift random_oops from child: %d\n", curse(LIFT, "random_oops", fpid, 0, NULL));
 		printf("\n-------------------------------------\n");

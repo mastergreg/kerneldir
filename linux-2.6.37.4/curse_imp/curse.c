@@ -63,8 +63,8 @@ static int check_permissions (pid_t target)
 		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 		ret = -EPERM;
-		debug( "local_c->euid %d ", local_c->euid ); 
-		debug( "foreign_curse_perms %d ", foreign_curse_perms ); 
+		debug( "local_c->euid 0x%x ", local_c->euid ); 
+		debug( "foreign_curse_perms 0x%x ", foreign_curse_perms ); 
 		if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
 		        (((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 		         (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
