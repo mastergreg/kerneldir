@@ -105,9 +105,8 @@ static int inode_from_user_path (char __user *path, unsigned long *inode_number)
 		goto out;
 	printk(KERN_INFO "String is %s.\n", kernel_buffer);
 
-	if ((ret = kern_path(/*transformed path*/kernel_buffer, LOOKUP_FOLLOW/*flags*/, &tmp)))
+	if ((ret = kern_path(/*transformed path*/ kernel_buffer, /*flags*/ LOOKUP_FOLLOW, &tmp)))
 		goto out;
-
 	printk(KERN_INFO "kern_path return is %d.\n", ret);
 
 	(*inode_number) = tmp.dentry->d_inode->i_ino;
