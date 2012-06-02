@@ -317,8 +317,10 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 	switch (set_clr) {		/*Permissions (on task_curse_struct struct)*/
 		case 0	:
 			SET_PERM((*cur_curse_field), ctrl_masks[com_index]);
+			break;
 		case 1	:
 			CLR_PERM((*cur_curse_field), ctrl_masks[com_index]);
+			break;
 		default	:
 			ret = -EINVAL;
 	}
