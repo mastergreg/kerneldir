@@ -1,15 +1,7 @@
 #include <linux/compiler.h>
-#include <linux/linkage.h>
-#include <linux/syscalls.h>
-#include <linux/kernel.h>
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
 #include <linux/sched.h>
 #include <linux/spinlock.h>
-#include <linux/slab.h>
-#include <linux/stat.h>
-#include <linux/proc_fs.h>
-#include <linux/rcupdate.h>
-//#include <asm/current.h>		//Does it compile without this?
 #include <asm/atomic.h>
 
 #include <curse/curse_list.h>

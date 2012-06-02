@@ -9,6 +9,7 @@
 /* Kernel-specific structures. */
 #ifdef __KERNEL__
 
+#include <linux/types.h>
 #include <linux/spinlock.h>
 
 #ifndef _CURSE_TASK_STRUCT_DEFINED

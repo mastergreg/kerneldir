@@ -5,21 +5,14 @@
  *
  */
 
-//#include <linux/linkage.h>
 #include <linux/syscalls.h>
-#include <linux/kernel.h>
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
-#include <linux/sched.h>
 #include <linux/spinlock.h>
-#include <linux/slab.h>
-#include <linux/stat.h>
-#include <linux/proc_fs.h>
 #include <linux/rcupdate.h>
 #include <linux/namei.h>
 
 #include <curse/curse.h>
 #include <curse/curse_types.h>
-//#include <curse/curse_list.h>
 
 //=====External declarations.
 extern int max_curse_no;
