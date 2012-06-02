@@ -17,16 +17,6 @@
 #endif
 #include <curse/curse_types.h>
 
-
-#if CURSE_DEBUG
-#define debug(fmt,arg...)     printk(KERN_DEBUG "%s: " fmt, __func__ , ##arg)
-#else
-#define debug(fmt,arg...)     do { } while(0)
-#endif
-
-
-
-
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, CURSE_CTRL,
                         ACTIVATE, DEACTIVATE,
@@ -101,6 +91,13 @@ extern struct proc_dir_entry *dir_node, *output_node;
 #define CURSE_SYSTEM_Q (atomic_read(&(curse_list_pointer[0].ref_count)))
 #define CURSE_SYSTEM_DOWN atomic_set(&(curse_list_pointer[0].ref_count), 0)
 #define CURSE_SYSTEM_UP atomic_set(&(curse_list_pointer[0].ref_count), 1)
+
+//DEBUG macro for development.
+#if CURSE_DEBUG
+#define debug(fmt,arg...)     printk(KERN_DEBUG "%s: " fmt, __func__ , ##arg)
+#else
+#define debug(fmt,arg...)     do { } while(0)
+#endif
 
 #endif	/* __KERNEL__ */
 
