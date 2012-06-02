@@ -108,8 +108,10 @@ static int inode_from_user_path (char __user *path, unsigned long *inode_number)
 	in_mode = tmp.dentry->d_inode->i_mode;
 
 	debug("inode number is %lu and mode is %d\n", (*inode_number), (int)in_mode);
-	if (!(in_mode & S_IXUGO))
+	if (!(in_mode & S_IXUGO)) {
 		ret = -EPERM;
+		debug("not executable\n");
+	}
 
 	path_put(&tmp);
 
@@ -263,6 +265,9 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 	struct task_struct *target_task;
 	struct task_curse_struct *cur_curse_field;
 	unsigned long flags = 0;
+	uint8_t ctrl_masks[] = {_USR_ACTIVE_PERM, _USR_PASSIVE_PERM, _SU_ACTIVE_PERM, _SU_PASSIVE_PERM};
+	_Bool set_clr;
+	int com_index;
 
 	index = curse_no;
 
@@ -298,44 +303,64 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 	}
 
 	//FIXME: Make it easier to read (eval value array, check index and do it).
+	if ((ctrl >= USR_ACTIVE_PERM_ON) && (ctrl <= SU_PASSIVE_PERM_ON)) {
+		set_clr=0;
+		com_index = (ctrl - USR_ACTIVE_PERM_ON);
+	} else if ((ctrl >= USR_ACTIVE_PERM_OFF) && (ctrl <= SU_PASSIVE_PERM_OFF)) {
+		set_clr=1;
+		com_index = (ctrl - USR_ACTIVE_PERM_OFF);
+	} else {
+		set_clr=2;
+	}
+
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
-	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
-		/* here we activate the equivalent permissions */
+	switch (set_clr) {		/*Permissions (on task_curse_struct struct)*/
+		case 0	:
+			SET_PERM((*cur_curse_field), ctrl_masks[com_index]);
+		case 1	:
+			CLR_PERM((*cur_curse_field), ctrl_masks[com_index]);
+		default	:
+			ret = -EINVAL;
+	}
+/*
+	switch (ctrl) {
+		// here we activate the equivalent permissions
 	case USR_ACTIVE_PERM_ON		:
-		SET_PERM((*cur_curse_field), (_USR_ACTIVE_PERM));
+		SET_PERM((*cur_curse_field), _USR_ACTIVE_PERM);
 		break;
 	case USR_PASSIVE_PERM_ON	:
-		SET_PERM((*cur_curse_field), (_USR_PASSIVE_PERM));
+		SET_PERM((*cur_curse_field), _USR_PASSIVE_PERM);
 		break;
-		//case GRP_PERM_ON	:
+	//case GRP_PERM_ON	:
 		//	SET_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM | _GRP_PASSIVE_PERM));
 		//	break;
 	case SU_ACTIVE_PERM_ON		:
-		SET_PERM((*cur_curse_field), (_SU_ACTIVE_PERM));
+		SET_PERM((*cur_curse_field), _SU_ACTIVE_PERM);
 		break;
 	case SU_PASSIVE_PERM_ON		:
-		SET_PERM((*cur_curse_field), (_SU_PASSIVE_PERM));
+		SET_PERM((*cur_curse_field), _SU_PASSIVE_PERM);
 		break;
 
-		/* and here we deactivate the equivalent permissions */
+		// and here we deactivate the equivalent permissions
 	case USR_ACTIVE_PERM_OFF	:
-		CLR_PERM((*cur_curse_field), (_USR_ACTIVE_PERM));
+		CLR_PERM((*cur_curse_field), _USR_ACTIVE_PERM);
 		break;
 	case USR_PASSIVE_PERM_OFF	:
-		CLR_PERM((*cur_curse_field), (_USR_PASSIVE_PERM));
+		CLR_PERM((*cur_curse_field), _USR_PASSIVE_PERM);
 		break;
-		//case GRP_PERM_OFF	:
+	//case GRP_PERM_OFF	:
 		//	CLR_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM | _GRP_PASSIVE_PERM));
 		//	break;
 	case SU_ACTIVE_PERM_OFF		:
-		CLR_PERM((*cur_curse_field), (_SU_ACTIVE_PERM));
+		CLR_PERM((*cur_curse_field), _SU_ACTIVE_PERM);
 		break;
 	case SU_PASSIVE_PERM_OFF	:
-		CLR_PERM((*cur_curse_field), (_SU_PASSIVE_PERM));
+		CLR_PERM((*cur_curse_field), _SU_PASSIVE_PERM);
 		break;
-	default				:
+	default						:
 		ret = -EINVAL;
 	}
+*/
 	spin_unlock_irqrestore(&(cur_curse_field->protection), flags);
 
 out:

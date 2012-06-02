@@ -19,23 +19,23 @@
 
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, CURSE_CTRL,
-                        ACTIVATE, DEACTIVATE,
-                        CHECK_CURSE_ACTIVITY,
-                        CHECK_TAINTED_PROCESS,
-                        CAST, LIFT, GET_CURSE_NO,
-                        SHOW_RULES,
-                        ADD_RULE, REM_RULE,
-                        ILLEGAL_COMMAND
-                   };
+						ACTIVATE, DEACTIVATE,
+						CHECK_CURSE_ACTIVITY,
+						CHECK_TAINTED_PROCESS,
+						CAST, LIFT, GET_CURSE_NO,
+						SHOW_RULES,
+						ADD_RULE, REM_RULE,
+						ILLEGAL_COMMAND
+					};
 
 /*Curse control commands.*/
 enum curse_control	{	INH_ON=0, INH_OFF,
-                        USR_ACTIVE_PERM_ON, USR_ACTIVE_PERM_OFF,
-                        USR_PASSIVE_PERM_ON, USR_PASSIVE_PERM_OFF,
-                        //GRP_PERM_ON, GRP_PERM_OFF,
-                        SU_ACTIVE_PERM_ON, SU_ACTIVE_PERM_OFF,
-                        SU_PASSIVE_PERM_ON, SU_PASSIVE_PERM_OFF,
-                   };
+						USR_ACTIVE_PERM_ON, USR_PASSIVE_PERM_ON,
+						SU_ACTIVE_PERM_ON, SU_PASSIVE_PERM_ON,
+						//GRP_PERM_ON, GRP_PERM_OFF,
+						USR_ACTIVE_PERM_OFF, USR_PASSIVE_PERM_OFF,
+						SU_ACTIVE_PERM_OFF, SU_PASSIVE_PERM_OFF
+					};
 
 /*Lists every possible status for a curse (for userspace portability).*/
 enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, CASTED=0x02, INVALID_CURSE=0x04};

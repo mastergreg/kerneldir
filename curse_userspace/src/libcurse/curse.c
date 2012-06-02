@@ -88,6 +88,7 @@ int index_from_name (const char *id)
 				break;
 			}
 		}
+		//FIXME: No reason for flag. Could just be inlined in if.
 		if (found == 1) {
 			return i;
 		} else {
@@ -107,7 +108,7 @@ long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf)
 	struct curse_list_entry *list;
 	long maxCurseNum;
 
-	switch(command) {
+	switch (command) {
 	case LIST_ALL:
 		maxCurseNum = get_maxCurseNum();
 		list = get_list(maxCurseNum);
@@ -128,6 +129,7 @@ long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf)
 	if (theCurse < 0) {
 		return -1;
 	}
+
 	return syscall(__NR_curse, command, theCurse, target, ctrl, userbuf);
 }
 
