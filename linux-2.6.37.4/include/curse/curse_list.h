@@ -28,7 +28,7 @@
 
 /*[ADD] The system curse listing.*/
 struct __attribute__((packed)) curse_list_entry curse_full_list[] = {
-	{	"stub", 0x00000000	},
+	{	"system", 0x00000000	},
 
 	{	"no_curse", 0xBEA7CE5C	},
 	{	"no_fs_cache", 0x00000002	},

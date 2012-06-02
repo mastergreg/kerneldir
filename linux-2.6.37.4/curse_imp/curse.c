@@ -37,6 +37,7 @@ static int check_permissions (pid_t target)
 	uint8_t foreign_curse_perms;
 	int ret;
 	unsigned long spinflags;
+
 	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
 	local_curse_perms = current->curse_data.permissions;
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
@@ -69,14 +70,10 @@ static int check_permissions (pid_t target)
 		        (((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 		         (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
 			ret = 1;
-		else
-			debug("permissions error 1");
 	} else {
 		ret = -EPERM;
 		if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))
 			ret = 1;
-		else
-			debug("permissions error 2");
 		goto out_with_local;
 	}
 
@@ -162,13 +159,13 @@ static int syscurse_activate (int curse_no)
 	if ((ret = check_permissions(0)) != 1)
 		goto out_ret;
 
-	ret = -EINVAL;
+	ret = 1;
 	//Found a use for stub curse 0: activates the general curse system without activating any curse.
 	if (bitmask_from_no(curse_no)) {								//Activation of an existing curse, activates the system too.
 		if (!(CURSE_FIELD(i, status) & ACTIVATED)) {
 			CURSE_FIELD(i, status) |= ACTIVATED;
-			ret = 1;
 		} else {
+			ret = -EINVAL;
 			goto out_ret;
 		}
 	}
@@ -187,12 +184,12 @@ static int syscurse_deactivate (int curse_no)
 		goto out_ret;
 	i = curse_no;
 
-	ret = -EINVAL;
+	ret = 1;
 	if (bitmask_from_no(curse_no)) {								//Targeted deactivation is normal.
 		if (CURSE_FIELD(i, status) & ACTIVATED) {
 			CURSE_FIELD(i, status) &= ~ACTIVATED;
-			ret = 1;
 		} else {
+			ret = -EINVAL;
 			goto out_ret;
 		}
 	} else if (/*!bitmask_from_no(curse_no) && */ CURSE_SYSTEM_Q)	//Invalid target deactivates the system.
@@ -277,7 +274,7 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 
 	spin_lock_irqsave(&CURSE_FIELD(index, flag_lock), flags);
 	ret = 1;
-	switch (ctrl) {		/*Inherritance (on curse_list_ponter array)*/
+	switch (ctrl) {		/*Inherritance (on curse_list_pointer array)*/
 	case INH_ON		:
 		SET_INHER(index);
 		break;
@@ -299,16 +296,13 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 		goto out;
 	cur_curse_field = &(target_task->curse_data);
 
-	debug("before permissions");
 	ret = -EINVAL;
 	if (pid <= 0)
 		goto out;
 	if ((ret = check_permissions(pid)) != 1) {
 		goto out;
 	}
-	debug("after permissions");
 
-	//FIXME: Make it easier to read (eval value array, check index and do it).
 	if ((ctrl >= USR_ACTIVE_PERM_ON) && (ctrl <= SU_PASSIVE_PERM_ON)) {
 		set_clr=0;
 		com_index = (ctrl - USR_ACTIVE_PERM_ON);
@@ -318,7 +312,6 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 	} else {
 		set_clr=2;
 	}
-	debug("set_clr: %d - com_index: %d\n", set_clr, com_index);
 
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (set_clr) {		/*Permissions (on task_curse_struct struct)*/
@@ -331,45 +324,6 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 		default	:
 			ret = -EINVAL;
 	}
-/*
-	switch (ctrl) {
-		// here we activate the equivalent permissions
-	case USR_ACTIVE_PERM_ON		:
-		SET_PERM((*cur_curse_field), _USR_ACTIVE_PERM);
-		break;
-	case USR_PASSIVE_PERM_ON	:
-		SET_PERM((*cur_curse_field), _USR_PASSIVE_PERM);
-		break;
-	//case GRP_PERM_ON	:
-		//	SET_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM | _GRP_PASSIVE_PERM));
-		//	break;
-	case SU_ACTIVE_PERM_ON		:
-		SET_PERM((*cur_curse_field), _SU_ACTIVE_PERM);
-		break;
-	case SU_PASSIVE_PERM_ON		:
-		SET_PERM((*cur_curse_field), _SU_PASSIVE_PERM);
-		break;
-
-		// and here we deactivate the equivalent permissions
-	case USR_ACTIVE_PERM_OFF	:
-		CLR_PERM((*cur_curse_field), _USR_ACTIVE_PERM);
-		break;
-	case USR_PASSIVE_PERM_OFF	:
-		CLR_PERM((*cur_curse_field), _USR_PASSIVE_PERM);
-		break;
-	//case GRP_PERM_OFF	:
-		//	CLR_PERM((*cur_curse_field), (_GRP_ACTIVE_PERM | _GRP_PASSIVE_PERM));
-		//	break;
-	case SU_ACTIVE_PERM_OFF		:
-		CLR_PERM((*cur_curse_field), _SU_ACTIVE_PERM);
-		break;
-	case SU_PASSIVE_PERM_OFF	:
-		CLR_PERM((*cur_curse_field), _SU_PASSIVE_PERM);
-		break;
-	default						:
-		ret = -EINVAL;
-	}
-*/
 	spin_unlock_irqrestore(&(cur_curse_field->protection), flags);
 
 out:
@@ -461,7 +415,6 @@ static int syscurse_lift (int curse_no, pid_t target)
 		target_task->curse_data.inherritance &= (~curse_mask);
 		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)		//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
 			CURSE_FIELD(index, status) &= ~CASTED;
-		//FIXME: Number is inconsistent in case of exited!!!!
 		err = 1;
 	}
 	spin_unlock_irqrestore(&((target_task->curse_data).protection), spinflags);
