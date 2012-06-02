@@ -3,15 +3,18 @@
 
 #include <curse/random_oops.h>
 
-void random_oops_init (struct task_struct * target) {
+void random_oops_init (struct task_struct * target)
+{
 	return;
 }
 
-void random_oops_destroy (struct task_struct * target) {
+void random_oops_destroy (struct task_struct * target)
+{
 	return;
 }
 
-void random_oops_inject (uint64_t mask) {
+void random_oops_inject (uint64_t mask)
+{
 	static int r = 0;
 
 	if (r == 0) {

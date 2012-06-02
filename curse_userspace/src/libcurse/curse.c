@@ -22,14 +22,16 @@
 sem_t list_sema;
 
 /*Init-Fin handlers.*/
-__attribute__((constructor)) void  curse_init_handle() {
+__attribute__((constructor)) void  curse_init_handle()
+{
 //	printf("Initializer on library called.\n");
 	if (sem_init(&list_sema, 1 /*0 is for thread-shared semas*/ , 1) != 0) {
 		perror("Semaphore initialization error");
 	}
 	//...Other initializations
 }
-__attribute__((destructor)) void  curse_fin_handle() {
+__attribute__((destructor)) void  curse_fin_handle()
+{
 //	printf("Destructor on library called.\n");
 	if (sem_destroy(&list_sema)) {
 		perror("Semaphore destroy error");
@@ -61,7 +63,8 @@ struct curse_list_entry *get_list (long maxCurseNum) {
 	return buffered_list;
 }
 
-inline long get_maxCurseNum() {
+inline long get_maxCurseNum()
+{
 	static long maxCurseNum = -1;
 	if (maxCurseNum == -1)
 		maxCurseNum = syscall(__NR_curse, GET_CURSE_NO, 0, 0, 0, 0);
@@ -69,7 +72,8 @@ inline long get_maxCurseNum() {
 }
 
 /*Wrapper for returning the index of a curse by searching with a name.*/
-int index_from_name (const char *id) {
+int index_from_name (const char *id)
+{
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
 	int i = 0, found = 0;
 	const struct curse_list_entry *list;
@@ -97,27 +101,28 @@ int index_from_name (const char *id) {
 }
 
 
-long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf) {
+long curse(int command, const char* name, pid_t target, int ctrl, char* userbuf)
+{
 	int theCurse;
 	struct curse_list_entry *list;
 	long maxCurseNum;
 
 	switch(command) {
-		case LIST_ALL:
-			maxCurseNum = get_maxCurseNum();
-			list = get_list(maxCurseNum);
-			userbuf = memcpy(userbuf, list, maxCurseNum*sizeof(struct curse_list_entry));
-			return 1;
-		case GET_CURSE_NO:
-			return get_maxCurseNum();
-		case SHOW_RULES:
-		case ADD_RULE:
-		case REM_RULE:
-			theCurse = 0;
-			break;
-		default:
-			theCurse = index_from_name(name);
-			break;
+	case LIST_ALL:
+		maxCurseNum = get_maxCurseNum();
+		list = get_list(maxCurseNum);
+		userbuf = memcpy(userbuf, list, maxCurseNum*sizeof(struct curse_list_entry));
+		return 1;
+	case GET_CURSE_NO:
+		return get_maxCurseNum();
+	case SHOW_RULES:
+	case ADD_RULE:
+	case REM_RULE:
+		theCurse = 0;
+		break;
+	default:
+		theCurse = index_from_name(name);
+		break;
 	}
 
 	if (theCurse < 0) {

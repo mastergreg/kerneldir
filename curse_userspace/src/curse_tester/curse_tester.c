@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int main (int argc, char **argv) {
-	
+int main (int argc, char **argv)
+{
+
 
 	if( argc == 1 ) {
-		exit(1);	
+		exit(1);
 	}
 	pid_t pid;
 	sscanf(argv[1], "%d", &pid);

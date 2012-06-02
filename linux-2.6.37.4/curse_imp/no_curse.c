@@ -4,7 +4,8 @@
 #include <curse/no_curse.h>
 #include <curse/curse.h>
 
-void no_curse_init (struct task_struct * target) {
+void no_curse_init (struct task_struct * target)
+{
 	struct task_curse_struct *tar_curse;
 	unsigned long irqflags;
 
@@ -18,7 +19,8 @@ void no_curse_init (struct task_struct * target) {
 	return;
 }
 
-void no_curse_inject (uint64_t mask) {
+void no_curse_inject (uint64_t mask)
+{
 
 	/*
 	struct task_curse_struct *cur_curse;
@@ -37,7 +39,8 @@ void no_curse_inject (uint64_t mask) {
 	return;
 }
 
-void no_curse_destroy (struct task_struct * target) {
+void no_curse_destroy (struct task_struct * target)
+{
 	struct task_curse_struct *tar_curse;
 	unsigned long irqflags;
 

@@ -35,7 +35,7 @@ struct task_curse_struct {
 struct curse_fun_element {
 	void (*fun_init) (struct task_struct * );
 	void (*fun_destroy) (struct task_struct * );
-	void (*fun_inject) (uint64_t); 
+	void (*fun_inject) (uint64_t);
 };
 
 #endif	/* __KERNEL__ */
@@ -47,8 +47,8 @@ typedef uint64_t curse_id_t;
 
 /*Curse entry structure for logistic purposes.*/
 struct __attribute__((packed)) curse_list_entry {
-	char curse_name[CURSE_MAX_NAME_SIZE];
-	curse_id_t curse_id;
+    char curse_name[CURSE_MAX_NAME_SIZE];
+    curse_id_t curse_id;
 };
 
 #endif	/* _CURSE_TYPES_LIB */

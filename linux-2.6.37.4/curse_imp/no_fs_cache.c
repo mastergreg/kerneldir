@@ -4,7 +4,8 @@
 
 #include <curse/no_fs_cache.h>
 
-void no_fs_cache_init (struct task_struct * target) {
+void no_fs_cache_init (struct task_struct * target)
+{
 	/*
 	 * we don't need to, if its greater than MAX_NO_FS_COUNT
 	 * it will be re initialized automagically
@@ -16,11 +17,13 @@ void no_fs_cache_init (struct task_struct * target) {
 	return;
 }
 
-void no_fs_cache_destroy (struct task_struct * target) {
+void no_fs_cache_destroy (struct task_struct * target)
+{
 	return;
 }
 
-void no_fs_cache_inject (uint64_t mask) {
+void no_fs_cache_inject (uint64_t mask)
+{
 	/* http://linux.die.net/man/2/fadvise */
 	struct fdtable *fdt;
 	struct files_struct *open_files;

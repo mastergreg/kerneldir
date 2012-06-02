@@ -24,7 +24,8 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 
 //=====Helpful functions (locally needed).		//TODO: We shouldn't add symbols we don't need to be external.
 //FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation. ::Possible conflicts with curse_init, that creates the masks.
-inline int index_from_curse_id (curse_id_t a_c_id) {
+inline int index_from_curse_id (curse_id_t a_c_id)
+{
 	int i = 0;
 
 	if (a_c_id == 0x00)
@@ -41,7 +42,8 @@ out:
 #ifdef _CURSES_INSERTED
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
-void curse_k_wrapper (void) {
+void curse_k_wrapper (void)
+{
 	struct task_struct *cur;
 	unsigned long flags;
 
@@ -78,7 +80,8 @@ out:
 	return;
 }
 
-int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data) {
+int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data)
+{
 	int i, line_len, ret = 0;
 	/*We provided the data pointer during creation of read handler for our proc entry.*/
 	struct syscurse *c_list = (struct syscurse *) data;
@@ -99,7 +102,8 @@ out:
 }
 
 /*This function initializes all needed resources (only) once, during system init.*/
-void curse_init (void) {
+void curse_init (void)
+{
 	int j;
 	curse_id_t t;
 
@@ -148,7 +152,8 @@ out:
 
 /*This function is inserted in the places of the kernel source code that act as triggers for each curse, and inserts a trigger indicator in task struct of each task.*/
 //FIXME: May have to swap out with define directive. Also, remove excessive overhead.
-void curse_trigger (_Bool defer_action, curse_id_t cid) {
+void curse_trigger (_Bool defer_action, curse_id_t cid)
+{
 	struct task_curse_struct *cur_struct;
 	unsigned long spinf;
 	int index;
@@ -175,7 +180,8 @@ void curse_trigger (_Bool defer_action, curse_id_t cid) {
 
 }
 
-void curse_init_actions (struct task_struct *p) {
+void curse_init_actions (struct task_struct *p)
+{
 	int i = 1;
 	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;
 
@@ -195,7 +201,8 @@ void curse_init_actions (struct task_struct *p) {
 	//...
 }
 
-void curse_destroy_actions (struct task_struct *p) {
+void curse_destroy_actions (struct task_struct *p)
+{
 	int i = 1;
 	uint64_t c_m = 0x0001, c_f = p->curse_data.curse_field;
 
@@ -217,23 +224,28 @@ void curse_destroy_actions (struct task_struct *p) {
 
 #else	/*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
 
-void curse_k_wrapper (void) {
+void curse_k_wrapper (void)
+{
 	return;
 }
 
-void curse_init (void) {
+void curse_init (void)
+{
 	return;
 }
 
-void curse_trigger (curse_id_t _) {
+void curse_trigger (curse_id_t _)
+{
 	return;
 }
 
-void curse_init_actions (struct task_struct *p) {
+void curse_init_actions (struct task_struct *p)
+{
 	return;
-} 
+}
 
-void curse_destroy_actions (struct task_struct *p)  {
+void curse_destroy_actions (struct task_struct *p)
+{
 	return;
 }
 

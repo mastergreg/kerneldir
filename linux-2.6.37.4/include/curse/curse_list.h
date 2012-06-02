@@ -3,7 +3,7 @@
  * and the curses implementation.
  * Every curse available must be registered here.
  * TODO: Maybe we could add a description field in each curse.
- * 
+ *
  */
 
 #ifndef _CURSE_LIST_LIB
@@ -29,11 +29,11 @@
 /*[ADD] The system curse listing.*/
 struct __attribute__((packed)) curse_list_entry curse_full_list[] = {
 	{	"stub", 0x00000000	},
-	
+
 	{	"no_curse", 0xBEA7CE5C	},
 	{	"no_fs_cache", 0x00000002	},
 	{	"random_oops", 0xDEFEC8ED	},
-	
+
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
 
