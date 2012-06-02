@@ -399,12 +399,14 @@ static int syscurse_cast (int curse_no, pid_t target)
 		goto out;
 	if ((err = check_permissions(target)) != 1)
 		goto out;
-	err = 0;
+	debug("skatoules");
 
 	err = -EINVAL;
 	new_index = curse_no;
-	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || !(CURSE_FIELD(new_index, status) & ACTIVATED))
+	
+	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || printk(KERN_INFO "%d - %llu\n", new_index, new_mask) || !(CURSE_FIELD(new_index, status) & ACTIVATED))
 		goto out;
+	debug("akomi perissoteres");
 
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {
@@ -459,7 +461,7 @@ static int syscurse_lift (int curse_no, pid_t target)
 		atomic_dec(&CURSE_FIELD(index, ref_count));
 		target_task->curse_data.inherritance &= (~curse_mask);
 		if (atomic_read(&CURSE_FIELD(index, ref_count)) == 0)		//Revert curse status to ACTIVATED if ref 0ed-out.	: Could be atomic_dec_and_set.
-			CURSE_FIELD(index, status) &= ~ACTIVATED;
+			CURSE_FIELD(index, status) &= ~CASTED;
 		//FIXME: Number is inconsistent in case of exited!!!!
 		err = 1;
 	}
