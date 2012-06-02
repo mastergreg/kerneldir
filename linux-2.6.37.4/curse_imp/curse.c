@@ -14,6 +14,11 @@
 #include <curse/curse.h>
 #include <curse/curse_types.h>
 
+#define CURSE_SYSTEM 0
+#define CURSE_TARGETED 1
+#define CURSE_REMOTE 2
+
+
 //=====External declarations.
 extern int max_curse_no;
 extern struct curse_list_entry *curse_full_list;
@@ -29,13 +34,13 @@ inline uint64_t bitmask_from_no (int  a_c_id)
 #define CURSE_FIELD(el, field) (curse_list_pointer[(el)].field)
 
 /*This function checks if current is allowed to change the state of the target proc.*/
-static int check_permissions (pid_t target)
+static int check_permissions (pid_t target, int type)
 {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c = NULL, *local_c = NULL;
 	uint8_t local_curse_perms;
 	uint8_t foreign_curse_perms;
-	int ret;
+	int ret = -EINVAL;
 	unsigned long spinflags;
 
 	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
@@ -43,40 +48,48 @@ static int check_permissions (pid_t target)
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 	local_c = get_current_cred();
 
-	if (target) {
-		ret = -ESRCH;		//FIXME: Sanity check.
-		rcu_read_lock();
-		foreign_task = find_task_by_vpid(target);
-		rcu_read_unlock();
-		if (!foreign_task)
-			goto out;
-
-		ret = -EINVAL;		//FIXME: Sanity check.
-		foreign_c = get_task_cred(foreign_task);
-
-		if (!foreign_c)
+	switch(type) {
+		case CURSE_SYSTEM:
+			ret = -EPERM;
+			if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))
+				ret = 1;
 			goto out_with_local;
-		/* am i root or sudo?? */
-		/* do we belong to the same effective user?*/
+		case CURSE_REMOTE:
+		case CURSE_TARGETED:
+			ret = -ESRCH;		//FIXME: Sanity check.
+			rcu_read_lock();
+			foreign_task = find_task_by_vpid(target);
+			rcu_read_unlock();
+			if (!foreign_task)
+				goto out;
 
-		spin_lock_irqsave(&((foreign_task->curse_data).protection), spinflags);
-		foreign_curse_perms = foreign_task->curse_data.permissions;
-		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
+			ret = -EINVAL;		//FIXME: Sanity check.
+			foreign_c = get_task_cred(foreign_task);
 
-		ret = -EPERM;
-		debug( "local_c->euid 0x%x ", local_c->euid ); 
-		debug( "foreign_curse_perms 0x%x ", foreign_curse_perms ); 
-		if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
-		        (((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
-		         (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
-			ret = 1;
-	} else {
-		ret = -EPERM;
-		if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))
-			ret = 1;
-		goto out_with_local;
+			if (!foreign_c)
+				goto out_with_local;
+			/* am i root or sudo?? */
+			/* do we belong to the same effective user?*/
+
+			spin_lock_irqsave(&((foreign_task->curse_data).protection), spinflags);
+			foreign_curse_perms = foreign_task->curse_data.permissions;
+			spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
+
+			ret = -EPERM;
+			debug( "local_c->euid 0x%x ", local_c->euid ); 
+			debug( "foreign_curse_perms 0x%x ", foreign_curse_perms ); 
+			if (type == CURSE_TARGETED) {
+				if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
+						(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
+						 (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
+					ret = 1;
+			}
+			else {
+				if ((local_c->euid == 0) || (local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))
+					ret = 1;
+			}
+
 	}
-
 	put_cred(foreign_c);
 out_with_local:
 	put_cred(local_c);
@@ -156,7 +169,7 @@ static int syscurse_activate (int curse_no)
 	int i, ret = -EPERM;
 
 	i = curse_no;
-	if ((ret = check_permissions(0)) != 1)
+	if ((ret = check_permissions(0, CURSE_SYSTEM)) != 1)
 		goto out_ret;
 
 	ret = 1;
@@ -180,7 +193,7 @@ static int syscurse_deactivate (int curse_no)
 {
 	int i, ret = -EPERM;
 
-	if ((ret = check_permissions(0)) != 1)
+	if ((ret = check_permissions(0, CURSE_SYSTEM)) != 1)
 		goto out_ret;
 	i = curse_no;
 
@@ -244,7 +257,7 @@ static int syscurse_check_tainted_process (int curse_no, pid_t target)
 	err = -EINVAL;
 	if (target <= 0)
 		goto out;
-	if ((err = check_permissions(target)) != 1)
+	if ((err = check_permissions(target, CURSE_TARGETED)) != 1)
 		goto out;
 	err = 0;
 
@@ -299,7 +312,7 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 	ret = -EINVAL;
 	if (pid <= 0)
 		goto out;
-	if ((ret = check_permissions(pid)) != 1) {
+	if ((ret = check_permissions(pid, CURSE_REMOTE)) != 1) {
 		goto out;
 	}
 
@@ -351,7 +364,7 @@ static int syscurse_cast (int curse_no, pid_t target)
 	err = -EINVAL;
 	if (target <= 0 )
 		goto out;
-	if ((err = check_permissions(target)) != 1)
+	if ((err = check_permissions(target, CURSE_TARGETED)) != 1)
 		goto out;
 
 	err = -EINVAL;
@@ -401,7 +414,7 @@ static int syscurse_lift (int curse_no, pid_t target)
 	err = -EINVAL;
 	if (target <= 0)
 		goto out;
-	if ((err = check_permissions(target)) != 1)
+	if ((err = check_permissions(target, CURSE_TARGETED)) != 1)
 		goto out;
 
 	err = -EINVAL;
