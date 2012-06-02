@@ -8,7 +8,7 @@ INCLUDEDIR = ../../include
 #LDFLAGS += 
 
 CCFLAGS += -I$(INCLUDEDIR)
-CCFLAGS += -O$(OPT) -Wextra -Wall -fPIC
+CCFLAGS += -O$(OPT) -Wextra -Wall -shared -fPIC
 
 CCFILES += $(wildcard *.c)
 OBJ +=  $(patsubst %.c,%.o,$(CCFILES))
