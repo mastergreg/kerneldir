@@ -17,6 +17,16 @@
 #endif
 #include <curse/curse_types.h>
 
+
+#if CURSE_DEBUG
+#define debug(fmt,arg...)     printk(KERN_DEBUG "%s: " fmt, __func__ , ##arg)
+#else
+#define debug(fmt,arg...)     do { } while(0)
+#endif
+
+
+
+
 /*Curse system call interface.*/
 enum curse_command	{	LIST_ALL=0, CURSE_CTRL,
 						ACTIVATE, DEACTIVATE,
