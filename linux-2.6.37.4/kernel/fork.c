@@ -1145,7 +1145,7 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	if (current->curse_data.curse_field)
 		p->curse_data.permissions = current->curse_data.permissions;
 	else
-		p->curse_data.permissions = ( 0x01 | 0x04 | 0x10 | 0x40 );
+		p->curse_data.permissions = ( 0x01 | 0x02 | 0x10 | 0x20 );
 		
 	spin_lock_init(&p->curse_data.protection);
 #endif 

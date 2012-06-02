@@ -69,10 +69,14 @@ static int check_permissions (pid_t target)
 		        (((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 		         (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
 			ret = 1;
+		else
+			debug("permissions error 1");
 	} else {
 		ret = -EPERM;
 		if ((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM))
 			ret = 1;
+		else
+			debug("permissions error 2");
 		goto out_with_local;
 	}
 
