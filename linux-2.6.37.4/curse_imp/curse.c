@@ -5,7 +5,7 @@
  *
  */
 
-#include <linux/linkage.h>
+//#include <linux/linkage.h>
 #include <linux/syscalls.h>
 #include <linux/kernel.h>
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/

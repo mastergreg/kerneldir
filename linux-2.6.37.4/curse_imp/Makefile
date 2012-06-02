@@ -1,7 +1,7 @@
 #Makefile for the curses system.
 #Called during kernel compilation, provided that we have added the curse source folder in the kernel makefile.
 
-EXTRA_CFLAGS+=-Werror -Wuninitialized -Wextra -DCURSE_DEBUG=1
+EXTRA_CFLAGS+=-Werror -Wuninitialized -Wunused -DCURSE_DEBUG=1
 obj-y	:= curse.o curse_externals.o
 
 #Curse implementation building.
