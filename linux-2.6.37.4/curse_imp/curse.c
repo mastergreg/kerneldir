@@ -295,12 +295,14 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 		goto out;
 	cur_curse_field = &(target_task->curse_data);
 
+	debug("before permissions");
 	ret = -EINVAL;
 	if (pid <= 0)
 		goto out;
 	if ((ret = check_permissions(pid)) != 1) {
 		goto out;
 	}
+	debug("after permissions");
 
 	//FIXME: Make it easier to read (eval value array, check index and do it).
 	if ((ctrl >= USR_ACTIVE_PERM_ON) && (ctrl <= SU_PASSIVE_PERM_ON)) {
@@ -312,6 +314,7 @@ static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid)
 	} else {
 		set_clr=2;
 	}
+	debug("set_clr: %d - com_index: %d\n", set_clr, com_index);
 
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (set_clr) {		/*Permissions (on task_curse_struct struct)*/
