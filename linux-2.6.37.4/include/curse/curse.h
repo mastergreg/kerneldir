@@ -49,9 +49,9 @@ enum curse_status {IMPLEMENTED=0x00, ACTIVATED=0x01, CASTED=0x02, INVALID_CURSE=
 
 /*Kernel specific libraries.*/
 #include <linux/semaphore.h>
-#include <linux/proc_fs.h>
-#include <linux/types.h>	/*pid_t, uin64_t on kernel.*/
-#include <asm/atomic.h>
+#include <linux/proc_fs.h>		/*struct proc_dir_entry*/
+#include <linux/types.h>		/*pid_t, uin64_t*/
+#include <asm/atomic.h>			/*atomic_t*/
 
 /*Structure describing a curse (and its status).*/
 struct syscurse {

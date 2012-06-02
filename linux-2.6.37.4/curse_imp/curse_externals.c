@@ -22,9 +22,11 @@ struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
 /*Proc node pointer.*/
 struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
 
-//=====Helpful functions (locally needed).		//TODO: We shouldn't add symbols we don't need to be external.
-//FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation. ::Possible conflicts with curse_init, that creates the masks.
-inline int index_from_curse_id (curse_id_t a_c_id)
+//=====Kernel functions.
+#ifdef _CURSES_INSERTED
+
+//FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation? ::Possible conflicts with curse_init, that creates the masks.
+static inline int index_from_curse_id (curse_id_t a_c_id)
 {
 	int i = 0;
 
@@ -38,8 +40,26 @@ out:
 	return i;
 }
 
-//=====Kernel functions.
-#ifdef _CURSES_INSERTED
+static int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data)
+{
+	int i, line_len, ret = 0;
+	/*We provided the data pointer during creation of read handler for our proc entry.*/
+	struct syscurse *c_list = (struct syscurse *) data;
+
+	if ((off > 0) || (data == NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
+		(*eof) = 1;
+		goto out;
+	}
+
+	//FIXME: Fix exaggeration: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
+	line_len = sizeof(c_list[i].entry->curse_name) + sizeof(c_list[i].entry->curse_id);
+	for (i = 0; ((i < max_curse_no) && ((ret + line_len) < count)); ++i)
+		ret += scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
+	(*start) = page;
+
+out:
+	return ret;
+}
 
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 void curse_k_wrapper (void)
@@ -78,27 +98,6 @@ void curse_k_wrapper (void)
 
 out:
 	return;
-}
-
-int proc_curse_read (char *page, char **start, off_t off, int count, int *eof, void *data)
-{
-	int i, line_len, ret = 0;
-	/*We provided the data pointer during creation of read handler for our proc entry.*/
-	struct syscurse *c_list = (struct syscurse *) data;
-
-	if ((off > 0) || (data == NULL)) {	//Dunno; see here:	http://www.thehackademy.net/madchat/coding/procfs.txt	: We do not support reading continuation.
-		(*eof) = 1;
-		goto out;
-	}
-
-	//FIXME: Fix exaggeration: we have to predict that the next print will not cause an overflow, so I am being overly cautious.
-	line_len = sizeof(c_list[i].entry->curse_name) + sizeof(c_list[i].entry->curse_id);
-	for (i = 0; ((i < max_curse_no) && ((ret + line_len) < count)); ++i)
-		ret += scnprintf(&page[ret], count, "%s %llX\n", c_list[i].entry->curse_name, c_list[i].entry->curse_id);
-	(*start) = page;
-
-out:
-	return ret;
 }
 
 /*This function initializes all needed resources (only) once, during system init.*/

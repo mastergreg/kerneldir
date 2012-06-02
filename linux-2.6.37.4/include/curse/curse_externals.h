@@ -8,8 +8,6 @@
 /* curse init function */
 void curse_init (void);
 
-//typedef curse_id_t;
-
 /* general curse trigger */
 void curse_trigger (_Bool defer, curse_id_t cid);
 
