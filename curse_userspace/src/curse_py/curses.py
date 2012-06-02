@@ -91,7 +91,7 @@ def activate(switches):
 	try:
 		c_name = switches['-N']
 	except KeyError:
-		c_name = 'stub'
+		c_name = 'system'
 	r =  curse(ACTIVATE, c_name, 0, 0, None)
 	if r == 1:
 		print "Activated {0}".format(c_name)
@@ -103,7 +103,7 @@ def deactivate(switches):
 	try:
 		c_name = switches['-N']
 	except KeyError:
-		c_name = 'stub'
+		c_name = 'system'
 	r = curse(DEACTIVATE, c_name, 0, 0, None)
 	if r == 1:
 		print "Deactivated {0}".format(c_name)
@@ -197,7 +197,7 @@ def permissions(switches):
 	except KeyError, IndexError:
 		showhelp()
 		return 1
-	r = curse(CURSE_CTRL, 'stub', c_pid, c_control, None)
+	r = curse(CURSE_CTRL, 'system', c_pid, c_control, None)
 	if r == 1:
 		stat = "Perms have been set"
 	else:
