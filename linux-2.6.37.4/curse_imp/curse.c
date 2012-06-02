@@ -83,8 +83,7 @@ static int check_permissions (pid_t target, int type)
 						(((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 						 (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
 					ret = 1;
-			}
-			else {
+			} else {
 				if ((local_c->euid == 0) || (local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))
 					ret = 1;
 			}
