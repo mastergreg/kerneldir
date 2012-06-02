@@ -93,7 +93,7 @@ extern struct proc_dir_entry *dir_node, *output_node;
 
 //DEBUG macro for development.
 #if CURSE_DEBUG
-#define debug(fmt,arg...)     printk(KERN_DEBUG "%s: " fmt, __func__ , ##arg)
+#define debug(fmt,arg...)     printk(KERN_INFO "%s: " fmt, __func__ , ##arg)
 #else
 #define debug(fmt,arg...)     do { } while(0)
 #endif
