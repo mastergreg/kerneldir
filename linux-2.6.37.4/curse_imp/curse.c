@@ -138,12 +138,12 @@ static int syscurse_list_all (char __user *buf)
 	int ret = -EINVAL;
 	size_t length;
 	//FIXME: I will add them for support, even if they are unused.
-	/*
-		static size_t offset=0;
+/*
+	static size_t offset=0;
 
-		if (len <= 0)
-			goto out;
-	*/
+	if (len <= 0)
+		goto out;
+*/
 	//length = sizeof(curse_full_list);
 	length = sizeof(struct curse_list_entry)*max_curse_no;
 //	ret = ((length - offset) >= len) ? len : (length - offset);
@@ -154,11 +154,11 @@ static int syscurse_list_all (char __user *buf)
 		ret=-EFAULT;
 		goto out;
 	}
-	/*
-		offset += ret;
-		if (offset == length)
-			offset=0;
-	*/
+/*
+	offset += ret;
+	if (offset == length)
+		offset=0;
+*/
 out:
 	return ret;
 }
