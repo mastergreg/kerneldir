@@ -125,6 +125,7 @@ out:
 static int syscurse_list_all (char __user *buf) {
 	int ret = -EINVAL;
 	size_t length;
+	//FIXME: I will add them for support, even if they are unused.
 /*
 	static size_t offset=0;
 
