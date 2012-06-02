@@ -65,7 +65,7 @@ struct syscurse {
 };
 
 /*Function prototypes (although forwards are ugly:)).*/
-int syscurse_list_all (char __user *buf);
+int syscurse_list_all (char __user *);
 int syscurse_activate (int);
 int syscurse_deactivate (int);
 int syscurse_check_curse_activity (int);
@@ -74,8 +74,8 @@ int syscurse_ctrl (int, int, pid_t);
 int syscurse_cast (int, pid_t);
 int syscurse_lift (int, pid_t);
 int syscurse_show_rules (void);
-int syscurse_add_rule (int, char *);
-int syscurse_rem_rule (int, char *);
+int syscurse_add_rule (int, char __user *);
+int syscurse_rem_rule (int, char __user *);
 
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 extern struct syscurse *curse_list_pointer;
