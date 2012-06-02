@@ -63,6 +63,8 @@ static int check_permissions (pid_t target)
 		spin_unlock_irqrestore(&((foreign_task->curse_data).protection), spinflags);
 
 		ret = -EPERM;
+		debug( "local_c->euid %d ", local_c->euid ); 
+		debug( "foreign_curse_perms %d ", foreign_curse_perms ); 
 		if (((local_c->euid == 0) && (local_curse_perms & _SU_ACTIVE_PERM) && (foreign_curse_perms & _SU_PASSIVE_PERM))	||	\
 		        (((local_c->euid == foreign_c->euid) || (local_c->euid == foreign_c->uid))								&&	\
 		         (local_curse_perms & _USR_ACTIVE_PERM) && (foreign_curse_perms & _USR_PASSIVE_PERM)))
@@ -90,22 +92,22 @@ static int inode_from_user_path (char __user *path, unsigned long *inode_number)
 	struct path tmp;
 	umode_t in_mode;
 
-	printk(KERN_INFO "Length is %d.\n", (int)len);
+	debug("Length is %d.\n", (int)len);
 	if ((kernel_buffer = kzalloc(sizeof(char)*len, GFP_KERNEL)) == NULL)
 		goto out;
 	ret = -EFAULT;
 	if (copy_from_user(kernel_buffer, path, len))
 		goto out;
-	printk(KERN_INFO "String is %s.\n", kernel_buffer);
+	debug("String is %s.\n", kernel_buffer);
 
 	if ((ret = kern_path(/*transformed path*/ kernel_buffer, /*flags*/ LOOKUP_FOLLOW, &tmp)))
 		goto out;
-	printk(KERN_INFO "kern_path return is %d.\n", ret);
+	debug("kern_path return is %d.\n", ret);
 
 	(*inode_number) = tmp.dentry->d_inode->i_ino;
 	in_mode = tmp.dentry->d_inode->i_mode;
 
-	printk(KERN_INFO "inode number is %lu and mode is %d\n", (*inode_number), (int)in_mode);
+	debug("inode number is %lu and mode is %d\n", (*inode_number), (int)in_mode);
 	if (!(in_mode & S_IXUGO))
 		ret = -EPERM;
 
@@ -132,7 +134,7 @@ static int syscurse_list_all (char __user *buf)
 //	ret = ((length - offset) >= len) ? len : (length - offset);
 
 	ret = 1;
-//	printk(KERN_INFO "My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
+//	debug("My master you ask me to copy %u bytes, i shall do my best...\n", (unsigned int) length);
 	if (copy_to_user(buf, (const char *)&curse_full_list/*+offset*/, length)) {
 		ret=-EFAULT;
 		goto out;
@@ -476,7 +478,7 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 	if ((curse_no < 0) || (curse_no >=max_curse_no))
 		goto out;
 
-//	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
+//	debug("Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
 	//Do not even call if curse system is not active.
 #ifdef _CURSES_INSERTED
