@@ -18,6 +18,7 @@ int main (int argc, char **argv) {
 		exit(1);
 	}
 	if (fpid == 0) {
+
 		raise(SIGSTOP);
 		printf("\n---------ONLY-SU-ACTIVE------------\n");
 		printf("\nChild: Cast random_oops on self: %d\n", curse(CAST, "random_oops", getpid(),0, NULL));
@@ -26,8 +27,10 @@ int main (int argc, char **argv) {
 		printf("\nChild: Lift random_oops from parent: %d\n", curse(LIFT, "random_oops", parent_pid, 0, NULL));
 		printf("\nChild: Restore SU ACTIVE permissions to self : %d\n", curse(CURSE_CTRL, "no_fs_cache", getpid(), SU_ACTIVE_PERM_ON,NULL));
 		printf("\nChild: Remove SU ACTIVE permissions from parent : %d\n", curse(CURSE_CTRL, "no_fs_cache", parent_pid, SU_ACTIVE_PERM_OFF,NULL));
+		printf("\nChild: Restore SU ACTIVE permissions to parent : %d\n", curse(CURSE_CTRL, "no_fs_cache", parent_pid, SU_ACTIVE_PERM_ON,NULL));
 		printf("\n-------------------------------------\n");
 		raise(SIGSTOP);
+
 
 		printf("\n-------------NONE------------------\n");
 		printf("\nChild: Cast random_oops on self: %d\n", curse(CAST, "random_oops", getpid(),0, NULL));
@@ -36,9 +39,10 @@ int main (int argc, char **argv) {
 		printf("\nChild: Lift random_oops from parent: %d\n", curse(LIFT, "random_oops", parent_pid, 0, NULL));
 		printf("\nChild: Restore SU ACTIVE permissions to self : %d\n", curse(CURSE_CTRL, "no_fs_cache", getpid(), SU_ACTIVE_PERM_ON,NULL));
 		printf("\nChild: Remove SU ACTIVE permissions from parent : %d\n", curse(CURSE_CTRL, "no_fs_cache", parent_pid, SU_ACTIVE_PERM_OFF,NULL));
-
+		printf("\nChild: Restore SU ACTIVE permissions to parent : %d\n", curse(CURSE_CTRL, "no_fs_cache", parent_pid, SU_ACTIVE_PERM_ON,NULL));
 		printf("\n-------------------------------------\n");
 		raise(SIGSTOP);
+
 
 		printf("\n-----------------ALL-------------------\n");
 		printf("\nChild: Cast random_oops on self: %d\n", curse(CAST, "random_oops", getpid(),0, NULL));
@@ -47,6 +51,7 @@ int main (int argc, char **argv) {
 		printf("\nChild: Lift random_oops from parent: %d\n", curse(LIFT, "random_oops", parent_pid, 0, NULL));
 		printf("\nChild: Restore SU ACTIVE permissions to self : %d\n", curse(CURSE_CTRL, "no_fs_cache", getpid(), SU_ACTIVE_PERM_ON,NULL));
 		printf("\nChild: Remove SU ACTIVE permissions from parent : %d\n", curse(CURSE_CTRL, "no_fs_cache", parent_pid, SU_ACTIVE_PERM_OFF,NULL));
+		printf("\nChild: Restore SU ACTIVE permissions to parent : %d\n", curse(CURSE_CTRL, "no_fs_cache", parent_pid, SU_ACTIVE_PERM_ON,NULL));
 		printf("\n-------------------------------------\n");
 
 		exit(1);

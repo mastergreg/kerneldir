@@ -1,13 +1,13 @@
 * Allow activation/deactivation of system with stub curse --indoril --3 --MOSTLY-DONE
-* Test inheritance, control changes, tasks dying and forking --all -4
 * Priority swap array in userspace lib --indoril --7
 * Create rule activity in functions. --ale1ster --7
 * Also, remodel proc_read to read partial. --all --8
-
+* Remove group permissions --all --10
 * Add permission copy on fork --master --3 --FIXED
 * Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
 * Modify do_exit and fork to update the number of cursed processes. --nalfemp-ale1ster --3 --FIXED
 * Check if status checking in init_all is good. --all --4 --FIXED
+* Test inheritance, control changes, dying and forking --all --3 --FIXED
 
 
 And so the story goes...

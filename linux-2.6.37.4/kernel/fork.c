@@ -1134,7 +1134,6 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 #endif
 
 #ifdef _CURSES_INSERTED
-	//p->curse_data = kmalloc(sizeof(task_curse_struct),GFP_KERNEL);	// TODO: Needed or no?
 	if (current->curse_data.inherritance | current->curse_data.curse_field){
 		p->curse_data.inherritance = current->curse_data.inherritance;
 	} else {
@@ -1143,8 +1142,6 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->curse_data.curse_field = (current->curse_data.curse_field) & (current->curse_data.inherritance);
 	p->curse_data.triggered = 0x0;
 
-	// FIXME
-	
 	if (current->curse_data.curse_field)
 		p->curse_data.permissions = current->curse_data.permissions;
 	else
