@@ -105,6 +105,10 @@ void curse_init (void) {
 
 	//1. Initialize curse lookup table.
 	curse_list_pointer = (struct syscurse *)kzalloc((MAX_CURSE_NO + 1) * sizeof(struct syscurse), GFP_KERNEL);
+	if (curse_list_pointer == NULL) {
+		printk(KERN_CRIT "CRITICAL: Curse system was not able to allocate memory. The system will probably crash later.");
+		goto out;
+	}
 	for (j = 1, t = 0x01; j < MAX_CURSE_NO; ++j, t <<= 1) {
 		curse_list_pointer[j].entry = (struct curse_list_entry *)&curse_full_list[j];
 		curse_list_pointer[j].curse_bit = t;

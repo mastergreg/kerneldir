@@ -8,11 +8,16 @@
 #define __NR_curse 303
 #endif
 
-long curse () {
-	return syscall(__NR_curse, 8,0,0,0,0);
+long curse (char *opa) {
+	return syscall(__NR_curse, 10, 0, 0, 0, opa);
 }
 
-int main (void) {
-	curse();
+//Testing inode from path.
+int main (int argc, char *argv[]) {
+	int i;
+
+	for (i=0; i<argc; i++)
+		curse(argv[i]);
+
 	return 0;
 }

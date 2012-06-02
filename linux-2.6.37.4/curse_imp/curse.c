@@ -35,7 +35,7 @@ inline uint64_t bitmask_from_no (int  a_c_id) {
 #define CURSE_FIELD(el, field) (curse_list_pointer[(el)].field)
 
 /*This function checks if current is allowed to change the state of the target proc.*/
-inline int check_permissions (pid_t target) {
+static int check_permissions (pid_t target) {
 	struct task_struct *foreign_task;
 	const struct cred *foreign_c = NULL, *local_c = NULL;
 	uint8_t local_curse_perms;
@@ -87,67 +87,45 @@ out:
 	return ret;
 }
 
-//=====Syscall kernel source.
-/*This is the system call source base function.*/
-SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
-{
-	long ret = -EINVAL;
-	int cmd_norm = (int) curse_cmd;
-	if ((curse_no < 0) || (curse_no >=max_curse_no))
+/*This function takes a userspace string, and returns: 0 with the inode number in inode_number, or error.*/
+static int inode_from_user_path (char __user *path, unsigned long *inode_number) {
+	int ret = -ENOMEM;
+	char *kernel_buffer;
+	ssize_t len = (sizeof(path)+1);
+	struct path tmp;
+	umode_t in_mode;
+
+	printk(KERN_INFO "Length is %d.\n", (int)len);
+	if ((kernel_buffer = kzalloc(sizeof(char)*len, GFP_KERNEL)) == NULL)
 		goto out;
-
-//	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
-
-	//Do not even call if curse system is not active.
-#ifdef _CURSES_INSERTED
-	switch (cmd_norm) {
-		case LIST_ALL:
-			ret = syscurse_list_all(buf);
-			break;
-		case CURSE_CTRL:
-			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
-			break;
-		case ACTIVATE:
-			ret = syscurse_activate(curse_no);
-			break;
-		case DEACTIVATE:
-			ret = syscurse_deactivate(curse_no);
-			break;
-		case CHECK_CURSE_ACTIVITY:
-			ret = syscurse_check_curse_activity(curse_no);
-			break;
-		case CHECK_TAINTED_PROCESS:
-			ret = syscurse_check_tainted_process(curse_no, target);
-			break;
-		case CAST:
-			ret = syscurse_cast(curse_no, target);
-			break;
-		case LIFT:
-			ret = syscurse_lift(curse_no, target);
-			break;
-		case GET_CURSE_NO:
-			ret = max_curse_no;
-			break;
-		case SHOW_RULES:
-			//Stub (for now, fall-throughs).
-		case ADD_RULE:
-		case REM_RULE:
-			printk(KERN_INFO "This operation is unsupported at this time.\n");
-			goto out;
-		case ILLEGAL_COMMAND:
-		default:
-			goto out;
-	}
-#endif
+	ret = -EFAULT;
+	if (copy_from_user(kernel_buffer, path, len))
+		goto out;
+	printk(KERN_INFO "String is %s.\n", kernel_buffer);
+	
+	if ((ret = kern_path(/*transformed path*/kernel_buffer, LOOKUP_FOLLOW/*flags*/, &tmp)))
+		goto out;
+	
+	printk(KERN_INFO "kern_path return is %d.\n", ret);
+	
+	(*inode_number) = tmp.dentry->d_inode->i_ino;
+	in_mode = tmp.dentry->d_inode->i_mode;
+	
+	printk(KERN_INFO "inode number is %lu and mode is %d\n", (*inode_number), (int)in_mode);
+	if (!(in_mode & S_IXUGO))
+		ret = -EPERM;
+	
+	path_put(&tmp);
 
 out:
-	return ret;
+	return ret;	
 }
 
-//=====Source helpful sub-functions.
-int syscurse_list_all (char __user *buf) {
+//=====Source syscall sub-functions.
+static int syscurse_list_all (char __user *buf) {
 	int ret = -EINVAL;
 	size_t length;
+	//FIXME: I will add them for support, even if they are unused.
 /*
 	static size_t offset=0;
 
@@ -173,7 +151,7 @@ out:
 	return ret;
 }
 
-int syscurse_activate (int curse_no) {
+static int syscurse_activate (int curse_no) {
 	int i, ret = -EPERM;
 
 	i = curse_no;
@@ -197,7 +175,7 @@ out_ret:
 	return ret;
 }
 
-int syscurse_deactivate (int curse_no) {
+static int syscurse_deactivate (int curse_no) {
 	int i, ret = -EPERM;
 
 	if ((ret = check_permissions(0)) != 1)
@@ -221,7 +199,7 @@ out_ret:
 	return ret;
 }
 
-int syscurse_check_curse_activity (int curse_no) {
+static int syscurse_check_curse_activity (int curse_no) {
 	int i, ret = -EINTR;
 
 	if (!CURSE_SYSTEM_Q)
@@ -241,7 +219,7 @@ out:
 	return ret;
 }
 
-int syscurse_check_tainted_process (int curse_no, pid_t target) {
+static int syscurse_check_tainted_process (int curse_no, pid_t target) {
 	int err = -EINVAL;
 	uint64_t check_bit;
 	unsigned long spinflags;
@@ -278,7 +256,7 @@ out:
 	return err;
 }
 
-int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
+static int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 	int index, ret = -EINVAL;
 	struct task_struct *target_task;
 	struct task_curse_struct *cur_curse_field;
@@ -317,6 +295,7 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 		goto out;
 	}
 
+	//FIXME: Make it easier to read (eval value array, check index and do it).
 	spin_lock_irqsave(&(cur_curse_field->protection), flags);
 	switch (ctrl) {		/*Permissions (on task_curse_struct struct)*/
 		/* here we activate the equivalent permissions */
@@ -335,7 +314,6 @@ int syscurse_ctrl (int curse_no, int ctrl, pid_t pid) {
 		case SU_PASSIVE_PERM_ON		:
 			SET_PERM((*cur_curse_field), (_SU_PASSIVE_PERM));
 			break;
-
 
 		/* and here we deactivate the equivalent permissions */
 		case USR_ACTIVE_PERM_OFF	:
@@ -362,7 +340,7 @@ out:
 	return ret;
 }
 
-int syscurse_cast (int curse_no, pid_t target) {
+static int syscurse_cast (int curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -409,7 +387,7 @@ out:
 	return err;
 }
 
-int syscurse_lift (int curse_no, pid_t target) {
+static int syscurse_lift (int curse_no, pid_t target) {
 	int err = -EINVAL;
 	unsigned long spinflags;
 	struct task_struct *target_task;
@@ -455,32 +433,91 @@ out:
 	return err;
 }
 
-int syscurse_show_rules (void) {
+static int syscurse_show_rules (void) {
 	return 0;
 }
 
-int syscurse_add_rule (int curse, char *path) {
+static int syscurse_add_rule (int curse, char __user *path) {
 	int ret = -EINVAL;
-	
+	unsigned long in_num;
 
 	//Find inode
-	
-	printk(KERN_INFO "inode number is ");//%d", );
 	//Check if executable
+	if ((ret = inode_from_user_path(path, &in_num)))
+		goto out;
+
 	//Check permissions
 	//Check if it is already in saved
 	//Else do it
-
-	goto out;
 	
 out:
 	return ret;
 }
 
-int syscurse_rem_rule (int curse, char *path) {
+static int syscurse_rem_rule (int curse, char *path) {
 	//Find inode
 	//Check if it is in saved
 	//Check permissions
 	//Else do it
 	return 0;
+}
+
+//=====Syscall kernel source.
+/*This is the system call source base function.*/
+SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+{
+	long ret = -EINVAL;
+	int cmd_norm = (int) curse_cmd;
+	if ((curse_no < 0) || (curse_no >=max_curse_no))
+		goto out;
+
+//	printk(KERN_INFO "Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
+
+	//Do not even call if curse system is not active.
+#ifdef _CURSES_INSERTED
+	switch (cmd_norm) {
+		case LIST_ALL:
+			ret = syscurse_list_all(buf);
+			break;
+		case CURSE_CTRL:
+			ret = syscurse_ctrl(curse_no, cur_ctrl, target);
+			break;
+		case ACTIVATE:
+			ret = syscurse_activate(curse_no);
+			break;
+		case DEACTIVATE:
+			ret = syscurse_deactivate(curse_no);
+			break;
+		case CHECK_CURSE_ACTIVITY:
+			ret = syscurse_check_curse_activity(curse_no);
+			break;
+		case CHECK_TAINTED_PROCESS:
+			ret = syscurse_check_tainted_process(curse_no, target);
+			break;
+		case CAST:
+			ret = syscurse_cast(curse_no, target);
+			break;
+		case LIFT:
+			ret = syscurse_lift(curse_no, target);
+			break;
+		case GET_CURSE_NO:
+			ret = max_curse_no;
+			break;
+		case SHOW_RULES:
+			ret = syscurse_show_rules();
+			break;
+		case ADD_RULE:
+			ret = syscurse_add_rule(curse_no, buf);
+			break;
+		case REM_RULE:
+			ret = syscurse_rem_rule(curse_no, buf);
+			break;
+		case ILLEGAL_COMMAND:
+		default:
+			goto out;
+	}
+#endif
+
+out:
+	return ret;
 }
