@@ -399,14 +399,13 @@ static int syscurse_cast (int curse_no, pid_t target)
 		goto out;
 	if ((err = check_permissions(target)) != 1)
 		goto out;
-	debug("skatoules");
 
 	err = -EINVAL;
 	new_index = curse_no;
-	
-	if (!(new_mask = CURSE_FIELD(new_index, curse_bit)) || printk(KERN_INFO "%d - %llu\n", new_index, new_mask) || !(CURSE_FIELD(new_index, status) & ACTIVATED))
+	new_mask = CURSE_FIELD(new_index, curse_bit);
+
+	if ((!new_mask) || (!(CURSE_FIELD(new_index, status) & ACTIVATED)))
 		goto out;
-	debug("akomi perissoteres");
 
 	spin_lock_irqsave(&((target_task->curse_data).protection), spinflags);
 	if (!(target_task->curse_data.curse_field & new_mask)) {

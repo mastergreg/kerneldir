@@ -9,7 +9,7 @@ int main (int argc, char **argv) {
 
 /*  Fork, and check cross-process permission changes */
 	parent_pid = getpid();
-	printf("\nActivate random_oops: %d\n",		 curse(ACTIVATE, "random_oops", parent_pid,0,NULL ));
+	printf("\nActivate random_oops: %d\n",		 curse(ACTIVATE, "random_oops", 0, 0, NULL));
 
 	printf("\n\n\n...Forking...\n\n");
 	fpid = fork();
