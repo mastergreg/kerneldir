@@ -1,0 +1,102 @@
+
+Activate random_oops: 1
+
+
+
+...Forking...
+
+
+---------ONLY-SU-ACTIVE------------
+
+Child: Cast random_oops on self: 1
+
+Child: Lift random_oops from self: 1
+
+Child: Cast random_oops on parent: 1
+
+Child: Lift random_oops from parent: 1
+
+Child: Restore SU ACTIVE permissions to self : 1
+
+Child: Remove SU ACTIVE permissions from parent : 1
+
+Child: Restore SU ACTIVE permissions to parent : 1
+
+-------------------------------------
+
+-------------NONE------------------
+
+Child: Cast random_oops on self: -1
+
+Child: Lift random_oops from self: -1
+
+Child: Cast random_oops on parent: 1
+
+Child: Lift random_oops from parent: 1
+
+Child: Restore SU ACTIVE permissions to self : 1
+
+Child: Remove SU ACTIVE permissions from parent : 1
+
+Child: Restore SU ACTIVE permissions to parent : 1
+
+-------------------------------------
+
+-----------------ALL-------------------
+
+Child: Cast random_oops on self: -1
+
+Child: Lift random_oops from self: -1
+
+Child: Cast random_oops on parent: -1
+
+Child: Lift random_oops from parent: -1
+
+Child: Restore SU ACTIVE permissions to self : 1
+
+Child: Remove SU ACTIVE permissions from parent : 1
+
+Child: Restore SU ACTIVE permissions to parent : 1
+
+-------------------------------------
+
+Activate random_oops: 1
+
+
+
+...Forking...
+
+
+-------------------------------------
+
+Parent: Remove SU PASSIVE permissions from child : 1
+
+Parent: Cast random_oops on child: 1
+
+Parent: Lift random_oops from child: 1
+
+-------------------------------------
+
+-------------------------------------
+
+Parent: Remove SU ACTIVE permissions from child : 1
+
+Parent: Cast random_oops on child: -1
+
+Parent: Lift random_oops from child: -1
+
+-------------------------------------
+
+-------------------------------------
+
+Parent: Restore SU PASSIVE permissions to child : 1
+
+Parent: Restore SU ACTIVE permissions to child : 1
+
+Parent: Cast random_oops on child: -1
+
+Parent: Lift random_oops from child: -1
+
+-------------------------------------
+
+Deactivate random_oops: 1
