@@ -9,7 +9,7 @@ void poison_init (struct task_struct * target)
 {	
 	unsigned long spinflags;
 	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-	target->curse_data.poison_counter = 10000;
+	target->curse_data.poison_counter = 1000;
 	spin_unlock_irqrestore(&((target->curse_data).protection), spinflags);
 	return;
 }
@@ -17,12 +17,16 @@ void poison_init (struct task_struct * target)
 void poison_inject (uint64_t mask)
 {
 	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-	uint32_t r  = target->curse_data.poison_counter;
+	uint32_t r  = current->curse_data.poison_counter;
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 
 	r--;
-	printk("The clock is ticking for this one...");
+	printk(KERN_INFO "The clock is ticking for this one...");
 	if (r == 0) {
 		do_exit(SIGKILL);
 	} 
+
+	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+	current->curse_data.poison_counter = r;
+	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 }
