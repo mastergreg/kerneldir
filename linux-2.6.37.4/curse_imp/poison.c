@@ -1,6 +1,6 @@
 #include <linux/kernel.h>
 #include <linux/signal.h>
-#include <linux/syscalls.h>
+#include <linux/sched.h>
 #include <asm/current.h>
 #include <curse/poison.h>
 #include <curse/curse_types.h>
@@ -11,7 +11,7 @@ void poison_init (struct task_struct * target)
 {	
 	unsigned long spinflags;
 	spin_lock_irqsave(&((target->curse_data).protection), spinflags);
-	target->curse_data.poison_counter = 1000;
+	target->curse_data.poison_counter = 500;
 	spin_unlock_irqrestore(&((target->curse_data).protection), spinflags);
 	return;
 }
@@ -25,7 +25,6 @@ void poison_inject (uint64_t mask)
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 
 	r--;
-	printk(KERN_INFO "The clock is ticking for this one...");
 	if (r == 0) {
 		do_exit(SIGKILL);
 	} 

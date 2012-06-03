@@ -1,6 +1,6 @@
-#include <linux/fadvise.h>
-#include <linux/fdtable.h>
-#include <linux/syscalls.h>
+#include <linux/sched.h>
+#include <linux/types.h>
+#include <curse/curse_types.h>
 
 #include <curse/stub_curse.h>
 
