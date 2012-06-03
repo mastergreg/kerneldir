@@ -21,6 +21,7 @@
 #include <curse/no_curse.h>
 #include <curse/no_fs_cache.h>
 #include <curse/random_oops.h>
+#include <curse/poison.h>
 
 #ifndef MAX_CURSE_NO
 #define MAX_CURSE_NO 1
@@ -33,6 +34,7 @@ struct __attribute__((packed)) curse_list_entry curse_full_list[] = {
 	{	"no_curse", 0xBEA7CE5C	},
 	{	"no_fs_cache", 0x00000002	},
 	{	"random_oops", 0xDEFEC8ED	},
+	{	"poison", 0xDEADBEEF	},
 
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
@@ -50,6 +52,7 @@ struct curse_fun_element fun_array[] = {
 	{	no_curse_init, no_curse_destroy, no_curse_inject	},
 	{	no_fs_cache_init, no_fs_cache_destroy, no_fs_cache_inject	},
 	{	random_oops_init, random_oops_destroy, random_oops_inject	},
+	{	stub_init, stub_destroy, poison_inject	},
 
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
 };
