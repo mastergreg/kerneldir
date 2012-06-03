@@ -29,8 +29,13 @@ void no_fs_cache_inject (uint64_t mask)
 	struct files_struct *open_files;
 	int n;
 	unsigned long spinflags;
+	int counter;
 
-	if (current->curse_data.no_fs_cache_counter > MAX_NO_FS_COUNT) {
+	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
+	counter = current->curse_data.no_fs_cache_counter;
+	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+
+	if (counter > MAX_NO_FS_COUNT) {
 		rcu_read_lock();
 
 		open_files = get_files_struct(current);
