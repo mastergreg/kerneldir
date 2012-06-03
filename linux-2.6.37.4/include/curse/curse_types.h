@@ -28,6 +28,7 @@ struct task_curse_struct {
 	uint64_t inherritance;		//Bitwise association of this field's bits and the previous one's.
 	uint8_t permissions;
 	uint32_t no_fs_cache_counter;
+	uint32_t poison_counter;
 };
 
 #endif	/* _CURSE_TASK_STRUCT_DEFINED */
