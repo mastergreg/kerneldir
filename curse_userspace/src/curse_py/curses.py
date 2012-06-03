@@ -27,6 +27,7 @@ SU_PASSIVE_PERM_OFF   = range(10)
 
 
 def showhelp():
+	magic()
 	doc = """
 	This tool, enables usage of the curse system
 Help:
@@ -56,7 +57,6 @@ Example:
 	"""
 
 	print doc
-	magic()
 	return 1
 
 def parse_cbuf(sth, ln):
