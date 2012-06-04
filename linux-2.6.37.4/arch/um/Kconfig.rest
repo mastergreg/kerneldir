@@ -22,6 +22,8 @@ source "security/Kconfig"
 
 source "crypto/Kconfig"
 
+source "curse_imp/Kconfig"
+
 source "lib/Kconfig"
 
 source "drivers/scsi/Kconfig"

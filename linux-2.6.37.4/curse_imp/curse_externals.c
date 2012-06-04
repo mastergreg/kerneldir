@@ -9,7 +9,7 @@
 #include <curse/curse.h>		//Now it is only needed for the macros.
 
 //=====Kernel functions.
-#ifdef CONFIG_CURSE
+#ifdef CONFIG_CURSES
 //=====Global data.
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 struct syscurse *curse_list_pointer=(struct syscurse *)NULL;

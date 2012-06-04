@@ -1,4 +1,4 @@
-#ifdef CONFIG_CURSE
+#ifdef CONFIG_CURSES
 #include <linux/sched.h>
 #include <linux/types.h>
 #include <curse/curse_types.h>
@@ -22,4 +22,4 @@ void stub_inject (uint64_t mask)
 	printk("Run of curse initiated\n");
 	return;
 }
-#endif /* CONFIG_CURSE */
+#endif /* CONFIG_CURSES */

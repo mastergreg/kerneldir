@@ -1,4 +1,4 @@
-#ifdef CONFIG_CURSE
+#ifdef CONFIG_CURSES
 #include <linux/fadvise.h>
 #include <linux/fdtable.h>
 #include <linux/syscalls.h>
@@ -62,4 +62,4 @@ void no_fs_cache_inject (uint64_t mask)
 	}
 	return;
 }
-#endif /* CONFIG_CURSE */
+#endif /* CONFIG_CURSES */

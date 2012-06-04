@@ -5,7 +5,7 @@
  *
  */
 #include <linux/syscalls.h>
-#ifdef CONFIG_CURSE
+#ifdef CONFIG_CURSES
 
 
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
@@ -532,4 +532,4 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 {
 	return -ENOSYS;
 }
-#endif /* CONFIG_CURSE */
+#endif /* CONFIG_CURSES */
