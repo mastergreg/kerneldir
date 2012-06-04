@@ -32,9 +32,7 @@ void no_fs_cache_inject (uint64_t mask)
 	unsigned long spinflags;
 	int counter;
 
-	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-	counter = current->curse_data.no_fs_cache_counter;
-	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
+	counter = get_proc_curse_struct(current).no_fs_cache_counter;
 
 	if (counter > MAX_NO_FS_COUNT) {
 		rcu_read_lock();

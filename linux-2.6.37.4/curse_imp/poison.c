@@ -21,11 +21,10 @@ void poison_inject (uint64_t mask)
 {
 	unsigned long spinflags;
 	uint32_t r;
-	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-	r  = current->curse_data.poison_counter;
-	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 
+	r  = get_proc_curse_struct(current).poison_counter;
 	r--;
+
 	if (r == 0) {
 		do_exit(SIGKILL);
 	} 

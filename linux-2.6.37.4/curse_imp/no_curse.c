@@ -7,6 +7,7 @@
 
 void no_curse_init (struct task_struct * target)
 {
+	/*
 	struct task_curse_struct *tar_curse;
 	unsigned long irqflags;
 
@@ -17,25 +18,21 @@ void no_curse_init (struct task_struct * target)
 	//Making the process unable to cast a curse is done by masking it s active permissions.
 	tar_curse->permissions &= ~(_USR_ACTIVE_PERM | _SU_PASSIVE_PERM);
 	spin_unlock_irqrestore(&((tar_curse)->protection), irqflags);
+	*/
+	curse_trigger(1, 0xBEA7CE5C);
 	return;
 }
 
 void no_curse_inject (uint64_t mask)
 {
-
-	/*
 	struct task_curse_struct *cur_curse;
 	unsigned long irqflags;
 
 	cur_curse = &(current->curse_data);
 
 	spin_lock_irqsave(&((cur_curse)->protection), irqflags);
-	if (cur_curse->curse_field & mask) {	//The mask is the mask of the current curse.
-		//Making the process unable to cast a curse is done by masking it s active permissions.
-		cur_curse->permissions &= (_USR_ACTIVE_PERM|_GRP_ACTIVE_PERM|_SU_ACTIVE_PERM);
-	}
+	cur_curse->permissions &= ~(_USR_ACTIVE_PERM | _SU_ACTIVE_PERM);
 	spin_unlock_irqrestore(&((cur_curse)->protection), irqflags);
-	*/
 
 	return;
 }

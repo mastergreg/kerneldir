@@ -53,6 +53,19 @@ out:
 	return ret;
 }
 
+/* A curse developer should not bother with our races (if they dont want to change data) */
+/* And they shouldn't have to create this function themselves just so they can wait_event on it */
+static struct task_curse_struct get_proc_curse_struct(struct task_struct * target) {
+	unsigned long irqflags;
+	uint64_t saved_field;
+	struct task_curse_struct saved;
+
+	spin_lock_irqsave(&((target->curse_data).protection), irqflags);
+	saved = (target->curse_data);
+	spin_unlock_irqrestore(&((target->curse_data).protection), irqflags);
+	return saved_field;
+}
+
 /*This is the injection wrapper, which must be in kernel space. This basically is an inline or define directive that checks if curses are activated and if the current process has a curse before calling the proper curse function.*/
 void curse_k_wrapper (void)
 {
@@ -149,7 +162,7 @@ void curse_trigger (_Bool defer_action, curse_id_t cid)
 	unsigned long spinf;
 	int index;
 
-//	printk("Trigger on %lld\n", cid);
+//	debug("Trigger on %lld\n", cid);
 	index = index_from_curse_id(cid);
 
 	cur_struct = &(current->curse_data);

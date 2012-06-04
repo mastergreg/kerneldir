@@ -4,16 +4,6 @@
 
 #include <curse/random_oops.h>
 
-void random_oops_init (struct task_struct * target)
-{
-	return;
-}
-
-void random_oops_destroy (struct task_struct * target)
-{
-	return;
-}
-
 void random_oops_inject (uint64_t mask)
 {
 	static int r = 0;

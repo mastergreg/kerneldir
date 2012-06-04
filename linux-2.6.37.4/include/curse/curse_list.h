@@ -52,7 +52,7 @@ struct curse_fun_element fun_array[] = {
 
 	{	no_curse_init, no_curse_destroy, no_curse_inject	},
 	{	no_fs_cache_init, no_fs_cache_destroy, no_fs_cache_inject	},
-	{	random_oops_init, random_oops_destroy, random_oops_inject	},
+	{	stub_init, stub_destroy, random_oops_inject	},
 	{	poison_init, stub_destroy, poison_inject	},
 
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
