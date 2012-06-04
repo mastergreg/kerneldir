@@ -34,7 +34,7 @@ inline uint64_t bitmask_from_no (int  a_c_id)
 
 /* A curse developer should not bother with our races (if they dont want to change data) */
 /* And they shouldn't have to create this function themselves just so they can wait_event on it */
-struct task_curse_struct get_curse_struct(struct task_struct * target) {
+inline struct task_curse_struct get_curse_struct(struct task_struct * target) {
 	unsigned long irqflags;
 	struct task_curse_struct saved;
 
