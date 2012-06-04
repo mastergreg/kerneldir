@@ -1,8 +1,9 @@
 * Allow activation/deactivation of system with stub curse --indoril --3 --MOSTLY-DONE
+* Add curse data support. --all --5
 * Priority swap array in userspace lib --indoril --7
 * Create rule activity in functions. --ale1ster --7
 * Also, remodel proc_read to read partial. --all --8
-* Remove group permissions --all --10
+* Remove group permissions --all --10 --FIXED "Only stubs remain"
 
 * Add permission copy on fork --master --3 --FIXED
 * Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
