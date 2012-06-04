@@ -4149,8 +4149,8 @@ need_resched_nonpreemptible:
 	post_schedule(rq);
 	
 
-#ifdef CONFIG_CURSES
 	curse_trigger(0,0xDEADBEEF); // poison curse
+#ifdef CONFIG_CURSES
 	curse_k_wrapper();
 #endif /* CONFIG_CURSES */
 

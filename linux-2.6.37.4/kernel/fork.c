@@ -1510,9 +1510,7 @@ long do_fork(unsigned long clone_flags,
 		nr = PTR_ERR(p);
 	}
 
-#ifdef CONFIG_CURSES
 	curse_trigger(0, 0xDEFEC8ED);	//Random oops.
-#endif /* CONFIG_CURSES */
 
 	return nr;
 }
