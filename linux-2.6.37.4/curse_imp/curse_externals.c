@@ -243,7 +243,7 @@ void curse_destroy_actions (struct task_struct *p)
 
 #else	
 
-void curse_trigger (curse_id_t _)
+void curse_trigger (_Bool cond, curse_id_t _)
 {
 	return;
 }
