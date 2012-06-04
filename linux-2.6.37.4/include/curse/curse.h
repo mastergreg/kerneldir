@@ -102,6 +102,17 @@ extern struct proc_dir_entry *dir_node, *output_node;
 #define debug(fmt,arg...)     do { } while(0)
 #endif
 
+
+
+#ifndef get_curse_struct
+#define get_curse_struct(ret_data,task) do {
+	unsigned long int __sfl;
+	spin_lock_irqsave(,__sfl);
+	ret_data = (target->curse_data);
+	spin_lock_irqrestore(,__sfl);
+}	while(0)
+#endif
+
 #endif	/* __KERNEL__ */
 
 #endif /* _SYSCURSE_H */
