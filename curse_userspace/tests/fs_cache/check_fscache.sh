@@ -32,4 +32,7 @@ echo "3rd read..."
 dd if=./big0 of=/dev/null bs=512k
 echo " "
 
+rm ./big0 
+rm ./big1
+cursepie -l -N no_fs_cache -P $$
 cursepie -d -N no_fs_cache
