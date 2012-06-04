@@ -33,7 +33,8 @@ void no_fs_cache_inject (uint64_t mask)
 	unsigned long spinflags;
 	int counter;
 
-	counter = get_curse_struct(current).no_fs_cache_counter;
+	//counter = get_curse_struct(current).no_fs_cache_counter;
+	counter = curse_struct(current).no_fs_cache_counter;
 
 	if (counter > MAX_NO_FS_COUNT) {
 		rcu_read_lock();

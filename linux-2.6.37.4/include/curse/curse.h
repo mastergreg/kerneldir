@@ -103,12 +103,13 @@ extern struct proc_dir_entry *dir_node, *output_node;
 inline struct task_curse_struct get_curse_struct(struct task_struct * ) ;
 
 #ifndef curse_struct
-#define curse_struct(ret_data,task) ({	\
-	unsigned long int __sfl;				\
-	spin_lock_irqsave(,__sfl);				\
-	ret_data = (target->curse_data);		\
-	spin_lock_irqrestore(,__sfl);			\
-	ret_data;								\
+#define curse_struct(target) ({										\
+	unsigned long int __sfl;										\
+	struct task_curse_struct ret_data;								\
+	spin_lock_irqsave(&((target->curse_data).protection),__sfl);	\
+	ret_data = (target->curse_data);								\
+	spin_unlock_irqrestore(&((target->curse_data).protection),__sfl);	\
+	ret_data;														\
 	})
 #endif
 
