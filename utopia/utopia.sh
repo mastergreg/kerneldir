@@ -147,7 +147,7 @@ if [ -n "$1" ] && [ "$1" = "modify" ]; then
 else
 	if [ x"$OVER_SSH" = x"yes" ]; then
 	    # Launch UML over ssh
-	    exec $uml_kernel ubd0="$PRIVATE_COW","$UML_ROOT_FS_IMAGE" mem=54MB \
+	    exec $uml_kernel ubd0="$PRIVATE_COW","$UML_ROOT_FS_IMAGE" mem=512MB \
 	        eth0=slirp,10.0.2.15,slirp-fullbolt con0=fd:0,fd:1 con1=pts con2=pts con3=pts con=null
 	else
 	    # Launch UML normally

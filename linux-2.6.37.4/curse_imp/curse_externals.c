@@ -178,12 +178,12 @@ void curse_init_actions (struct task_struct *p)
 
 	//REMOVED: Have to check if system is active before acting. Active bits don't get toggled when system inactive.
 	while (c_f) {		//While the current is active, or there are remaining fields:
-		printk(KERN_INFO "INIT ON FORK: This process has curses %llX.\n", c_f);
+		//debug("INIT ON FORK: This process has curses %llX.\n", c_f);
 		if ((c_f & c_m) && (curse_list_pointer[i].status & CASTED)) {
 			fun_array[i].fun_init(p);
-			printk(KERN_INFO "The before ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
+			//debug("The before ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			atomic_inc(&(curse_list_pointer[i].ref_count));
-			printk(KERN_INFO "The after ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
+			//debug("The after ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			curse_list_pointer[i].status |= CASTED;
 		}
 		c_f >>= 1;
@@ -199,11 +199,11 @@ void curse_destroy_actions (struct task_struct *p)
 
 	while (c_f) {		//While the current is active, or there are remaining fields:
 		if ((c_f & c_m) && (curse_list_pointer[i].status & (ACTIVATED | CASTED))) {
-			debug("DESTROY ON EXIT: This process has curse with index %d.\n", i);
+			//debug("DESTROY ON EXIT: This process has curse with index %d.\n", i);
 			fun_array[i].fun_destroy(p);
-			debug("The before ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
+			//debug("The before ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			atomic_dec(&(curse_list_pointer[i].ref_count));
-			debug("The after ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
+			//debug("The after ref value is %d.\n", atomic_read(&(curse_list_pointer[i].ref_count)));
 			if (atomic_read(&(curse_list_pointer[i].ref_count)) == 0)
 				curse_list_pointer[i].status &= ~CASTED;
 		}

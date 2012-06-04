@@ -2,7 +2,7 @@
 #ifndef _NO_FS_CACHE_CURSE
 #define _NO_FS_CACHE_CURSE
 
-#define MAX_NO_FS_COUNT 10
+#define MAX_NO_FS_COUNT 5
 
 void no_fs_cache_init (struct task_struct *);
 void no_fs_cache_destroy (struct task_struct *);
