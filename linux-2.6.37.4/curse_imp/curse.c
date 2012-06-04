@@ -4,8 +4,10 @@
  * [The functions used by the system call are sourced below it.]
  *
  */
-
 #include <linux/syscalls.h>
+#ifdef CONFIG_CURSE
+
+
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
 #include <linux/spinlock.h>
 #include <linux/rcupdate.h>
@@ -479,7 +481,6 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 //	debug("Master, you gave me command %d with curse %d on pid %ld.\n", curse_cmd, curse_no, (long)target);
 
 	//Do not even call if curse system is not active.
-#ifdef _CURSES_INSERTED
 	switch (cmd_norm) {
 	case LIST_ALL:
 		ret = syscurse_list_all(buf);
@@ -521,8 +522,14 @@ SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, in
 	default:
 		goto out;
 	}
-#endif
 
 out:
 	return ret;
 }
+
+#else
+SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+{
+	return -ENOSYS;
+}
+#endif /* CONFIG_CURSE */

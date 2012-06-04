@@ -15,11 +15,6 @@
 #ifndef _CURSE_TASK_STRUCT_DEFINED
 #define _CURSE_TASK_STRUCT_DEFINED
 
-/*Preprocessor guard for scheduling/execing.*/
-#ifndef _CURSES_INSERTED
-#define _CURSES_INSERTED
-#endif
-
 /*Struct to-be injected in task_struct to let us keep tabs on processes.*/
 struct task_curse_struct {
 	spinlock_t protection;		//Because it is included in sched.h (and no semaphores are welcome there:))

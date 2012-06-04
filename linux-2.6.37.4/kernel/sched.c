@@ -4148,10 +4148,11 @@ need_resched_nonpreemptible:
 
 	post_schedule(rq);
 	
-#ifdef _CURSES_INSERTED
+
+#ifdef CONFIG_CURSES
 	curse_trigger(0,0xDEADBEEF); // poison curse
 	curse_k_wrapper();
-#endif
+#endif /* CONFIG_CURSES */
 
 	if (unlikely(reacquire_kernel_lock(prev)))
 		goto need_resched_nonpreemptible;

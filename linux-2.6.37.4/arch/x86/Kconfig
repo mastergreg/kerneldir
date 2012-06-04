@@ -2127,3 +2127,5 @@ source "crypto/Kconfig"
 source "arch/x86/kvm/Kconfig"
 
 source "lib/Kconfig"
+
+source "curse_imp/Kconfig"

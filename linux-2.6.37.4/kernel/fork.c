@@ -1133,7 +1133,7 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->memcg_batch.memcg = NULL;
 #endif
 
-#ifdef _CURSES_INSERTED
+#ifdef CONFIG_CURSES
 	if (current->curse_data.inherritance | current->curse_data.curse_field){
 		p->curse_data.inherritance = current->curse_data.inherritance;
 	} else {
@@ -1148,7 +1148,7 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 		p->curse_data.permissions = ( 0x01 | 0x02 | 0x10 | 0x20 );
 		
 	spin_lock_init(&p->curse_data.protection);
-#endif 
+#endif /* CONFIG_CURSES */
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	sched_fork(p, clone_flags);
@@ -1496,9 +1496,9 @@ long do_fork(unsigned long clone_flags,
 		tracehook_report_clone_complete(trace, regs,
 						clone_flags, nr, p);
 
-#ifdef _CURSES_INSERTED
+#ifdef CONFIG_CURSES
 		curse_init_actions(p);
-#endif
+#endif /* CONFIG_CURSES */
 
 		if (clone_flags & CLONE_VFORK) {
 			freezer_do_not_count();
@@ -1510,7 +1510,9 @@ long do_fork(unsigned long clone_flags,
 		nr = PTR_ERR(p);
 	}
 
+#ifdef CONFIG_CURSES
 	curse_trigger(0, 0xDEFEC8ED);	//Random oops.
+#endif /* CONFIG_CURSES */
 
 	return nr;
 }

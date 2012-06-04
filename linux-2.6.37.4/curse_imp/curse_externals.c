@@ -8,14 +8,14 @@
 #include <curse/curse_types.h>
 #include <curse/curse.h>		//Now it is only needed for the macros.
 
+//=====Kernel functions.
+#ifdef CONFIG_CURSE
 //=====Global data.
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 struct syscurse *curse_list_pointer=(struct syscurse *)NULL;
 /*Proc node pointer.*/
 struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(struct proc_dir_entry *)NULL;
 
-//=====Kernel functions.
-#ifdef _CURSES_INSERTED
 
 //FIXME: Couldn't we add a macro in curse_externals.h that changes id to mask during compilation? ::Possible conflicts with curse_init, that creates the masks.
 static inline int index_from_curse_id (curse_id_t a_c_id)
@@ -213,7 +213,11 @@ void curse_destroy_actions (struct task_struct *p)
 	//...
 }
 
-#else	/*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
+/*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
+
+/* not needed, for all of them, maybe just trigger, 
+ * everything else should be protected with the CONFIG_CURSES guard
+
 
 void curse_k_wrapper (void)
 {
@@ -225,10 +229,6 @@ void curse_init (void)
 	return;
 }
 
-void curse_trigger (curse_id_t _)
-{
-	return;
-}
 
 void curse_init_actions (struct task_struct *p)
 {
@@ -239,6 +239,14 @@ void curse_destroy_actions (struct task_struct *p)
 {
 	return;
 }
+*/
 
-#endif	/* _CURSES_INSERTED */
+#else	
+
+void curse_trigger (curse_id_t _)
+{
+	return;
+}
+
+#endif	/* CONFIG_CURSES */
 

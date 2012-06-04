@@ -1,3 +1,4 @@
+#ifdef CONFIG_CURSE
 #include <linux/syscalls.h>
 #include <linux/random.h>
 
@@ -39,3 +40,4 @@ out:
 	return;
 }
 
+#endif /* CONFIG_CURSE */

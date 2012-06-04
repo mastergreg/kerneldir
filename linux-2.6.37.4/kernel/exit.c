@@ -929,7 +929,7 @@ NORET_TYPE void do_exit(long code)
 
 	validate_creds_for_do_exit(tsk);
 
-#ifdef _CURSES_INSERTED
+#ifdef CONFIG_CURSES
 	curse_destroy_actions(tsk);
 #endif
 

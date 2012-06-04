@@ -1188,7 +1188,7 @@ struct task_struct {
 	unsigned int flags;	/* per process flags, defined below */
 	unsigned int ptrace;
 
-#ifdef _CURSES_INSERTED
+#ifdef CONFIG_CURSES
 	struct task_curse_struct curse_data;
 #endif
 

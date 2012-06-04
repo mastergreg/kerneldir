@@ -1,3 +1,4 @@
+#ifdef CONFIG_CURSES
 #ifndef _NO_CURSE_CURSE
 #define _NO_CURSE_CURSE
 
@@ -6,3 +7,4 @@ void no_curse_init (struct task_struct *);
 void no_curse_destroy (struct task_struct *);
 
 #endif	/* _NO_CURSE_CURSE */
+#endif /* CONFIG_CURSES */

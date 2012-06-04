@@ -1,3 +1,4 @@
+#ifdef CONFIG_CURSES
 #ifndef _STUB_CURSE
 #define _STUB_CURSE
 
@@ -6,3 +7,4 @@ void stub_destroy (struct task_struct *);
 void stub_inject (uint64_t);
 
 #endif	/* _STUB_CURSE */
+#endif /* CONFIG_CURSES */

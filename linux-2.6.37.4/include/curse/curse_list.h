@@ -5,6 +5,7 @@
  * TODO: Maybe we could add a description field in each curse.
  *
  */
+#ifdef CONFIG_CURSES
 
 #ifndef _CURSE_LIST_LIB
 #define _CURSE_LIST_LIB
@@ -60,3 +61,4 @@ struct curse_fun_element fun_array[] = {
 #endif	/* __KERNEL__ */
 
 #endif /* _CURSE_LIST_LIB */
+#endif /* CONFIG_CURSES */

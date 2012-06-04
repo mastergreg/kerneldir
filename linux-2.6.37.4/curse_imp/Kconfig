@@ -1,0 +1,8 @@
+#
+# Generic algorithms support
+#
+config CURSES
+	bool "Curse implemetation"
+	default y
+	help
+		This enables the curse system in the linux kernel.
