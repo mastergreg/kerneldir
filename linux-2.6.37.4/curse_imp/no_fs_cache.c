@@ -4,6 +4,7 @@
 #include <linux/syscalls.h>
 
 #include <curse/no_fs_cache.h>
+#include <curse/curse.h>
 
 void no_fs_cache_init (struct task_struct * target)
 {
@@ -32,7 +33,7 @@ void no_fs_cache_inject (uint64_t mask)
 	unsigned long spinflags;
 	int counter;
 
-	counter = get_proc_curse_struct(current).no_fs_cache_counter;
+	counter = get_curse_struct(current).no_fs_cache_counter;
 
 	if (counter > MAX_NO_FS_COUNT) {
 		rcu_read_lock();

@@ -17,12 +17,7 @@ void no_exit_inject (uint64_t mask)
 
 
 	while (!(lifted)) {
-
-		if (get_proc_curses & mask) {	
-			lifted = 1;
-		} else {
-				
-		}
+		// wait on condition
 	}
 
 	return;
@@ -33,12 +28,7 @@ void no_curse_destroy (struct task_struct * target)
 	struct task_curse_struct *tar_curse;
 	unsigned long irqflags;
 
-	tar_curse = &(target->curse_data);
 
-	spin_lock_irqsave(&((tar_curse)->protection), irqflags);
-	// FIXME: security exploit, process may gain permissions
-	tar_curse->permissions |= (_USR_ACTIVE_PERM | _SU_ACTIVE_PERM);
-	spin_unlock_irqrestore(&((tar_curse)->protection), irqflags);
 	return;
 }
 #endif /* CONFIG_CURSES */

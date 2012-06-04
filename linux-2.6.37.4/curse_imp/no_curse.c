@@ -4,6 +4,7 @@
 
 #include <curse/no_curse.h>
 #include <curse/curse.h>
+#include <curse/curse_externals.h>
 
 void no_curse_init (struct task_struct * target)
 {

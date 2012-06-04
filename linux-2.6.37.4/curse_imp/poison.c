@@ -5,6 +5,7 @@
 #include <asm/current.h>
 #include <curse/poison.h>
 #include <curse/curse_types.h>
+#include <curse/curse.h>
 
 /* 	Poison: The cursed process dies after a prespecified number of injections */
 
@@ -22,7 +23,7 @@ void poison_inject (uint64_t mask)
 	unsigned long spinflags;
 	uint32_t r;
 
-	r  = get_proc_curse_struct(current).poison_counter;
+	r  = get_curse_struct(current).poison_counter;
 	r--;
 
 	if (r == 0) {

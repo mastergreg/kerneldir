@@ -32,6 +32,18 @@ inline uint64_t bitmask_from_no (int  a_c_id)
 	return curse_list_pointer[a_c_id].curse_bit;
 }
 
+/* A curse developer should not bother with our races (if they dont want to change data) */
+/* And they shouldn't have to create this function themselves just so they can wait_event on it */
+struct task_curse_struct get_curse_struct(struct task_struct * target) {
+	unsigned long irqflags;
+	struct task_curse_struct saved;
+
+	spin_lock_irqsave(&((target->curse_data).protection), irqflags);
+	saved = (target->curse_data);
+	spin_unlock_irqrestore(&((target->curse_data).protection), irqflags);
+	return saved;
+}
+
 /*This macro expands to the requested field of the requested element of curse_list_pointer array.*/
 #define CURSE_FIELD(el, field) (curse_list_pointer[(el)].field)
 

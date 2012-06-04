@@ -63,6 +63,9 @@ struct syscurse {
 	struct curse_fun_element *functions;
 };
 
+/* To be changed to macro */
+struct task_curse_struct get_curse_struct(struct task_struct *);
+
 /*Pointer to the implemented curse array (loaded at init of syscall).*/
 extern struct syscurse *curse_list_pointer;
 /*Proc node pointer.*/
