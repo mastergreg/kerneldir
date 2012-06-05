@@ -1,4 +1,6 @@
 * Allow activation/deactivation of system with stub curse --indoril --3 --MOSTLY-DONE
+* Why do we need attribute packed in kernelspace? --master --3
+* Why do we have curse_struct macro and get_curse_struct inline? --all --3
 * Add curse data support. --all --5
 * Priority swap array in userspace lib --indoril --7
 * Create rule activity in functions. --ale1ster --7

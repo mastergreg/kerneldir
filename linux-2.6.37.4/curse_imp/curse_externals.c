@@ -216,33 +216,7 @@ void curse_destroy_actions (struct task_struct *p)
 }
 
 /*Define dummies here, for the case when the curses system is not inserted in the kernel code.*/
-
-/* not needed, for all of them, maybe just trigger, 
- * everything else should be protected with the CONFIG_CURSES guard
-
-
-void curse_k_wrapper (void)
-{
-	return;
-}
-
-void curse_init (void)
-{
-	return;
-}
-
-
-void curse_init_actions (struct task_struct *p)
-{
-	return;
-}
-
-void curse_destroy_actions (struct task_struct *p)
-{
-	return;
-}
-*/
-
+/* Not needed for all of them. Maybe just trigger. Everything else should be protected with the CONFIG_CURSES guard.*/
 #else	
 
 void curse_trigger (_Bool cond, curse_id_t _)

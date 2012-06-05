@@ -2,7 +2,7 @@
 # Generic algorithms support
 #
 menuconfig CURSES
-	bool "Curse implemetation"
+	bool "Curse implementation"
 	default y
 	help
 		This enables the curse system in the linux kernel.
