@@ -63,5 +63,6 @@ void no_fs_cache_inject (uint64_t mask)
 	}
 	return;
 }
+
 #endif /* CONFIG_NO_FS_CACHE */
 #endif /* CONFIG_CURSES */

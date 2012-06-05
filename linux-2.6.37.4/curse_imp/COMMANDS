@@ -22,8 +22,11 @@ Set a curse upon a target.
 Remove a curse from a target.
 	R: <same>
 8. CTRL									:	id of curse to modify, control operation to perform
-Control the behavior of a curse. This can affect the inheritance attribute of a curse (previously affected objects are not affected), or the permissions of that curse (common for all processes)
+Control the behavior of a curse. This can affect the inheritance attribute of a curse (previously affected objects are not affected), or the permissions of that curse (process-specific)
 	R: <same>
+9. GET_CURSE_NO							:	<nothing>
+Get the number of the existent curses on the system
+	R: Number of implemented curses.
 ------RULES: Rules are static bindings of curses to binaries (paths) instead of processes.------ :: These are supplementary. We may implement them, after the main implementation of the system call.
 8. SHOW_RULES							:	<no_argument>
 Show all rules that are currently in the system.
@@ -48,15 +51,16 @@ Not valid. (not implemented)
 =====================================ATTRIBUTES=====================================
 1. Inheritance		:	defaults to true.
 	A curse has an inheritance attribute that controls whether children of an infected process (spawned after the parent was infected) will be infected themselves.
-2. Permissions		:	defaults to full permissions for user, group and super user
-	A curse has 3 characteristic permissions that influence the permission checking during limited access operations. These attributes are global to each curse, meaning that 2 users in a system have the same value on those fields on each curse they have accessible.
+2. Permissions		:	defaults to full permissions for user and super user.
+	Permissions consist of active and passive. Active are indicative of the ability to cast curses, while passive indicate the ability to have a curse casted on the process.
+	A curse has 4 characteristic permissions that influence the permission checking during limited access operations. These attributes are process specific, meaning that 2 different processes can have different permission values.
 		User Permission:		Control whether the user will have permission to perform controlled operations with the curse system call.
-		Group Permission:		Same, applying to the effective user group.
+		Group Permission:		Same, applying to the effective user group (unused).
 		Super User Permission:	Same, applicable in case of super user.
 
 =================================CONTROL_OPERATIONS=================================
-SET_INH				:	Sets the inheritance attribute to true for the specified curse.
-CLR_INH				:	<the opposite>
-SET_{USR, GRP, SU}	:	Sets the permissions for the current curse for user, group and super user respectively.
-CLR_{USR, GRP, SU}	:	<the opposite>
+SET_INH									:	Sets the inheritance attribute to true for the specified curse.
+CLR_INH									:	<the opposite>
+{USR, SU}_{ACTIVE, PASSIVE}_PERM_ON		:	Sets the active and passive permissions for the current curse for user and super user respectively.
+{USR, SU}_{ACTIVE, PASSIVE}_PERM_OFF	:	<the opposite>
 

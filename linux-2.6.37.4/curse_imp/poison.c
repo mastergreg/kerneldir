@@ -10,7 +10,7 @@
 
 /* 	Poison: The cursed process dies after a prespecified number of injections */
 
-void poison_init (struct task_struct * target)
+void poison_init (struct task_struct *target)
 {	
 	unsigned long spinflags;
 	spin_lock_irqsave(&((target->curse_data).protection), spinflags);
@@ -35,5 +35,6 @@ void poison_inject (uint64_t mask)
 	current->curse_data.poison_counter = r;
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 }
+
 #endif /* CONFIG_POISON */
 #endif /* CONFIG_CURSES */
