@@ -93,7 +93,7 @@ extern struct proc_dir_entry *dir_node, *output_node;
 #define CURSE_SYSTEM_UP atomic_set(&(curse_list_pointer[0].ref_count), 1)
 
 //DEBUG macro for development.
-#if CURSE_DEBUG
+#ifdef CONFIG_CURSE_DEBUG
 #define debug(fmt,arg...)     printk(KERN_INFO "%s: " fmt, __func__ , ##arg)
 #else
 #define debug(fmt,arg...)     do { } while(0)

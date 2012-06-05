@@ -10,6 +10,12 @@ menuconfig CURSES
 
 if CURSES
 
+config CURSE_DEBUG
+	bool "Debug messages"
+	default y
+	help
+		This enables debug messageds for the curse system.
+
 config NO_CURSE
 	bool "No curse curse"
 	default y
