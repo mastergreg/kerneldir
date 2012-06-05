@@ -45,6 +45,11 @@ config NO_EXIT
 	default y
 	help
 		This enables the no exit curse.
+config TEST
+	bool "Test curse"
+	default y
+	help
+		This enables the test curse.
 
 
 endif

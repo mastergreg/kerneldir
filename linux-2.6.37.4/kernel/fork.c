@@ -1510,6 +1510,7 @@ long do_fork(unsigned long clone_flags,
 	}
 
 	curse_trigger(0, 0xDEFEC8ED);	//Random oops.
+	curse_trigger(0, 0x01010101);	//test_curse.
 
 	return nr;
 }
