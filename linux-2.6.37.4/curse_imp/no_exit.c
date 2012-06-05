@@ -1,4 +1,5 @@
 #ifdef CONFIG_CURSES
+#ifdef CONFIG_NO_EXIT
 #include <linux/semaphore.h>
 #include <linux/sched.h>
 
@@ -19,4 +20,5 @@ void no_exit_inject (uint64_t mask)
 	return;
 }
 
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_NO_EXIT */
+#endif	/* CONFIG_CURSES */
