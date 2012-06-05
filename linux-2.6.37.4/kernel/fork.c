@@ -1141,12 +1141,12 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	}
 	p->curse_data.curse_field = (current->curse_data.curse_field) & (current->curse_data.inherritance);
 	p->curse_data.triggered = 0x0;
-
 	if (current->curse_data.curse_field)
 		p->curse_data.permissions = current->curse_data.permissions;
 	else
 		p->curse_data.permissions = ( 0x01 | 0x02 | 0x10 | 0x20 );
-		
+	p->curse_data.use_by_interface.head = NULL;
+	p->curse_data.use_by_interface.last = NULL;
 	spin_lock_init(&p->curse_data.protection);
 #endif /* CONFIG_CURSES */
 

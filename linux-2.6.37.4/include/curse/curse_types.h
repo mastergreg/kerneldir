@@ -15,6 +15,23 @@
 #ifndef _CURSE_TASK_STRUCT_DEFINED
 #define _CURSE_TASK_STRUCT_DEFINED
 
+/*Linked list data element.*//*
+struct curse_inside_data {
+	void *elem;
+	struct curse_inside_data *next;
+};*/
+
+/*Curse specific data (linked list head element).*/
+struct curse_specific_data {
+struct curse_inside_data {
+	void *elem;
+	struct curse_inside_data *next;
+} hi;
+	//...
+	void *head;
+	void *last;
+};
+
 /*Struct to-be injected in task_struct to let us keep tabs on processes.*/
 struct task_curse_struct {
 	spinlock_t protection;		//Because it is included in sched.h (and no semaphores are welcome there:))
@@ -25,6 +42,8 @@ struct task_curse_struct {
 
 	uint32_t no_fs_cache_counter;
 	uint32_t poison_counter;
+
+	struct curse_specific_data use_by_interface;
 };
 
 #endif	/* _CURSE_TASK_STRUCT_DEFINED */
