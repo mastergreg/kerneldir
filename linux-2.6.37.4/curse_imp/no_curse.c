@@ -52,5 +52,6 @@ void no_curse_destroy (struct task_struct * target)
 	spin_unlock_irqrestore(&((tar_curse)->protection), irqflags);
 	return;
 }
+
 #endif /* CONFIG_NO_CURSE */
 #endif /* CONFIG_CURSES */

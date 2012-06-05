@@ -6,6 +6,6 @@
 void poison_inject (uint64_t);
 void poison_init (struct task_struct *);
 
-#endif /* CONFIG_POISON */
+#endif	/* CONFIG_POISON */
 #endif	/* _POISON_CURSE */
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_CURSES */

@@ -6,5 +6,5 @@
 void random_oops_inject (uint64_t);
 
 #endif	/* _RANDOM_OOPS_CURSE */
-#endif /* CONFIG_RANDOM_OOPS */
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_RANDOM_OOPS */
+#endif	/* CONFIG_CURSES */
