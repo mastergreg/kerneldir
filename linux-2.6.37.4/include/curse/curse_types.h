@@ -6,6 +6,8 @@
 #ifndef _CURSE_TYPES_LIB
 #define _CURSE_TYPES_LIB
 
+typedef uint64_t curse_id_t;
+
 /* Kernel-specific structures. */
 #ifdef __KERNEL__
 
@@ -18,6 +20,7 @@
 /*Curse specific data (linked list head element).*/
 struct curse_inside_data {
 	void *elem;
+	curse_id_t owner;
 	struct curse_inside_data *next;
 };
 
@@ -47,8 +50,6 @@ struct curse_fun_element {
 };
 
 #endif	/* __KERNEL__ */
-
-typedef uint64_t curse_id_t;
 
 /*Maximum size for a curse name.*/
 #define CURSE_MAX_NAME_SIZE 24

@@ -19,9 +19,12 @@ struct proc_dir_entry *dir_node=(struct proc_dir_entry *)NULL, *output_node=(str
 /*Curse specific data - allocation interface.*/
 #ifdef _CURSE_TASK_STRUCT_DEFINED
 
-void *curse_get_alloc (struct task_struct *h, size_t desired_alloc_size)
+void *curse_create_alloc (struct task_struct *h, size_t desired_alloc_size, curse_id_t owner)
 {
 	void *ret;
+	/*This function returns a pointer to a small amount of memory (ATOMIC).*/
+	/*The memory can be accessed with the curse_get_mem method (in case we want it to be process specific),
+	 or with a static variable in the curse object (in case we want it to be common to all processes).*/
 
 	if (!(ret = kmalloc(desired_alloc_size, GFP_ATOMIC))) {
 		return NULL;
@@ -30,8 +33,11 @@ void *curse_get_alloc (struct task_struct *h, size_t desired_alloc_size)
 		struct curse_inside_data *tmp;
 
 		tmp = (struct curse_inside_data *)kmalloc(sizeof(struct curse_inside_data), GFP_ATOMIC);
+		/*Create element 'offline'*/
 		tmp->elem = ret;
+		tmp->owner = owner;
 		spin_lock_irqsave(&((h->curse_data).protection), tfs);
+		/*Connect it to the list*/
 		tmp->next = ((h->curse_data).use_by_interface).head;
 		((h->curse_data).use_by_interface).head = tmp;
 		spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
@@ -72,6 +78,27 @@ out:
 	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
 }
 
+void *curse_get_mem (struct task_struct *h, curse_id_t cid)
+{
+	void *ret = NULL;
+	unsigned long tfs;
+	struct task_curse_struct *hi;
+	struct curse_inside_data *rs;
+
+	hi = &(h->curse_data);
+	rs = (hi->use_by_interface).head;
+	spin_lock_irqsave(&((h->curse_data).protection), tfs);
+	while (rs != NULL) {
+		if (rs->owner == cid) {
+			ret = rs->elem;
+			break;
+		}
+		rs = rs->next;
+	}
+	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+	return ret;
+}
+
 void curse_free_alloced_ll (struct task_struct *h)
 {
 	unsigned long tfs;
@@ -79,19 +106,17 @@ void curse_free_alloced_ll (struct task_struct *h)
 
 	spin_lock_irqsave(&((h->curse_data).protection), tfs);
 	p = ((h->curse_data).use_by_interface).head;
-	c = (p != NULL) ? (p->next) : NULL;
-	printk("CLOSE: %p %p\n", p, c);
-	if (p)
-		printk("LIST: CURRENT ELEMENT NEXT\n");
-	while (p != NULL) {
-		printk("LIST: %p %p %p\n", p, p->elem, p->next);
-		kfree(p->elem);
-		kfree(p);
-		p = c;
-		if (c != NULL)
-			c = c->next;
+	if (p) {
+		c = (p != NULL) ? (p->next) : NULL;
+		while (p != NULL) {
+			kfree(p->elem);
+			kfree(p);
+			p = c;
+			if (c != NULL)
+				c = c->next;
+		}
+		((h->curse_data).use_by_interface).head = NULL;
 	}
-	((h->curse_data).use_by_interface).head = NULL;
 	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
 }
 
@@ -290,7 +315,7 @@ void curse_destroy_actions (struct task_struct *p)
 		c_f >>= 1;
 		++i;
 	}
-//	if (p->curse_data.curse_field)
+	if (p->curse_data.curse_field)
 		curse_free_alloced_ll(p);
 	//...
 }
