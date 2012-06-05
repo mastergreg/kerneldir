@@ -7,13 +7,13 @@
 
 void no_exit_inject (uint64_t mask)
 {
-	/* Will only be triggered when process is exiting, in which case it will wait until the curse is lifted to exit */
+	/*Will only be triggered when process is exiting, in which case it will wait until the curse is lifted to exit.*/
 	int lifted = 0;
 
 	while (!(lifted)) {
 		schedule_timeout_interruptible(100);
-		if (!(curse_struct(current)->curse_field & mask))
-			lifted = 1;
+		if (!(curse_struct(current).curse_field & mask))
+			break;
 	}
 
 	return;
