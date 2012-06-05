@@ -224,5 +224,61 @@ void curse_trigger (_Bool cond, curse_id_t _)
 	return;
 }
 
+/*Curse specific data - allocation interface.*/
+#ifdef _CURSE_TASK_STRUCT_DEFINED
+
+void *curse_get_alloc (struct task_struct *h, size_t len)
+{
+	void *ret;
+
+	if (!(ret = kmalloc(len, GFP_ATOMIC))) {
+		return NULL;
+	} else {
+		unsigned long tfs;
+		struct curse_inside_data *tmp;
+
+		tmp = (struct curse_inside_data *)kmalloc(sizeof(struct curse_inside_data), GFP_ATOMIC);
+		tmp->elem = ret;
+		spin_lock_irqsave(&((h->curse_data).protection), tfs);
+		tmp->next = ((h->curse_data).use_by_interface).head;
+		((h->curse_data).use_by_interface).head = tmp;
+		spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+	}
+	return ret;
+}
+
+void curse_free_alloc (struct task_struct *h, void *p)
+{
+	/*Must be called with a pointer allocated with curse_get_alloc, else the system will get destalibized.*/
+	unsigned long tfs;
+	struct task_curse_struct *hi;
+	struct curse_inside_data *prev, *cur;
+
+	hi = &(h->curse_data);
+	spin_lock_irqsave(&((h->curse_data).protection), tfs);
+	cur = (hi->use_by_interface).head;
+	prev = cur;
+	if (prev !=NULL) {
+		while (cur != NULL) {
+			/*Search for proper data pointer*/
+			if (cur->elem == p)
+				break;
+			prev = cur;
+			cur = cur->next;
+		}
+		/*Free data (and remove node too)*/
+		kfree(cur->elem);
+		if (((hi->use_by_interface).head) == cur)
+			(hi->use_by_interface).head = (hi->use_by_interface).head->next;
+		else
+			prev->next = cur->next;
+		kfree(cur);
+	}
+	((h->curse_data).use_by_interface).head = NULL;
+	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+}
+
+#endif
+
 #endif	/* CONFIG_CURSES */
 

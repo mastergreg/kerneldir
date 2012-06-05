@@ -1146,7 +1146,6 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	else
 		p->curse_data.permissions = ( 0x01 | 0x02 | 0x10 | 0x20 );
 	p->curse_data.use_by_interface.head = NULL;
-	p->curse_data.use_by_interface.last = NULL;
 	spin_lock_init(&p->curse_data.protection);
 #endif /* CONFIG_CURSES */
 
