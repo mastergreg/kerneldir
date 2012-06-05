@@ -1,4 +1,5 @@
 #ifdef CONFIG_CURSES
+#ifdef CONFIG_POISON
 #include <linux/kernel.h>
 #include <linux/signal.h>
 #include <linux/sched.h>
@@ -34,4 +35,5 @@ void poison_inject (uint64_t mask)
 	current->curse_data.poison_counter = r;
 	spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
 }
+#endif /* CONFIG_POISON */
 #endif /* CONFIG_CURSES */

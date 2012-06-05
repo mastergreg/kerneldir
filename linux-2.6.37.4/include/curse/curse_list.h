@@ -32,10 +32,18 @@
 struct __attribute__((packed)) curse_list_entry curse_full_list[] = {
 	{	"system", 0x00000000	},
 
+#ifdef CONFIG_NO_CURSE
 	{	"no_curse", 0xBEA7CE5C	},
+#endif 
+#ifdef CONFIG_NO_FS_CACHE
 	{	"no_fs_cache", 0x00000002	},
+#endif
+#ifdef CONFIG_RANDOM_OOPS
 	{	"random_oops", 0xDEFEC8ED	},
+#endif
+#ifdef CONFIG_POISON
 	{	"poison", 0xDEADBEEF	},
+#endif
 
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
 };
@@ -50,10 +58,18 @@ const int max_curse_no = (((sizeof (curse_full_list))/(sizeof (struct curse_list
 struct curse_fun_element fun_array[] = {
 	{	stub_init, stub_destroy, stub_inject	}, /* Maybe a stub maybe not, depends on how we handle 0 :: It is a stub handling curse system activation */
 
+#ifdef CONFIG_NO_CURSE
 	{	no_curse_init, no_curse_destroy, no_curse_inject	},
+#endif
+#ifdef CONFIG_NO_FS_CACHE
 	{	no_fs_cache_init, no_fs_cache_destroy, no_fs_cache_inject	},
+#endif
+#ifdef CONFIG_RANDOM_OOPS
 	{	stub_init, stub_destroy, random_oops_inject	},
+#endif
+#ifdef CONFIG_POISON
 	{	poison_init, stub_destroy, poison_inject	},
+#endif
 
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */
 };

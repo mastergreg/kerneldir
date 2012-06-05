@@ -1,4 +1,5 @@
 #ifdef CONFIG_CURSES
+#ifdef CONFIG_NO_CURSE
 #include <linux/syscalls.h>
 //#include <asm/current.h>
 
@@ -51,4 +52,5 @@ void no_curse_destroy (struct task_struct * target)
 	spin_unlock_irqrestore(&((tar_curse)->protection), irqflags);
 	return;
 }
+#endif /* CONFIG_NO_CURSE */
 #endif /* CONFIG_CURSES */

@@ -1,4 +1,5 @@
 #ifdef CONFIG_CURSES
+#ifdef CONFIG_RANDOM_OOPS
 #include <linux/syscalls.h>
 #include <linux/random.h>
 
@@ -30,4 +31,5 @@ out:
 	return;
 }
 
+#endif /* CONFIG_RANDOM_OOPS */
 #endif /* CONFIG_CURSES */

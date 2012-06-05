@@ -1,8 +1,38 @@
 #
 # Generic algorithms support
 #
-config CURSES
+menuconfig CURSES
 	bool "Curse implemetation"
 	default y
 	help
 		This enables the curse system in the linux kernel.
+
+
+if CURSES
+
+config NO_CURSE
+	bool "No curse curse"
+	default y
+	help
+		This enables the no curse curse.
+
+config NO_FS_CACHE
+	bool "No fs cache curse"
+	default y
+	help
+		This enables the no fs cache curse.
+
+config RANDOM_OOPS 
+	bool "Random oops curse"
+	default y
+	help
+		This enables the random oops curse.
+
+config POISON
+	bool "Poison curse"
+	default y
+	help
+		This enables the poison curse.
+
+
+endif
