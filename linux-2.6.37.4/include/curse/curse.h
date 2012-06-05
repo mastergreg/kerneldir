@@ -99,8 +99,6 @@ extern struct proc_dir_entry *dir_node, *output_node;
 #define debug(fmt,arg...)     do { } while(0)
 #endif
 
-inline struct task_curse_struct get_curse_struct(struct task_struct *);
-
 #ifndef curse_struct
 #define curse_struct(target) ({											\
 	unsigned long int __sfl;											\

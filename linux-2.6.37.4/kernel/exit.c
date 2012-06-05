@@ -930,6 +930,7 @@ NORET_TYPE void do_exit(long code)
 	validate_creds_for_do_exit(tsk);
 
 #ifdef CONFIG_CURSES
+	curse_trigger(0,0xCAFECAFE); 
 	curse_destroy_actions(tsk);
 #endif
 

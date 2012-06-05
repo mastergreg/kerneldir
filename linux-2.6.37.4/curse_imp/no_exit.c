@@ -1,6 +1,6 @@
 #ifdef CONFIG_CURSES
-#include <linux/syscalls.h>			//WHY all these? NO sema in here and no syscalls>>>>>>>>>>>>!!!!!!!!!!!!
 #include <linux/semaphore.h>
+#include <linux/sched.h>
 
 #include <curse/no_exit.h>
 #include <curse/curse.h>
@@ -16,20 +16,10 @@ void no_exit_inject (uint64_t mask)
 	int lifted = 0;
 
 	while (!(lifted)) {
-		// wait on condition
-		//if (!((get_curse_struct(current).curse_field) & mask))	//OR without the "get_" part??
-		//	break;
+		schedule_timeout_interruptible(100);
+		if (!(curse_struct(current)->curse_field & mask))
+			lifted = 1;
 	}
-
-	return;
-}
-
-void no_curse_destroy (struct task_struct *target)
-{
-	struct task_curse_struct *tar_curse;
-	unsigned long irqflags;
-
-	//What do you want to go here?
 
 	return;
 }

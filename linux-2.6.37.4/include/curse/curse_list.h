@@ -23,6 +23,7 @@
 #include <curse/no_fs_cache.h>
 #include <curse/random_oops.h>
 #include <curse/poison.h>
+#include <curse/no_exit.h>
 
 #ifndef MAX_CURSE_NO
 #define MAX_CURSE_NO 1
@@ -43,6 +44,9 @@ struct __attribute__((packed)) curse_list_entry curse_full_list[] = {
 #endif
 #ifdef CONFIG_POISON
 	{	"poison", 0xDEADBEEF	},
+#endif
+#ifdef CONFIG_NO_EXIT
+	{	"no_exit", 0xCAFECAFE	},
 #endif
 
 	{	"sentinel", 0xABADDE5C	}	/*Curse table sentinel. Every entry after this will be ignored.*/
@@ -69,6 +73,9 @@ struct curse_fun_element fun_array[] = {
 #endif
 #ifdef CONFIG_POISON
 	{	poison_init, stub_destroy, poison_inject	},
+#endif
+#ifdef CONFIG_NO_EXIT
+	{	stub_init, stub_destroy, no_exit_inject	},
 #endif
 
 	{	stub_init, stub_destroy, stub_inject	} /* you have made a grave mistake (sentinel speaking) */

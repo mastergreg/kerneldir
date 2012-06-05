@@ -39,6 +39,11 @@ config POISON
 	default y
 	help
 		This enables the poison curse.
+config NO_EXIT
+	bool "No exit curse"
+	default y
+	help
+		This enables the no exit curse.
 
 
 endif

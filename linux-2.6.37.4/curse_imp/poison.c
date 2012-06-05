@@ -24,7 +24,7 @@ void poison_inject (uint64_t mask)
 	unsigned long spinflags;
 	uint32_t r;
 
-	r  = get_curse_struct(current).poison_counter;
+	r  = curse_struct(current).poison_counter;
 	r--;
 
 	if (r == 0) {
