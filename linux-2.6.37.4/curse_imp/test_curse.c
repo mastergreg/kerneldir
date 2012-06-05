@@ -28,6 +28,7 @@ void test_destroy (struct task_struct *target)
 	printk("Close of curse initiated\n");
 	printk("Freeing data at %p\n", hi);
 	curse_free_alloc(target, hi);
+	hi=NULL;
 	return;
 }
 
