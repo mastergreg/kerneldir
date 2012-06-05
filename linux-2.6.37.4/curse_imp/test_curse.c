@@ -11,11 +11,15 @@ static char *hi=NULL;
 
 void test_init (struct task_struct *target)
 {
+	static int shit=0;
+	shit++;
 	printk("Open of curse initiated\n");
 	hi = curse_get_alloc(target, 5);
 	printk("Allocated 5 bytes on pointer %p\n", hi);
-	hi[0]=hi[1]=hi[2]=hi[3]='1';
-	hi[4]='\0';
+	if (hi != NULL) {
+		snprintf(hi, 4, "%d", shit);
+		hi[4]='\0';
+	}
 	return;
 }
 
@@ -23,7 +27,7 @@ void test_destroy (struct task_struct *target)
 {
 	printk("Close of curse initiated\n");
 	printk("Freeing data at %p\n", hi);
-	curse_free_alloc(hi);
+	curse_free_alloc(target, hi);
 	return;
 }
 
