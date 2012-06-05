@@ -274,6 +274,25 @@ void curse_free_alloc (struct task_struct *h, void *p)
 			prev->next = cur->next;
 		kfree(cur);
 	}
+	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+}
+
+void curse_free_alloced_ll (struct task_struct *h)
+{
+	unsigned long tfs;
+	struct curse_inside_data *c, *p;
+
+	spin_lock_irqsave(&((h->curse_data).protection), tfs);
+	p = ((h->curse_data).use_by_interface).head;
+	c = (p != NULL) ? (p->next) : NULL;
+	while (p != NULL) {
+		kfree(p->elem);
+		kfree(p);
+		p = c;
+		if (c != NULL)
+			c = c->next;
+
+	}
 	((h->curse_data).use_by_interface).head = NULL;
 	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
 }
