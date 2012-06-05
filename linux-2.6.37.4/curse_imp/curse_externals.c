@@ -88,7 +88,9 @@ void *curse_get_mem (struct task_struct *h, curse_id_t cid)
 	hi = &(h->curse_data);
 	rs = (hi->use_by_interface).head;
 	spin_lock_irqsave(&((h->curse_data).protection), tfs);
+	/*If there are data*/
 	while (rs != NULL) {
+		/*Find the proper node*/
 		if (rs->owner == cid) {
 			ret = rs->elem;
 			break;
@@ -106,6 +108,7 @@ void curse_free_alloced_ll (struct task_struct *h)
 
 	spin_lock_irqsave(&((h->curse_data).protection), tfs);
 	p = ((h->curse_data).use_by_interface).head;
+	/*Free all nodes*/
 	if (p) {
 		c = (p != NULL) ? (p->next) : NULL;
 		while (p != NULL) {
