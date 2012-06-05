@@ -58,6 +58,8 @@ void curse_free_alloc (struct task_struct *h, void *mem_to_free)
 			prev = cur;
 			cur = cur->next;
 		}
+		if (cur == NULL)
+			goto out;
 		/*Free data (and remove node too)*/
 		kfree(cur->elem);
 		if (((hi->use_by_interface).head) == cur)
@@ -66,6 +68,7 @@ void curse_free_alloc (struct task_struct *h, void *mem_to_free)
 			prev->next = cur->next;
 		kfree(cur);
 	}
+out:
 	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
 }
 
@@ -77,13 +80,16 @@ void curse_free_alloced_ll (struct task_struct *h)
 	spin_lock_irqsave(&((h->curse_data).protection), tfs);
 	p = ((h->curse_data).use_by_interface).head;
 	c = (p != NULL) ? (p->next) : NULL;
+	printk("CLOSE: %p %p\n", p, c);
+	if (p)
+		printk("LIST: CURRENT ELEMENT NEXT\n");
 	while (p != NULL) {
+		printk("LIST: %p %p %p\n", p, p->elem, p->next);
 		kfree(p->elem);
 		kfree(p);
 		p = c;
 		if (c != NULL)
 			c = c->next;
-
 	}
 	((h->curse_data).use_by_interface).head = NULL;
 	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
@@ -284,6 +290,8 @@ void curse_destroy_actions (struct task_struct *p)
 		c_f >>= 1;
 		++i;
 	}
+//	if (p->curse_data.curse_field)
+		curse_free_alloced_ll(p);
 	//...
 }
 
