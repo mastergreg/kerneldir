@@ -1,11 +1,10 @@
 * Allow activation/deactivation of system with stub curse --indoril --3 --MOSTLY-DONE
 * Why do we need attribute packed in kernelspace? --master --3
 * Why do we have curse_struct macro and get_curse_struct inline? --all --3
-* Add curse data support. --all --5
+* Add curse data support. --all --5 --ALMOST "Support added. Have to test on a real curse, and also check for bugs (leaks)."
 * Priority swap array in userspace lib --indoril --7
 * Create rule activity in functions. --ale1ster --7
 * Also, remodel proc_read to read partial. --all --8
-* Remove group permissions --all --10 --FIXED "Only stubs remain"
 
 * Add permission copy on fork --master --3 --FIXED
 * Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
@@ -13,6 +12,7 @@
 * Test inheritance, control changes, dying and forking --all --3 --FIXED
 * Fix incostistency in ref_count in case of exited. --ale1ster --3 --FIXED
 * Check if status checking in init_all is good. --all --4 --FIXED
+* Remove group permissions --all --10 --FIXED "Only stubs remain"
 
 
 And so the story goes...
