@@ -5,6 +5,6 @@
 
 void no_exit_inject (uint64_t mask);
 
-#endif /* CONFIG_POISON */
+#endif	/* CONFIG_POISON */
 #endif	/* _NO_CURSE_CURSE */
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_CURSES */
