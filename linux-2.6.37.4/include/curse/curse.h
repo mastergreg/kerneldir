@@ -100,7 +100,7 @@ extern struct proc_dir_entry *dir_node, *output_node;
 #endif
 
 #ifndef curse_struct
-#define curse_struct(target) ({											\
+#define curse_struct(target) ({				 							\
 	unsigned long int __sfl;											\
 	struct task_curse_struct ret_data;									\
 	spin_lock_irqsave(&((target->curse_data).protection),__sfl);		\
@@ -108,6 +108,80 @@ extern struct proc_dir_entry *dir_node, *output_node;
 	spin_unlock_irqrestore(&((target->curse_data).protection),__sfl);	\
 	ret_data;															\
 	})
+#endif
+
+/*Curse specific data - allocation interface.*/
+#ifdef _CURSE_TASK_STRUCT_DEFINED
+
+void *curse_get_alloc (struct task_struct *h, size_t len)
+{
+	void *ret;
+
+	if (!(ret = kmalloc(len, GFP_ATOMIC))) {
+		return NULL;
+	} else {
+		unsigned long tfs;
+		struct curse_inside_data *tmp;
+
+		tmp = (struct curse_inside_data *)kmalloc(sizeof(struct curse_inside_data), GFP_ATOMIC);
+		tmp.elem = ret;
+		spin_lock_irqsave(&((h->curse_data).protection), tfs);
+		tmp->next = ((h->curse_data).use_by_interface)->head;
+		((h->curse_data).use_by_interface)->head = tmp;
+		spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+	}
+	return ret;
+}
+
+void curse_free_alloc (struct task_struct *h, void *p)
+{
+	/*Must be called with a pointer allocated with curse_get_alloc, else the system will get destalibized.*/
+	struct task_curse_struct *hi;
+	struct curse_inside_data *prev, *cur;
+
+	hi = h->curse_data;
+	spin_lock_irqsave(&((h->curse_data).protection), tfs);
+	cur = (hi.use_by_interface)->head;
+	prev = cur;
+	if (prev !=NULL) {
+		while (cur != NULL) {
+			/*Search for proper data pointer*/
+			if (cur.elem == p)
+				break;
+			prev = cur;
+			cur = cur->next;
+		}
+		/*Free data (and remove node too)*/
+		kfree(cur.elem);
+		if (((hi.use_by_interface)->head) == cur)
+			head = head->next;
+		else
+			prev->next = cur->next;
+		kfree(cur);
+	}
+	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+}
+
+void curse_free_alloced_ll (struct task_struct *h)
+{
+	unsigned long tfs;
+	struct curse_inside_data *c, *p;
+
+	spin_lock_irqsave(&((h->curse_data).protection), tfs);
+	p = ((h->curse_data).use_by_interface)->head;
+	c = (p != NULL) ? (p->next) : NULL;
+	while (p != NULL) {
+		kfree(p.elem);
+		kfree(p);
+		p = c;
+		if (c != NULL)
+			c = c->next;
+
+	}
+	((h->curse_data).use_by_interface)->head = NULL;
+	spin_unlock_irqrestore(&((h->curse_data).protection), tfs);
+}
+
 #endif
 
 #endif	/* __KERNEL__ */

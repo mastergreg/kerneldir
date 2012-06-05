@@ -33,7 +33,7 @@ struct task_curse_struct {
 	uint32_t poison_counter;
 
 	struct curse_specific_data {
-		struct curse_inside_data *head, *last;
+		struct curse_inside_data *head;
 	} use_by_interface;
 };
 
