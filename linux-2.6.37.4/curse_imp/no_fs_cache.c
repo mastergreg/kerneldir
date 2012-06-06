@@ -35,6 +35,11 @@ void no_fs_cache_destroy (struct task_struct *target)
 	return;
 }
 
+//uint32_t testme(uint32_t *a, uint32_t t){(*a)=t; return t;}
+//uint32_t testme2(uint32_t *A) {(*A)=0; return 0;}
+//uint32_t testme3(uint32_t *a) {(*a)++; return (*a);}
+//uint32_t testme4(uint32_t *a) {return (*a);}
+
 void no_fs_cache_inject (uint64_t mask)
 {
 	/* http://linux.die.net/man/2/fadvise */
@@ -46,6 +51,7 @@ void no_fs_cache_inject (uint64_t mask)
 
 	counter = curse_get_mem(current, 0x00000002);
 	if (*counter > MAX_NO_FS_COUNT) { 
+//	if (testme4(counter) > MAX_NO_FS_COUNT) { 
 		rcu_read_lock();
 
 		open_files = get_files_struct(current);
@@ -54,7 +60,7 @@ void no_fs_cache_inject (uint64_t mask)
 		for (n = 0; n <= fdt->max_fds; ++n) {
 		 	if (fcheck(n)) {
 				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
-				//debug("u got sth up %d\n", n);
+				debug("%ld's got sth up %d\n", (long)current->pid, n);
 			}
 		} 
 
@@ -62,8 +68,10 @@ void no_fs_cache_inject (uint64_t mask)
 		put_files_struct(open_files);
 		
 		*counter = 0;
+//		testme2(counter);
 	} else {
 		++(*counter);
+//		testme3(counter);
 	}
 
 	return;
