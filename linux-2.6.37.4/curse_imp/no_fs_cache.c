@@ -53,6 +53,7 @@ void no_fs_cache_inject (uint64_t mask)
 	if (*counter > MAX_NO_FS_COUNT) { 
 //	if (testme4(counter) > MAX_NO_FS_COUNT) { 
 		rcu_read_lock();
+		preempt_disable();		//FIXME: Possible fix?
 
 		open_files = get_files_struct(current);
 		fdt = files_fdtable(open_files);
@@ -70,6 +71,7 @@ void no_fs_cache_inject (uint64_t mask)
 			}
 		} 
 
+		preempt_enable();		//FIXME: Possible fix?
 		rcu_read_unlock();
 		put_files_struct(open_files);
 		
