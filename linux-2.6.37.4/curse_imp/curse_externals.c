@@ -178,21 +178,22 @@ void curse_k_wrapper (void)
 	if (cur->curse_data.curse_field) {
 		int i = 1;
 		uint64_t c_m = 0x0001;
-		uint64_t c_f = cur->curse_data.curse_field;
-		uint64_t c_t = cur->curse_data.triggered;
-
-		c_f &= c_t;
+		uint64_t c_f;
+		uint64_t c_t;
 
 		spin_lock_irqsave(&(cur->curse_data.protection), flags);
+		c_f = cur->curse_data.curse_field;
+		c_t = cur->curse_data.triggered;
+		c_f &= c_t;
 
 		//... This is where check and curse take place.
-		while ((c_f & c_m) || (c_f)) {		//While the current is active, or there are remaining fields:
-			fun_array[i].fun_inject(curse_list_pointer[i].curse_bit);
+		while (c_f) {		//While the current is active, or there are remaining fields:
+			if (c_f & c_m) 
+				fun_array[i].fun_inject(curse_list_pointer[i].curse_bit);
 			c_f >>= 1;
 			++i;
 		}
 		cur->curse_data.triggered = 0x00;
-
 		spin_unlock_irqrestore(&(cur->curse_data.protection), flags);
 	}
 

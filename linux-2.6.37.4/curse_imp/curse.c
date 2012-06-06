@@ -351,6 +351,7 @@ static int syscurse_cast (int curse_no, pid_t target)
 	if (!CURSE_SYSTEM_Q)
 		goto out;
 
+
 	err = -ESRCH;
 	rcu_read_lock();
 	target_task = find_task_by_vpid(target);
