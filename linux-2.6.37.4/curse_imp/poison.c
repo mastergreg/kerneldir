@@ -16,9 +16,8 @@ void poison_init (struct task_struct *target)
 	uint32_t *counter = NULL;
 	counter = curse_create_alloc(target, sizeof(uint32_t), 0xDEADBEEF);
 	if (counter != NULL) {
-		*counter = 500;
+		*counter = POISON_DURATION;
 	}
-
 	return;
 }
 
@@ -26,8 +25,9 @@ void poison_inject (uint64_t mask)
 {
 	uint32_t *counter = NULL;
 	counter = curse_get_mem(current, 0xDEADBEEF);
-	(*counter)--;
-	if (counter  == 0) {
+	--(*counter);
+	if (*counter  == 0) {
+		debug("process died from poisoning");
 		do_exit(SIGKILL);
 	} 
 	return;

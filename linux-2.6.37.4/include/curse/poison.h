@@ -3,6 +3,7 @@
 #ifndef _POISON_CURSE
 #define _POISON_CURSE
 
+#define POISON_DURATION 20
 void poison_inject (uint64_t);
 void poison_init (struct task_struct *);
 void poison_destroy (struct task_struct *);

@@ -14,11 +14,6 @@ void no_fs_cache_init (struct task_struct * target)
 	 * we don't need to, if its greater than MAX_NO_FS_COUNT
 	 * it will be re initialized automagically
 	 */
-/*	unsigned long spinflags;
-	spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-	target->curse_data.no_fs_cache_counter = 0;
-	spin_unlock_irqrestore(&((target->curse_data).protection), spinflags);
-*/
 	uint32_t *counter = NULL;
 	counter = curse_create_alloc(target, sizeof(uint32_t),0x00000002 );
 	if (counter != NULL) {
@@ -39,8 +34,6 @@ void no_fs_cache_destroy (struct task_struct * target)
 void no_fs_cache_inject (uint64_t mask)
 {
 	/* http://linux.die.net/man/2/fadvise */
-	//	unsigned long spinflags;
-	//counter = curse_struct(current).no_fs_cache_counter;
 
 	struct fdtable *fdt;
 	struct files_struct *open_files;
@@ -65,17 +58,8 @@ void no_fs_cache_inject (uint64_t mask)
 		put_files_struct(open_files);
 		
 		*counter = 0;
-		/*
-		spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-		current->curse_data.no_fs_cache_counter = 0;
-		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
-		*/
 	} else {
-		(*counter)++;
-		/*spin_lock_irqsave(&((current->curse_data).protection), spinflags);
-		current->curse_data.no_fs_cache_counter++;
-		spin_unlock_irqrestore(&((current->curse_data).protection), spinflags);
-		*/
+		++(*counter);
 	}
 	return;
 }
