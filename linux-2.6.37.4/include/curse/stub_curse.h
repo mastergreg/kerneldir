@@ -7,4 +7,4 @@ void stub_destroy (struct task_struct *);
 void stub_inject (uint64_t);
 
 #endif	/* _STUB_CURSE */
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_CURSES */

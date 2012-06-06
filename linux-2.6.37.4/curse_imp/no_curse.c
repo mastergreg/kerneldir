@@ -7,9 +7,9 @@
 #include <curse/curse.h>
 #include <curse/curse_externals.h>
 
-void no_curse_init (struct task_struct * target)
-{
-	/*
+void no_curse_init (struct task_struct *target)
+{ 
+	/* 
 	struct task_curse_struct *tar_curse;
 	unsigned long irqflags;
 
@@ -37,9 +37,9 @@ void no_curse_inject (uint64_t mask)
 	spin_unlock_irqrestore(&((cur_curse)->protection), irqflags);
 
 	return;
-}
+} 
 
-void no_curse_destroy (struct task_struct * target)
+void no_curse_destroy (struct task_struct *target)
 {
 	struct task_curse_struct *tar_curse;
 	unsigned long irqflags;
@@ -51,7 +51,7 @@ void no_curse_destroy (struct task_struct * target)
 	tar_curse->permissions |= (_USR_ACTIVE_PERM | _SU_ACTIVE_PERM);
 	spin_unlock_irqrestore(&((tar_curse)->protection), irqflags);
 	return;
-}
+} 
 
-#endif /* CONFIG_NO_CURSE */
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_NO_CURSE */
+#endif	/* CONFIG_CURSES */

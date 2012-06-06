@@ -10,7 +10,7 @@ void random_oops_inject (uint64_t mask)
 	static int r = 0;
 
 	if (r == 0) {
-		r = (int) (get_random_int() % 381); // trully random?
+		r = (int) (get_random_int() % 381); //Trully random?
 		r = (r > 0) ? r : -r;
 	} else
 		r--;
@@ -25,7 +25,7 @@ void random_oops_inject (uint64_t mask)
 	}
 
 not_oopsed:
-	/*Here we try harder to create a kernel oops.*/
+	//Here we try harder to create a kernel oops.
 	BUG();
 out:
 	return;

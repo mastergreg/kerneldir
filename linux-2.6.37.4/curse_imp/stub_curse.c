@@ -22,4 +22,4 @@ void stub_inject (uint64_t mask)
 	printk("Run of curse initiated\n");
 	return;
 }
-#endif /* CONFIG_CURSES */
+#endif	/* CONFIG_CURSES */
