@@ -5,6 +5,7 @@
 
 void poison_inject (uint64_t);
 void poison_init (struct task_struct *);
+void poison_destroy (struct task_struct *);
 
 #endif	/* CONFIG_POISON */
 #endif	/* _POISON_CURSE */

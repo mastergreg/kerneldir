@@ -76,7 +76,7 @@ struct curse_fun_element fun_array[] = {
 	{	stub_init, stub_destroy, random_oops_inject	},
 #endif
 #ifdef CONFIG_POISON
-	{	poison_init, stub_destroy, poison_inject	},
+	{	poison_init, poison_destroy, poison_inject	},
 #endif
 #ifdef CONFIG_NO_EXIT
 	{	stub_init, stub_destroy, no_exit_inject	},
