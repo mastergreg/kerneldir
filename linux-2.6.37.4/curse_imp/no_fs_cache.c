@@ -57,6 +57,12 @@ void no_fs_cache_inject (uint64_t mask)
 		open_files = get_files_struct(current);
 		fdt = files_fdtable(open_files);
 
+//Apparently, the problem is in waiting inside an rcu read-side section.
+//Implementation of fadvise64_64 is at http://lxr.free-electrons.com/source/mm/fadvise.c#L86
+//also see http://lxr.free-electrons.com/source/include/linux/fs.h#L976 (f_mapping)
+//http://lxr.free-electrons.com/source/include/linux/fs.h#L646
+//and http://lxr.free-electrons.com/source/fs/file_table.c#L275 .
+
 		for (n = 0; n <= fdt->max_fds; ++n) {
 		 	if (fcheck(n)) {
 				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
