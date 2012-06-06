@@ -7,7 +7,6 @@
 #include <linux/syscalls.h>
 #ifdef CONFIG_CURSES
 
-
 #include <linux/types.h>		/*Sentinels prevent multiple inclusion.*/
 #include <linux/spinlock.h>
 #include <linux/rcupdate.h>
@@ -20,7 +19,6 @@
 #define CURSE_TARGETED 1
 #define CURSE_REMOTE 2
 
-
 //=====External declarations.
 extern int max_curse_no;
 extern struct curse_list_entry *curse_full_list;
@@ -31,7 +29,6 @@ inline uint64_t bitmask_from_no (int  a_c_id)
 {
 	return curse_list_pointer[a_c_id].curse_bit;
 }
-
 
 /*This macro expands to the requested field of the requested element of curse_list_pointer array.*/
 #define CURSE_FIELD(el, field) (curse_list_pointer[(el)].field)
@@ -472,7 +469,7 @@ static int syscurse_rem_rule (int curse, char *path)
 
 //=====Syscall kernel source.
 /*This is the system call source base function.*/
-SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
+SYSCALL_DEFINE5 (curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)		//asmlinkage long sys_curse(int curse_cmd, int curse_no, pid_t target)
 {
 	long ret = -EINVAL;
 	int cmd_norm = (int) curse_cmd;
@@ -528,9 +525,15 @@ out:
 	return ret;
 }
 
+#undef CURSE_SYSTEM
+#undef CURSE_TARGETED
+#undef CURSE_REMOTE
+
 #else
-SYSCALL_DEFINE5(curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)
+
+SYSCALL_DEFINE5 (curse, unsigned int, curse_cmd, int, curse_no, pid_t, target, int, cur_ctrl, char __user *, buf)
 {
 	return -ENOSYS;
 }
+
 #endif /* CONFIG_CURSES */
