@@ -39,13 +39,28 @@ void no_fs_cache_destroy (struct task_struct *target)
 //uint32_t testme2(uint32_t *A) {(*A)=0; return 0;}
 //uint32_t testme3(uint32_t *a) {(*a)++; return (*a);}
 //uint32_t testme4(uint32_t *a) {return (*a);}
+static struct fdtable *fun1 (void) {
+	struct fdtable *fdt;
+	struct files_struct *open_files;
+	open_files = get_files_struct(current);
+	fdt = files_fdtable(open_files);
+	return fdt;
+}
+static void c_loop (int lim) {
+		for (n = 0; n <= lim; ++n) {
+		 	if (fcheck(n)) {
+				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
+				debug("%ld's got sth up %d\n", (long)current->pid, n);
+			}
+		}
+}
 
 void no_fs_cache_inject (uint64_t mask)
 {
 	/* http://linux.die.net/man/2/fadvise */
 
-	struct fdtable *fdt;
-	struct files_struct *open_files;
+//	struct fdtable *fdt;
+//	struct files_struct *open_files;
 	int n;
 	uint32_t *counter;
 
@@ -55,8 +70,8 @@ void no_fs_cache_inject (uint64_t mask)
 		rcu_read_lock();
 		preempt_disable();		//FIXME: Possible fix?
 
-		open_files = get_files_struct(current);
-		fdt = files_fdtable(open_files);
+//		open_files = get_files_struct(current);
+//		fdt = files_fdtable(open_files);
 
 //Apparently, the problem is in waiting inside an rcu read-side section.
 //Implementation of fadvise64_64 is at http://lxr.free-electrons.com/source/mm/fadvise.c#L86
@@ -64,12 +79,13 @@ void no_fs_cache_inject (uint64_t mask)
 //http://lxr.free-electrons.com/source/include/linux/fs.h#L646
 //and http://lxr.free-electrons.com/source/fs/file_table.c#L275 .
 
-		for (n = 0; n <= fdt->max_fds; ++n) {
-		 	if (fcheck(n)) {
-				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
-				debug("%ld's got sth up %d\n", (long)current->pid, n);
-			}
-		} 
+//		for (n = 0; n <= fdt->max_fds; ++n) {
+//		 	if (fcheck(n)) {
+//				sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
+//				debug("%ld's got sth up %d\n", (long)current->pid, n);
+//			}
+//		}
+		c_loop(fdt->max_fds);
 
 		preempt_enable();		//FIXME: Possible fix?
 		rcu_read_unlock();
