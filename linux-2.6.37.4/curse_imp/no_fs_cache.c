@@ -41,7 +41,7 @@ static inline void clear_cache_loop (int lim) {
 	for (n = 0; n <= lim; ++n) {
 	 	if (fcheck(n)) {
 			sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
-			debug("%ld's got sth up %d\n", (long)current->pid, n);
+			//debug("%ld's got sth up %d\n", (long)current->pid, n);
 		}
 	}
 }
