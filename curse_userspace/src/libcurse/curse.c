@@ -75,7 +75,7 @@ inline long get_maxCurseNum()
 int index_from_name (const char *id)
 {
 	/*Search static buffered list (if not null) for occurence. That is until MAX_CURSE_NO.*/
-	int i = 0, found = 0;
+	int i = 0;
 	const struct curse_list_entry *list;
 
 	//Get the max number only on first call of this function, save unneeded syscalls.
@@ -84,17 +84,11 @@ int index_from_name (const char *id)
 	if (list != NULL) {
 		for (i = 0; i < maxCurseNum; ++i) {
 			if (strcmp(list[i].curse_name, id) == 0) {
-				found = 1;
-				break;
+				return i;
 			}
 		}
-		//FIXME: No reason for flag. Could just be inlined in if.
-		if (found == 1) {
-			return i;
-		} else {
-			perror("Curse not found");
-			return -1;
-		}
+		perror("Curse not found");
+		return -1;
 	} else {
 		perror("Curse list is empty");
 		return -2;
