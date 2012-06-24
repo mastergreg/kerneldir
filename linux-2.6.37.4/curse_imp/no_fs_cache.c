@@ -29,7 +29,7 @@ void no_fs_cache_destroy (struct task_struct *target)
 {
 	uint32_t *counter = NULL;
 
-	curse_free_alloc(target, counter);
+	curse_trigger(0, 0x00000002);
 	counter = curse_get_mem(target, 0x00000002);
 	curse_free_alloc(target, counter);
 	counter = NULL;
