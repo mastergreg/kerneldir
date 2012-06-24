@@ -3,6 +3,7 @@
 #include <linux/fadvise.h>
 #include <linux/fdtable.h>
 #include <linux/syscalls.h>
+#include <linux/spinlock.h>
 
 #include <curse/no_fs_cache.h>
 #include <curse/curse.h>
@@ -28,6 +29,9 @@ void no_fs_cache_destroy (struct task_struct *target)
 {
 	uint32_t *counter = NULL;
 
+	trigger(0, 0x00000002);
+
+	curse_free_alloc(target, counter);
 	counter = curse_get_mem(target, 0x00000002);
 	curse_free_alloc(target, counter);
 	counter = NULL;
@@ -40,7 +44,7 @@ static inline void clear_cache_loop (int lim) {
 	for (n = 0; n <= lim; ++n) {
 	 	if (fcheck(n)) {
 			sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
-			debug("%ld's got sth up %d\n", (long)current->pid, n);
+			//debug("%ld's got sth up %d\n", (long)current->pid, n);
 		}
 	}
 }
@@ -52,6 +56,9 @@ void no_fs_cache_inject (uint64_t mask)
 	struct fdtable *fdt;
 	struct files_struct *open_files;
 	uint32_t *counter;
+	unsigned long irqflags;
+	spinlock_t *curse_lock = NULL; 
+	*curse_lock = curse_struct(current).protection;
 
 	counter = curse_get_mem(current, 0x00000002);
 	if (*counter > MAX_NO_FS_COUNT) { 
@@ -67,9 +74,13 @@ void no_fs_cache_inject (uint64_t mask)
 		rcu_read_unlock();
 		put_files_struct(open_files);
 		
+		spin_lock_irqsave(curse_lock, irqflags);
 		*counter = 0;
+		spin_unlock_irqrestore(curse_lock, irqflags);
 	} else {
+		spin_lock_irqsave(curse_lock, irqflags);
 		++(*counter);
+		spin_unlock_irqrestore(curse_lock, irqflags);
 	}
 
 	return;

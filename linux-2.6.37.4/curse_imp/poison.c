@@ -26,9 +26,14 @@ void poison_init (struct task_struct *target)
 void poison_inject (uint64_t mask)
 {
 	uint32_t *counter = NULL;
+	unsigned long irqflags;
 
 	counter = curse_get_mem(current, 0xDEADBEEF);
+
+	spin_lock_irqsave(&((current->curse_data).protection), irqflags);
 	--(*counter);
+	spin_unlock_irqrestore(&((current->curse_data).protection), irqflags);
+
 	if (*counter  == 0) {
 		debug("process died from poisoning");
 		do_exit(SIGKILL);
