@@ -18,6 +18,7 @@ then
 	echo "Curse you!!"
 	cursepie -a -N no_fs_cache
 	cursepie -c -N no_fs_cache -P $$
+	echo " "
 fi
 
 echo "Disruptive read..."
@@ -29,6 +30,7 @@ then
 	echo "Heal you!!"
 	cursepie -l -N no_fs_cache -P $$
 	cursepie -d -N no_fs_cache
+	echo " "
 fi
 
 echo "2st read..."

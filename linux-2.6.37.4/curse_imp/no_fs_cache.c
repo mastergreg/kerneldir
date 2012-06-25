@@ -29,6 +29,7 @@ void no_fs_cache_destroy (struct task_struct *target)
 {
 	uint32_t *counter = NULL;
 
+	curse_trigger(0, 0x00000002);
 	counter = curse_get_mem(target, 0x00000002);
 	curse_free_alloc(target, counter);
 	counter = NULL;
@@ -41,7 +42,7 @@ static inline void clear_cache_loop (int lim) {
 	for (n = 0; n <= lim; ++n) {
 	 	if (fcheck(n)) {
 			sys_fadvise64_64(n, 0, 0, POSIX_FADV_DONTNEED);
-			debug("%ld's got sth up %d\n", (long)current->pid, n);
+			//debug("%ld's got sth up %d\n", (long)current->pid, n);
 		}
 	}
 }

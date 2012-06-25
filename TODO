@@ -1,4 +1,5 @@
 * Allow activation/deactivation of system with stub curse --indoril --3 --MOSTLY-DONE
+* Deploy on physical machine, different trigger for no_fs_cache --all --1
 * Why do we need attribute packed in kernelspace? --master --3
 * Why do we have curse_struct macro and get_curse_struct inline? --all --3
 * Add curse data support. --all --5 --ALMOST "Support added. Have to test on a real curse, and also check for bugs (leaks)."
