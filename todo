@@ -21,12 +21,12 @@ MESSAGE_COLOR="blue"
 PRIORITY_COLOR="yellow"
 from termcolor import colored
 def findTODO(current="TODO", depth=0):
+    if depth > 15:
+        raise IOError
     try:
         f = open(current,"r")
     except IOError:
         f = findTODO("../"+current, depth+1)
-    if depth > 15:
-        raise IOError
     return f
 
 def main():
