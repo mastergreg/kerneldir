@@ -9,18 +9,6 @@
 
 void no_curse_init (struct task_struct *target)
 { 
-	/* 
-	struct task_curse_struct *tar_curse;
-	unsigned long irqflags;
-
-	tar_curse = &(target->curse_data);
-
-	spin_lock_irqsave(&((tar_curse)->protection), irqflags);
-	// No need to check if curse is active
-	//Making the process unable to cast a curse is done by masking it s active permissions.
-	tar_curse->permissions &= ~(_USR_ACTIVE_PERM | _SU_PASSIVE_PERM);
-	spin_unlock_irqrestore(&((tar_curse)->protection), irqflags);
-	*/
 	curse_trigger(1, 0xBEA7CE5C);
 	return;
 }

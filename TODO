@@ -1,23 +1,22 @@
-* Allow activation/deactivation of system with stub curse --indoril --3 --MOSTLY-DONE
 * Deploy on physical machine, different trigger for no_fs_cache --all --1
 * Why do we need attribute packed in kernelspace? --master --3
-* Why do we have curse_struct macro and get_curse_struct inline? --all --3
-* Add curse data support. --all --5 --ALMOST "Support added. Have to test on a real curse, and also check for bugs (leaks)."
 * Priority swap array in userspace lib --indoril --7
 * Create rule activity in functions. --ale1ster --7
 * Also, remodel proc_read to read partial. --all --8
 
-* Add permission copy on fork --master --3 --FIXED
+* Add curse data support. --all --5 --FIXED 
 * Add triggerred && check in curse_k_wrapper while condition. --master --3 --FIXED
 * Modify do_exit and fork to update the number of cursed processes. --nalfemp-ale1ster --3 --FIXED
 * Test inheritance, control changes, dying and forking --all --3 --FIXED
 * Fix incostistency in ref_count in case of exited. --ale1ster --3 --FIXED
 * Check if status checking in init_all is good. --all --4 --FIXED
-* Remove group permissions --all --10 --FIXED "Only stubs remain"
 
 
 And so the story goes...
 
+ Remove group permissions --all --10 --FIXED "Only stubs remain"
+ Add permission copy on fork --master --3 --FIXED
+ Why do we have curse_struct macro and get_curse_struct inline? --all --3
  Create a better version down to the assembly instructions of curse_trigger. Maybe the hashing should be done in kernel space. --all --2 --REJECTED "::Future static creation of curse list"
  Modify curse_{init, destroy}_actions to check if system is active before doing any action. --ale1ster --3 --FIXED
  Check how to implement other curses like no-curse --all --3 --PARTIAL "Ask Vaggeli how we can offer that"
