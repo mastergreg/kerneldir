@@ -6,4 +6,3 @@ local
 *.swo
 *.pyc
 rootfs
-gotta_pull_em_all.sh
